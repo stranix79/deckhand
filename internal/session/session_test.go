@@ -90,6 +90,15 @@ func TestMoveWithoutStage(t *testing.T) {
 	if !s.State().Black {
 		t.Fatal("black not toggled")
 	}
+	drain(c.out)
+	must(`{"op":"qr","seconds":0}`)
+	if got := string(<-c.out); got != `{"op":"qr","seconds":0}` {
+		t.Fatalf("qr hide frame: %s", got)
+	}
+	must(`{"op":"qr"}`)
+	if got := string(<-c.out); got != `{"op":"qr","seconds":15}` {
+		t.Fatalf("qr default frame: %s", got)
+	}
 	if err := s.apply(c, []byte(`{"op":"dance"}`)); err == nil {
 		t.Fatal("unknown op accepted")
 	}

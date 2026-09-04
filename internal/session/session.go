@@ -183,6 +183,7 @@ type op struct {
 	Seq      int      `json:"seq,omitempty"`
 	Handled  bool     `json:"handled,omitempty"`
 	Fragment *int     `json:"fragment,omitempty"`
+	Seconds  *int     `json:"seconds,omitempty"`
 }
 
 // errForbidden is returned when a role sends an op it may not send.
@@ -232,8 +233,14 @@ func (s *Session) apply(c *client, raw []byte) error {
 		s.state.Black = !s.state.Black
 		s.broadcastStateLocked()
 	case "qr":
-		// Transient: the stage shows the audience QR for a few seconds.
-		s.broadcastLocked(mustJSON(map[string]any{"op": "qr", "seconds": 15}), nil)
+		// Transient: the stage shows the audience QR for a few seconds
+		// (default 15). seconds:0 hides it. Everybody gets the frame so the
+		// remote can flip its button.
+		secs := 15
+		if o.Seconds != nil && *o.Seconds >= 0 && *o.Seconds <= 120 {
+			secs = *o.Seconds
+		}
+		s.broadcastLocked(mustJSON(map[string]any{"op": "qr", "seconds": secs}), nil)
 	case "reset":
 		s.state.StartedAt = nil
 		s.broadcastStateLocked()

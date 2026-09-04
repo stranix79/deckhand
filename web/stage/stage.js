@@ -67,12 +67,24 @@
 
   // --- overlays ------------------------------------------------------------------
 
+  // The QR overlay hides at a deadline (qrUntil), not only on a timer:
+  // browsers throttle timers of background tabs to once a minute, so a
+  // timer alone can leave the QR on screen far longer than 15 s. The
+  // deadline is re-checked whenever the tab becomes visible and on every
+  // server frame.
+  let qrUntil = 0;
   function showQr(seconds) {
+    if (seconds === 0) { hideQr(); return; }
     qrImg.src = '/qr/' + encodeURIComponent(code) + '/viewer.png?s=' + Date.now();
     qr.hidden = false;
+    qrUntil = Date.now() + (seconds || 15) * 1000;
     clearTimeout(qrTimer);
-    qrTimer = setTimeout(() => { qr.hidden = true; }, (seconds || 15) * 1000);
+    qrTimer = setTimeout(checkQr, (seconds || 15) * 1000 + 50);
   }
+  function hideQr() { qr.hidden = true; qrUntil = 0; clearTimeout(qrTimer); }
+  function checkQr() { if (qrUntil && Date.now() >= qrUntil) hideQr(); }
+  document.addEventListener('visibilitychange', checkQr);
+  window.addEventListener('focus', checkQr);
 
   function setStatus(kind, text) {
     if (!kind) { status.hidden = true; return; }
@@ -100,6 +112,7 @@
         case 'state':
           state = f.state;
           render();
+          checkQr();
           break;
         case 'ask':
           onAsk(f);
@@ -135,7 +148,7 @@
       case 'b': case 'B': case '.': sock.send({ op: 'black' }); break;
       case 'q': case 'Q': showQr(15); break;
       case 'f': case 'F': toggleFullscreen(); break;
-      case 'Escape': qr.hidden = true; break;
+      case 'Escape': hideQr(); break;
     }
   });
 
@@ -147,7 +160,7 @@
   // A click anywhere goes fullscreen (the brief), except on the QR overlay
   // which just closes.
   document.addEventListener('click', (e) => {
-    if (!qr.hidden) { qr.hidden = true; return; }
+    if (!qr.hidden) { hideQr(); return; }
     if (!document.fullscreenElement) toggleFullscreen();
   });
 

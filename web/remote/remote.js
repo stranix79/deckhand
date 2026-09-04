@@ -88,6 +88,12 @@
         case 'viewers':
           viewers.textContent = f.count + ' ' + (f.count === 1 ? t('viewer1') : t('viewers'));
           break;
+        case 'qr':
+          qrShownUntil = f.seconds ? Date.now() + f.seconds * 1000 : 0;
+          clearTimeout(qrLabelTimer);
+          setQrLabel();
+          if (f.seconds) qrLabelTimer = setTimeout(setQrLabel, f.seconds * 1000 + 100);
+          break;
       }
     },
     onStatus: function (s) {
@@ -105,7 +111,18 @@
   $('next').addEventListener('click', () => sock.send({ op: 'next' }));
   $('prev').addEventListener('click', () => sock.send({ op: 'prev' }));
   blackBtn.addEventListener('click', () => sock.send({ op: 'black' }));
-  qrBtn.addEventListener('click', () => sock.send({ op: 'qr' }));
+  // "Show QR" becomes "Hide QR" while the stage shows it; the server tells
+  // every client when the QR is shown (qr frame) so the label stays right
+  // even if another remote asked for it.
+  let qrShownUntil = 0, qrLabelTimer = null;
+  function setQrLabel() {
+    const on = Date.now() < qrShownUntil;
+    qrBtn.textContent = on ? t('hideQr') : t('showQr');
+    qrBtn.classList.toggle('on', on);
+  }
+  qrBtn.addEventListener('click', () => {
+    sock.send({ op: 'qr', seconds: Date.now() < qrShownUntil ? 0 : 15 });
+  });
   laserBtn.addEventListener('click', () => {
     laserMode = !laserMode;
     laserBtn.classList.toggle('on', laserMode);

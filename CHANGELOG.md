@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-09-04
+
+### Fixed
+- Stage: the audience QR could stay on screen much longer than 15 s when the stage tab was in the background (browsers throttle timers); it now hides on a deadline checked on focus and on every frame. The remote's button toggles Show/Hide.
+
 ## [1.0.2] - 2026-09-04
 
 ### Added

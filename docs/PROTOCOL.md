@@ -36,7 +36,7 @@ connection time:
 {op:"state", state:{...}}          on connection and on every change
 {op:"viewers", count:17}           on connection, then every 2 s when it changed
 {op:"ask", seq:12, dir:"next"|"prev"}   to the stage only, see fragments
-{op:"qr", seconds:15}              the stage shows the audience QR
+{op:"qr", seconds:15}              the stage shows the audience QR (0 = hide); sent to all
 ```
 
 `viewerUrl` (the public link) is sent to the stage and the remote only.
@@ -49,7 +49,7 @@ Slide `url`s are relative to the app origin locally, absolute on the hub
 {op:"next"} | {op:"prev"} | {op:"goto", slide:3}
 {op:"pointer", x:0.42, y:0.73} | {op:"pointer", x:null}
 {op:"black"}                       toggle
-{op:"qr"}                          ask the stage to show the audience QR
+{op:"qr", seconds?:15}            show the audience QR on the stage (seconds:0 hides it)
 {op:"reset"}                       clear startedAt (timer)
 {op:"answer", seq:12, handled:true|false}   stage only, see fragments
 {op:"fragment", fragment:2}        stage only: report a fragment moved locally
