@@ -20,7 +20,7 @@ exist. `present`, the three screens and the Hub are next. Roadmap in
 Binaries come with milestone 3 (goreleaser). Until then, with Go 1.23+:
 
 ```
-git clone https://github.com/stranix/deckhand && cd deckhand
+git clone https://github.com/stranix79/deckhand && cd deckhand
 make build          # → ./deckhand
 ./deckhand validate examples/ship-it
 ```

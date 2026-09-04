@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/stranix/deckhand/internal/deck"
+	"github.com/stranix79/deckhand/internal/deck"
 )
 
 func validateCmd() *cobra.Command {

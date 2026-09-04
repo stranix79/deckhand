@@ -1,7 +1,7 @@
 BIN     := deckhand
 PKG     := ./...
 VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
-LDFLAGS := -s -w -X github.com/stranix/deckhand/internal/version.Version=$(VERSION)
+LDFLAGS := -s -w -X github.com/stranix79/deckhand/internal/version.Version=$(VERSION)
 
 .PHONY: build test lint fmt validate run-local run-hub release clean
 

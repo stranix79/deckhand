@@ -8,3 +8,10 @@ One line per decision not covered by the brief, with the date and why. Newest fi
 - 2026-09-04 — Ratio → height table: 16:9 → width×9/16, 16:10 → width×10/16, 4:3 → width×3/4, rounded to the nearest integer. `width` defaults to 1920.
 - 2026-09-04 — Natural sort compares digit runs numerically (so `2-` < `10-`), the rest byte-wise and case-insensitively. No locale collation: decks must sort the same on every OS.
 - 2026-09-04 — Repo lives at `~/git/stranix/deckhand`; remote `git@github.com:stranix/deckhand.git` as instructed, created on GitHub by Gilles.
+
+## 2026-09-04 — Repository lives at github.com/stranix79/deckhand
+
+The brief names `github.com/stranix/deckhand`, but no `stranix` GitHub
+organisation exists; the personal account is `stranix79` (same as asm-m1).
+The module path follows the repository so that `go install` works. Homebrew
+tap will be `stranix79/tap`.

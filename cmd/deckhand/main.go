@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/stranix/deckhand/internal/version"
+	"github.com/stranix79/deckhand/internal/version"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module github.com/stranix/deckhand
+module github.com/stranix79/deckhand
 
 go 1.25.0
 
