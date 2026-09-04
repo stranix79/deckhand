@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-09-04
+
+### Fixed
+- Stage: entrance animations of the next slide played while it was preloaded off screen, so going forward showed them already finished (going back played them). The hidden frame now only warms the cache; the visible frame loads the slide when it is shown.
+
 ## [1.0.3] - 2026-09-04
 
 ### Fixed

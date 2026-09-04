@@ -23,7 +23,7 @@
   let deck = null;       // from the "deck" frame
   let state = null;      // from the last "state" frame
   let main = null;       // SlideFrame on screen
-  let preload = null;    // SlideFrame loading the next slide, off screen
+  let preload = null;    // SlideFrame warming the cache with the next slide, off screen
   let qrTimer = null, lostTimer = null, hintTimer = null, cursorTimer = null;
 
   // --- rendering -------------------------------------------------------------
@@ -32,17 +32,15 @@
     if (!deck || !state) return;
     const n = state.slide;
     if (main.index !== n) {
-      // If the preload frame already holds slide n, swap the two frames:
-      // the slide appears instantly, without a white flash.
-      if (preload.index === n) {
-        const tmp = main; main = preload; preload = tmp;
-        main.iframe.style.visibility = 'visible';
-        preload.iframe.style.visibility = 'hidden';
-      } else {
-        main.show(n);
-      }
+      // The slide is (re)loaded in the visible frame at the moment it is
+      // shown, so its CSS animations and scripts start now, not earlier.
+      // The hidden frame only warms the browser cache with the next slide
+      // and its assets: the load below is served from cache and is
+      // near-instant. (Swapping the preloaded frame in would show a slide
+      // whose entrance animations already played while hidden.)
+      main.show(n);
       preload.show(Math.min(n + 1, deck.slides.length - 1));
-      if (preload.index === n) preload.show(-1); // last slide: nothing to preload
+      if (preload.index === n) preload.show(-1); // last slide: nothing to warm
     }
     main.setFragment(state.fragment || 0);
     placeLaser(laser, main, state.pointer);
