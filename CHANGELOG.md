@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-09-04
+
+### Added
+- Examples page (`/docs/EXAMPLES`) and a link from the landing to the live example deck and its source.
+
 ## [1.0.0] - 2026-09-04
 
 The hub, the site and the docs.

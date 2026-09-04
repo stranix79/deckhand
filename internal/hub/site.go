@@ -18,7 +18,7 @@ import (
 )
 
 // docPages are the docs rendered under /docs/{name}, in menu order.
-var docPages = []string{"FORMAT", "CLI", "HUB", "PROTOCOL", "SECURITY"}
+var docPages = []string{"EXAMPLES", "FORMAT", "CLI", "HUB", "PROTOCOL", "SECURITY"}
 
 func (h *Hub) siteRoutes(r chi.Router) {
 	r.Get("/", h.landing)
