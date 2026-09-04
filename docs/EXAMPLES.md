@@ -1,6 +1,19 @@
 # Examples
 
-## Ship it before lunch
+## Field notes — the showcase
+
+Seventeen slides that make the case for HTML over PowerPoint, with full-bleed
+photos, a section of slides that **are running code** (a live clock and a
+canvas particle field, a slider that drives an SVG chart, a git diff of a
+slide, a scorecard), fragments, an animated chart, and a photo grid.
+
+* **Browse it live**: [deckhand.stranix.net/d/stranix79/field-notes](https://deckhand.stranix.net/d/stranix79/field-notes)
+* **Source**: [examples/keynote on GitHub](https://github.com/stranix79/deckhand/tree/main/examples/keynote)
+  (photo credits in `CREDITS.md`).
+* Present it: `deckhand present deckhand/examples/keynote --open`. On slide 5,
+  drag the slider on the stage or use ↑/↓.
+
+## Ship it before lunch — the minimal one
 
 The deck that ships with the repository: eight slides, speaker notes, two
 public notes, and one slide with **fragments** (step-by-step reveal driven by

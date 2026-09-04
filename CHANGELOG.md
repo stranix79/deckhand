@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-09-04
+
+### Added
+- `examples/keynote` ("Field notes"): a 17-slide showcase with photos, live code, an interactive chart, a git diff and an HTML-vs-PPTX scorecard.
+
 ## [1.0.1] - 2026-09-04
 
 ### Added

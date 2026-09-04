@@ -1,0 +1,146 @@
+/* "Field notes" — the showy example deck. Designed at 1920×1080. Fonts fall
+   back to system faces so it works offline. Every slide is one of a few
+   layouts: .cover, .statement, .split, .cards, .quote, .grid, .code, .end. */
+:root {
+  --ink: #12233B; --sea: #1E6E74; --brass: #C9A227; --fog: #E9EEEF; --white: #fff;
+  --muted: #8A97A6;
+  --display: "Bricolage Grotesque", "Avenir Next", "Helvetica Neue", Arial, sans-serif;
+  --serif: "Source Serif 4", "Iowan Old Style", Georgia, serif;
+  --mono: "SF Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
+body { font-family: var(--serif); color: var(--white); background: var(--ink); position: relative; }
+h1, h2, h3 { font-family: var(--display); font-weight: 800; letter-spacing: -.025em; margin: 0; line-height: .98; }
+h1 { font-size: 168px; } h2 { font-size: 112px; } h3 { font-size: 44px; letter-spacing: -.01em; }
+p { margin: 0; font-size: 42px; line-height: 1.35; }
+.kicker { font-family: var(--display); font-weight: 700; font-size: 26px; letter-spacing: .22em; text-transform: uppercase; color: var(--brass); }
+.rule { width: 120px; height: 6px; background: var(--brass); border-radius: 3px; margin: 36px 0; }
+.foot { position: absolute; left: 96px; bottom: 56px; font-family: var(--display); font-size: 24px; color: rgba(255,255,255,.55); letter-spacing: .04em; }
+.num { position: absolute; right: 96px; bottom: 56px; font-family: var(--display); font-size: 24px; color: rgba(255,255,255,.45); }
+
+/* Full-bleed photo with a slow zoom (Ken Burns) and a legibility gradient. */
+.photo { position: absolute; inset: 0; background-size: cover; background-position: center; animation: kb 22s ease-out forwards; }
+@keyframes kb { from { transform: scale(1); } to { transform: scale(1.08); } }
+.shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(18,35,59,.86) 0%, rgba(18,35,59,.55) 45%, rgba(18,35,59,.05) 100%); }
+.shade.bottom { background: linear-gradient(180deg, rgba(18,35,59,0) 35%, rgba(18,35,59,.9) 100%); }
+.shade.dark { background: rgba(8,16,28,.55); }
+
+/* Entrances: everything with .in slides up on load, staggered by --i. */
+.in { animation: rise .8s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * .12s + .1s); }
+@keyframes rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+
+/* cover */
+.cover .content { position: absolute; left: 96px; bottom: 140px; max-width: 1300px; }
+.cover h1 { font-size: 200px; }
+.cover p { font-size: 46px; color: var(--fog); margin-top: 28px; max-width: 1100px; }
+
+/* statement */
+.statement { display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 160px; }
+.statement h1 { font-size: 150px; }
+.statement .big { font-size: 420px; line-height: 1; color: var(--brass); }
+.statement p { color: var(--fog); font-size: 44px; margin-top: 30px; }
+
+/* split: photo left 58%, text panel right */
+.split .photo { right: 42%; animation: none; }
+.split .panel { position: absolute; top: 0; right: 0; width: 42%; height: 100%; background: var(--ink); padding: 120px 96px; display: flex; flex-direction: column; justify-content: center; }
+.split .panel h2 { font-size: 92px; }
+.split .panel p { color: var(--fog); font-size: 38px; margin-top: 24px; }
+.split .panel ul { list-style: none; padding: 0; margin: 40px 0 0; font-size: 36px; line-height: 1.5; color: var(--fog); }
+.split .panel li::before { content: "—"; color: var(--brass); margin-right: 18px; }
+
+/* cards */
+.cards { padding: 120px 96px; display: flex; flex-direction: column; }
+.cards .row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 64px; flex: 1; }
+.card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 24px; padding: 48px; display: flex; flex-direction: column; gap: 22px; }
+.card svg { width: 88px; height: 88px; }
+.card h3 { font-size: 48px; }
+.card p { font-size: 32px; color: var(--fog); line-height: 1.4; }
+
+/* quote */
+.quote .content { position: absolute; left: 96px; right: 96px; bottom: 120px; }
+.quote blockquote { margin: 0; font-size: 80px; line-height: 1.15; font-weight: 400; max-width: 1500px; }
+.quote blockquote::before { content: "“"; color: var(--brass); }
+.quote cite { display: block; margin-top: 30px; font-style: normal; font-family: var(--display); font-size: 30px; color: var(--fog); letter-spacing: .08em; text-transform: uppercase; }
+
+/* timeline with fragments */
+.timeline { padding: 120px 96px; }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; margin-top: 90px; }
+.step { position: relative; padding-top: 40px; border-top: 4px solid rgba(255,255,255,.15); }
+.step .n { position: absolute; top: -34px; left: 0; width: 64px; height: 64px; border-radius: 50%; background: var(--brass); color: var(--ink); font-family: var(--display); font-weight: 800; font-size: 32px; display: grid; place-items: center; }
+.step code { display: block; font-family: var(--mono); font-size: 34px; color: var(--brass); margin: 20px 0 16px; }
+.step p { font-size: 32px; color: var(--fog); }
+.fragment { opacity: 0; transform: translateY(16px); transition: opacity .35s ease, transform .35s ease; }
+.fragment.on { opacity: 1; transform: none; }
+
+/* chart */
+.chart { padding: 120px 96px; }
+.chart svg { width: 100%; height: 640px; margin-top: 40px; }
+.bar { fill: var(--sea); transform-origin: bottom; animation: grow 1.2s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i) * .15s + .3s); }
+.bar.hi { fill: var(--brass); }
+@keyframes grow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.chart text { font-family: var(--display); fill: var(--fog); font-size: 26px; }
+.chart .val { fill: var(--white); font-weight: 700; font-size: 30px; }
+
+/* grid */
+.grid { padding: 96px; display: grid; grid-template-rows: auto 1fr; gap: 40px; }
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: 1fr 1fr; gap: 20px; }
+.tile { border-radius: 20px; background-size: cover; background-position: center; }
+.tile.wide { grid-column: span 2; }
+
+/* code */
+.code { padding: 120px 96px; display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center; }
+.code pre { margin: 0; font-family: var(--mono); font-size: 30px; line-height: 1.5; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 20px; padding: 40px 48px; color: var(--fog); }
+.code .k { color: var(--brass); } .code .s { color: #9BE3D2; }
+.code p { font-size: 36px; color: var(--fog); margin-top: 24px; }
+
+/* end */
+.end .content { position: absolute; left: 96px; right: 96px; bottom: 120px; }
+.end h1 { font-size: 180px; }
+.end p { font-size: 40px; color: var(--fog); margin-top: 24px; }
+.end .links { display: flex; gap: 48px; margin-top: 40px; font-family: var(--display); font-size: 34px; }
+.end .links span { color: var(--brass); }
+
+/* ---- "What PowerPoint can't" section ---------------------------------- */
+.section { display: flex; align-items: flex-end; padding: 120px 96px; }
+.section h1 { font-size: 190px; }
+.section .sub { font-size: 44px; color: var(--fog); margin-top: 30px; max-width: 1200px; }
+
+/* live: canvas particles behind, clock and counters in front */
+.live canvas { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+.live .content { position: absolute; left: 96px; top: 120px; right: 96px; }
+.live .clock { font-family: var(--display); font-weight: 800; font-size: 300px; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; margin-top: 20px; }
+.live .clock small { font-size: 90px; color: var(--brass); letter-spacing: 0; }
+.live .facts { display: flex; gap: 80px; margin-top: 40px; }
+.live .facts div { font-family: var(--display); }
+.live .facts strong { display: block; font-size: 72px; font-variant-numeric: tabular-nums; }
+.live .facts span { font-size: 26px; color: var(--fog); letter-spacing: .08em; text-transform: uppercase; }
+
+/* interactive: a slider drives numbers and an SVG donut */
+.interactive { padding: 120px 96px; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.interactive .panel p { font-size: 36px; color: var(--fog); margin-top: 24px; }
+.interactive input[type=range] { width: 100%; margin-top: 50px; accent-color: var(--brass); height: 40px; }
+.interactive .out { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; }
+.interactive .out div { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 20px; padding: 28px 32px; font-family: var(--display); }
+.interactive .out strong { display: block; font-size: 72px; font-variant-numeric: tabular-nums; color: var(--brass); }
+.interactive .out span { font-size: 24px; color: var(--fog); text-transform: uppercase; letter-spacing: .08em; }
+.interactive svg { width: 100%; height: 700px; }
+.interactive .ring { fill: none; stroke: var(--sea); stroke-width: 44; stroke-linecap: round; transition: stroke-dasharray .25s ease; }
+.interactive .track { fill: none; stroke: rgba(255,255,255,.1); stroke-width: 44; }
+.interactive .pct { font-family: var(--display); font-weight: 800; font-size: 150px; fill: var(--white); }
+.interactive .lbl { font-family: var(--display); font-size: 34px; fill: var(--fog); }
+
+/* diff: a git diff of a slide, coloured like a terminal */
+.diff { padding: 120px 96px; }
+.diff pre { margin: 32px 0 0; font-family: var(--mono); font-size: 27px; line-height: 1.45; background: #0B1626; border-radius: 20px; padding: 32px 40px; color: var(--fog); }
+.diff .h { color: var(--muted); } .diff .add { color: #7EE2B8; background: rgba(126,226,184,.10); } .diff .del { color: #FF8A80; background: rgba(255,138,128,.10); }
+.diff p { font-size: 32px; color: var(--fog); margin-top: 28px; max-width: 1600px; }
+
+/* compare: a table with big ticks */
+.compare { padding: 110px 96px; }
+.compare table { width: 100%; border-collapse: collapse; margin-top: 36px; font-family: var(--display); font-size: 29px; }
+.compare th { text-align: left; color: var(--brass); font-size: 28px; letter-spacing: .12em; text-transform: uppercase; padding: 0 20px 20px; }
+.compare td { padding: 15px 20px; border-top: 1px solid rgba(255,255,255,.12); }
+.compare td:first-child { font-family: var(--serif); font-size: 31px; }
+.compare .num { display: none; }
+.compare .yes { color: #7EE2B8; } .compare .no { color: #FF8A80; } .compare .meh { color: var(--fog); }

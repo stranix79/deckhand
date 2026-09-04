@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Interactive</title>
+<link rel="stylesheet" href="assets/keynote.css">
+</head>
+<body class="interactive">
+  <div class="panel">
+    <div class="kicker in" style="--i:0">Interactive · drag the slider</div>
+    <h2 class="in" style="--i:1">Numbers that answer questions.</h2>
+    <p class="in" style="--i:2">“And if we only kept 30 %?” Move the slider. The chart and the figures follow. No second version of the deck.</p>
+    <input id="r" type="range" min="0" max="100" value="62" class="in" style="--i:3" aria-label="share">
+    <div class="out">
+      <div class="in" style="--i:4"><strong id="v1">62 %</strong><span>of talks kept as HTML</span></div>
+      <div class="in" style="--i:5"><strong id="v2">3.1 h</strong><span>saved per week</span></div>
+    </div>
+  </div>
+  <svg viewBox="0 0 700 700" class="in" style="--i:2">
+    <circle class="track" cx="350" cy="350" r="280"/>
+    <circle id="ring" class="ring" cx="350" cy="350" r="280" transform="rotate(-90 350 350)" stroke-dasharray="1090 1759"/>
+    <text id="pct" class="pct" x="350" y="380" text-anchor="middle">62 %</text>
+    <text class="lbl" x="350" y="450" text-anchor="middle">share of decks in HTML</text>
+  </svg>
+  <div class="num">5</div>
+  <script>
+    // One slider, three outputs. 1759 is the circumference of the ring (2π·280).
+    const r = document.getElementById('r');
+    function update() {
+      const v = Number(r.value);
+      document.getElementById('v1').textContent = v + ' %';
+      document.getElementById('v2').textContent = (v * 0.05).toFixed(1) + ' h';
+      document.getElementById('pct').textContent = v + ' %';
+      document.getElementById('ring').setAttribute('stroke-dasharray', (1759 * v / 100).toFixed(0) + ' 1759');
+    }
+    r.addEventListener('input', update);
+    // Keyboard: ↑/↓ move the slider so the presenter can demo without a mouse
+    // (← → are taken by Deckhand for slide navigation).
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowUp') { r.value = Math.min(100, Number(r.value) + 5); update(); }
+      if (e.key === 'ArrowDown') { r.value = Math.max(0, Number(r.value) - 5); update(); }
+    });
+    update();
+  </script>
+</body>
+</html>

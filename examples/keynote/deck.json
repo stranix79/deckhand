@@ -1,0 +1,79 @@
+{
+  "title": "Field notes",
+  "ratio": "16:9",
+  "width": 1920,
+  "slides": [
+    {
+      "file": "01-cover.html",
+      "notes": "Wait for the room to settle. The photo zooms slowly: give it three seconds."
+    },
+    {
+      "file": "02-one-file.html",
+      "notes": "Say it slowly. This is the whole product.",
+      "public": true
+    },
+    {
+      "file": "03-section.html",
+      "notes": "Section header. Announce: the next four slides are live, not screenshots."
+    },
+    {
+      "file": "04-live.html",
+      "notes": "Point at the clock: it is the real time. The particles are a canvas drawn 60 times per second. Ask: which PowerPoint does that?",
+      "public": true
+    },
+    {
+      "file": "05-interactive.html",
+      "notes": "Drag the slider on the stage (or ↑/↓ on the keyboard). The donut and the two numbers follow. Answer a question from the room live."
+    },
+    {
+      "file": "06-diff.html",
+      "notes": "A slide is a text file: git, grep, code review, and an AI can rewrite one slide without touching the others."
+    },
+    {
+      "file": "07-compare.html",
+      "notes": "Read the last line with a straight face.",
+      "public": true
+    },
+    {
+      "file": "08-tent.html",
+      "notes": "Story: the conference Wi-Fi that died. Everything kept working because nothing needed the internet."
+    },
+    {
+      "file": "09-screens.html",
+      "notes": "Point at your phone: this is the remote. Point at the room: they can follow on theirs."
+    },
+    {
+      "file": "10-quote.html",
+      "notes": "Pause. Let them read."
+    },
+    {
+      "file": "11-commands.html",
+      "notes": "Three fragments: each → reveals one command. Do not rush the third one, it is the hub pitch.",
+      "public": true
+    },
+    {
+      "file": "12-chart.html",
+      "notes": "Numbers are illustrative. The point is the last bar."
+    },
+    {
+      "file": "13-sandbox.html",
+      "notes": "Security in one sentence: slides cannot touch anything of yours. Details in docs/SECURITY.md."
+    },
+    {
+      "file": "14-assets.html",
+      "notes": "Photos here are from Unsplash, 2.9 MB in total. Video and fonts work the same way."
+    },
+    {
+      "file": "15-audience.html",
+      "notes": "Transition to the hub. Free plan: 10 remote viewers. Pro: unlimited."
+    },
+    {
+      "file": "16-deckjson.html",
+      "notes": "Optional. Most people never write it by hand: the AI does."
+    },
+    {
+      "file": "17-thanks.html",
+      "notes": "Leave it on screen. Stop the timer."
+    }
+  ]
+}

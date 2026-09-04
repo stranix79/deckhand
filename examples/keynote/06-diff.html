@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Text, so git works</title>
+<link rel="stylesheet" href="assets/keynote.css">
+</head>
+<body class="diff">
+  <div class="kicker in" style="--i:0">Plain text · so everything you know already works</div>
+  <h2 class="in" style="--i:1">A slide is a file. Files have history.</h2>
+  <pre class="in" style="--i:2"><span class="h">$ git diff 04-live.html</span>
+<span class="h">@@ -12,7 +12,7 @@</span>
+   &lt;div class="facts"&gt;
+     &lt;div&gt;&lt;strong id="frames"&gt;0&lt;/strong&gt;&lt;span&gt;frames drawn&lt;/span&gt;&lt;/div&gt;
+<span class="del">-    &lt;div&gt;&lt;strong id="dots"&gt;0&lt;/strong&gt;&lt;span&gt;dots&lt;/span&gt;&lt;/div&gt;</span>
+<span class="add">+    &lt;div&gt;&lt;strong id="dots"&gt;0&lt;/strong&gt;&lt;span&gt;particles&lt;/span&gt;&lt;/div&gt;</span>
+     &lt;div&gt;&lt;strong id="since"&gt;0 s&lt;/strong&gt;&lt;span&gt;on this slide&lt;/span&gt;&lt;/div&gt;
+   &lt;/div&gt;
+<span class="h">$ grep -l "deckhand present" *.html | wc -l</span>
+3</pre>
+  <p class="in" style="--i:3">Diff it, grep it, review it in a pull request, let an AI rewrite slide 7 and nothing else. A .pptx is a zip of XML nobody reads.</p>
+  <div class="num">6</div>
+</body>
+</html>

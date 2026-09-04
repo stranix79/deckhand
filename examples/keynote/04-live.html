@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>This is running code</title>
+<link rel="stylesheet" href="assets/keynote.css">
+</head>
+<body class="live">
+  <canvas id="c" width="1920" height="1080"></canvas>
+  <div class="content">
+    <div class="kicker in" style="--i:0">Live · this slide is running code right now</div>
+    <div class="clock in" style="--i:1"><span id="hm">--:--</span><small id="s">:--</small></div>
+    <div class="facts">
+      <div class="in" style="--i:2"><strong id="frames">0</strong><span>frames drawn</span></div>
+      <div class="in" style="--i:3"><strong id="dots">0</strong><span>particles</span></div>
+      <div class="in" style="--i:4"><strong id="since">0 s</strong><span>on this slide</span></div>
+    </div>
+  </div>
+  <div class="num">4</div>
+  <script>
+    // A real clock and a particle field. Try this in PowerPoint.
+    const hm = document.getElementById('hm'), s = document.getElementById('s');
+    const t0 = Date.now();
+    function tick() {
+      const d = new Date();
+      hm.textContent = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+      s.textContent = ':' + String(d.getSeconds()).padStart(2, '0');
+      document.getElementById('since').textContent = Math.floor((Date.now() - t0) / 1000) + ' s';
+    }
+    tick(); setInterval(tick, 250);
+
+    const cv = document.getElementById('c'), ctx = cv.getContext('2d');
+    const N = 220, P = [];
+    for (let i = 0; i < N; i++) P.push({ x: Math.random() * 1920, y: Math.random() * 1080, vx: (Math.random() - .5) * .6, vy: (Math.random() - .5) * .6 });
+    document.getElementById('dots').textContent = N;
+    let frames = 0;
+    function draw() {
+      ctx.clearRect(0, 0, 1920, 1080);
+      for (const p of P) { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > 1920) p.vx *= -1; if (p.y < 0 || p.y > 1080) p.vy *= -1; }
+      ctx.strokeStyle = 'rgba(201,162,39,.25)'; ctx.lineWidth = 1.5;
+      for (let i = 0; i < N; i++) for (let j = i + 1; j < N; j++) {
+        const dx = P[i].x - P[j].x, dy = P[i].y - P[j].y, d2 = dx * dx + dy * dy;
+        if (d2 < 150 * 150) { ctx.globalAlpha = 1 - Math.sqrt(d2) / 150; ctx.beginPath(); ctx.moveTo(P[i].x, P[i].y); ctx.lineTo(P[j].x, P[j].y); ctx.stroke(); }
+      }
+      ctx.globalAlpha = 1; ctx.fillStyle = '#C9A227';
+      for (const p of P) { ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill(); }
+      frames++; if (frames % 10 === 0) document.getElementById('frames').textContent = frames.toLocaleString();
+      requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
+</body>
+</html>
