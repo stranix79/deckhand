@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Deckhand">
+<meta name="theme-color" content="#12233B">
+<link rel="apple-touch-icon" href="/static/remote/icon-180.png">
+<link id="manifest" rel="manifest" href="/static/remote/manifest.json">
+<title>Deckhand · Remote</title>
+<link rel="stylesheet" href="/static/shared/base.css">
+<link rel="stylesheet" href="/static/remote/remote.css">
+</head>
+<body class="remote">
+  <header class="top">
+    <div class="title-row">
+      <span id="title" class="title"></span>
+      <span id="conn" class="pill"><span class="dot"></span><span id="conn-text"></span></span>
+    </div>
+    <div class="meta-row">
+      <span id="counter" class="counter">– / –</span>
+      <button id="timer" class="timer" data-i18n-title="resetTimer">0:00</button>
+      <span id="viewers" class="viewers"></span>
+    </div>
+  </header>
+
+  <!-- Current slide (also the laser touchpad) and the next one. -->
+  <section class="thumbs">
+    <div class="thumb-wrap">
+      <div id="cur" class="frame thumb cur"><div id="laser" class="laser"></div></div>
+      <div id="pad-hint" class="pad-hint" hidden>laser</div>
+    </div>
+    <div class="thumb-wrap">
+      <div id="nxt" class="frame thumb"></div>
+      <div id="end" class="end" hidden data-i18n="endOfDeck"></div>
+    </div>
+  </section>
+
+  <section class="notes">
+    <div id="notes" class="notes-text"></div>
+  </section>
+
+  <nav class="tools">
+    <button id="laser-btn" data-i18n="laser"></button>
+    <button id="black-btn" data-i18n="black"></button>
+    <button id="qr-btn" data-i18n="showQr"></button>
+  </nav>
+  <nav class="nav">
+    <button id="prev" class="big" data-i18n-title="prev">‹</button>
+    <button id="next" class="big primary" data-i18n-title="next">›</button>
+  </nav>
+
+  <div id="banner" class="banner" hidden></div>
+
+  <script src="/static/shared/i18n.js"></script>
+  <script src="/static/shared/ws.js"></script>
+  <script src="/static/shared/slides.js"></script>
+  <script src="/static/remote/remote.js"></script>
+</body>
+</html>

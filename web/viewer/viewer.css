@@ -1,0 +1,20 @@
+/* Viewer: the slide first; on a phone in portrait, public notes below. */
+body.viewer { background: var(--ink); color: var(--white); display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
+.bar {
+  display: flex; align-items: center; gap: 12px; padding: 8px 12px; font-size: .9rem;
+  padding-top: max(8px, env(safe-area-inset-top));
+}
+.title { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
+.bar .pill { background: rgba(255,255,255,.1); color: var(--fog); }
+.counter { font-variant-numeric: tabular-nums; }
+.viewers { color: var(--fog); opacity: .8; }
+#back { padding: 6px 12px; font-size: .9rem; background: var(--brass); color: var(--ink); }
+#main { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+#frame { width: 100%; height: 100%; touch-action: pan-y; }
+.notes { padding: 12px 16px max(12px, env(safe-area-inset-bottom)); border-top: 1px solid rgba(255,255,255,.12); max-height: 40dvh; overflow: auto; }
+.notes-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .12em; color: var(--brass); margin-bottom: 6px; }
+.notes-text { font-family: var(--serif); font-size: 1.05rem; line-height: 1.45; white-space: pre-wrap; }
+.banner { position: fixed; left: 12px; right: 12px; bottom: 16px; background: var(--laser); color: #fff; padding: 12px; border-radius: 10px; z-index: 30; }
+.hint { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,.6); font-size: .8rem; transition: opacity .5s; pointer-events: none; }
+.hint.gone { opacity: 0; }
+@media (orientation: landscape) { .notes { max-height: 25dvh; } }

@@ -1,0 +1,70 @@
+/* Shared design tokens, copied from site/index.html so the three screens
+   match the landing. Fonts fall back to system faces: presentation screens
+   must work offline, so nothing is loaded from Google Fonts here. */
+:root {
+  --ink: #12233B;
+  --white: #FFFFFF;
+  --fog: #E9EEEF;
+  --sea: #1E6E74;
+  --brass: #C9A227;
+  --sea-soft: #D7E8E9;
+  --text: #1B2A3E;
+  --muted: #5C6B7A;
+  --laser: #FF3B30;
+  --display: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font-family: var(--display);
+  color: var(--text);
+  background: var(--white);
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 0;
+  border-radius: 8px;
+  background: var(--fog);
+  color: var(--ink);
+  padding: 10px 14px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+button:focus-visible { outline: 3px solid var(--brass); outline-offset: 2px; }
+button.primary { background: var(--ink); color: var(--white); }
+button.on { background: var(--brass); color: var(--ink); }
+[hidden] { display: none !important; }
+
+/* .frame is the box that keeps the deck ratio; .slide-frame's iframe is
+   scaled inside it (see slides.js). */
+.frame { position: relative; overflow: hidden; background: #000; }
+.frame iframe {
+  position: absolute; top: 0; left: 0; border: 0; background: #fff;
+  transform-origin: 0 0;
+}
+.frame.thumb iframe { pointer-events: none; }
+
+/* The laser dot, drawn above the iframe in normalised coordinates. */
+.laser {
+  position: absolute; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--laser); box-shadow: 0 0 18px 6px rgba(255,59,48,.75);
+  transform: translate(-50%, -50%); pointer-events: none; opacity: 0;
+  transition: opacity .15s; z-index: 5;
+}
+.laser.on { opacity: 1; }
+
+/* Small status pill (connection, live/detached). */
+.pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .85rem; padding: 4px 10px; border-radius: 999px;
+  background: var(--fog); color: var(--muted);
+}
+.pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.pill.live .dot { background: #2BB673; }
+.pill.warn .dot { background: var(--brass); }
+.pill.off .dot { background: var(--laser); }

@@ -18,7 +18,7 @@ Read this before touching the repo. The full brief lives in docs/BRIEF.md.
 
 ## Milestones
 1. ✅ (2026-09-04) Deck & validation (internal/deck, `deckhand validate`, examples/ship-it) — DONE when `deckhand validate examples/ship-it` exits 0 and a zip with `../` exits 1 with a clear message.
-2. Present local: server, WebSocket, stage + remote, ASCII QR codes, integration test.
+2. ✅ (2026-09-04) Present local: server, WebSocket, stage + remote, ASCII QR codes, integration test.
 3. Viewer + local polish, goreleaser snapshot, Homebrew tap. v0.1.0.
 4. Hub: auth, decks, remote viewers, relay.
 5. Hub: stats, Stripe, limits, metrics, deployment.

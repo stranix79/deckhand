@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deckhand — Present HTML decks. From any screen, to any screen.</title>
+<meta name="description" content="Deckhand turns a folder of HTML pages into a presentation: a stage, a remote in your pocket, and a live copy for everyone in the room. No PowerPoint required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12233B; --white:#FFFFFF; --fog:#E9EEEF; --sea:#1E6E74; --brass:#C9A227;
+    --sea-soft:#D7E8E9; --text:#1B2A3E; --muted:#5C6B7A;
+    --display:"Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+    --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--white);color:var(--text);font-family:var(--serif);font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:var(--sea);text-decoration-thickness:1px;text-underline-offset:3px}
+  a:focus-visible,button:focus-visible{outline:3px solid var(--brass);outline-offset:3px}
+  h1,h2,h3{font-family:var(--display);color:var(--ink);line-height:1.05;margin:0 0 .5em;letter-spacing:-.01em}
+  h1{font-size:clamp(2.6rem,6vw,5.2rem);font-weight:700;max-width:14ch}
+  h2{font-size:clamp(1.9rem,3.6vw,2.9rem);font-weight:700;max-width:22ch}
+  h3{font-size:1.25rem;font-weight:700;margin-top:1.6em}
+  p{margin:0 0 1.1em;max-width:66ch}
+  .lede{font-size:1.3rem;color:var(--ink);max-width:40ch}
+  /* language switch: hide the inactive language entirely */
+  html[data-lang="en"] [lang="fr"]{display:none}
+  html[data-lang="fr"] [lang="en"]{display:none}
+  html[data-lang="fr"] .lang-fr, html[data-lang="en"] .lang-en{text-decoration:none;color:var(--ink);font-weight:700}
+
+  header{display:flex;align-items:center;justify-content:space-between;padding:22px clamp(20px,5vw,72px)}
+  .brand{font-family:var(--display);font-weight:700;font-size:1.35rem;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+  .brand svg{width:28px;height:28px}
+  nav{display:flex;gap:26px;font-family:var(--display);font-size:1rem;align-items:center}
+  nav a{color:var(--text);text-decoration:none}
+  nav a:hover{color:var(--sea)}
+  .lang{display:flex;gap:6px;border-left:1px solid var(--fog);padding-left:20px}
+  .lang button{background:none;border:0;font:inherit;font-family:var(--display);color:var(--muted);cursor:pointer;padding:2px 4px}
+
+  section{padding:clamp(48px,8vw,110px) clamp(20px,5vw,72px)}
+  .hero{padding-top:clamp(24px,4vw,56px);display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,5vw,72px);align-items:center}
+  @media (max-width:900px){.hero{grid-template-columns:1fr}}
+  .cta{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:var(--white);font-family:var(--display);font-weight:700;padding:14px 22px;border-radius:6px;text-decoration:none;margin-right:14px;margin-top:8px}
+  .cta.alt{background:transparent;color:var(--ink);border:2px solid var(--ink)}
+  .hint{font-family:var(--display);font-size:.95rem;color:var(--muted);margin-top:18px}
+  kbd{font-family:var(--display);border:1px solid var(--muted);border-radius:4px;padding:1px 6px;font-size:.85em;color:var(--ink)}
+
+  /* ---------- live demo ---------- */
+  .demo{background:var(--ink);border-radius:14px;padding:clamp(16px,2.5vw,28px);display:grid;grid-template-columns:1.9fr 1fr;grid-template-rows:auto auto;gap:14px;color:var(--white);box-shadow:0 30px 60px -30px rgba(18,35,59,.6)}
+  .screen{background:#0C1A2C;border-radius:8px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+  .screen .tag{position:absolute;top:8px;left:10px;font-family:var(--display);font-size:.72rem;color:rgba(255,255,255,.55);z-index:2}
+  .stage{grid-row:1 / span 2;aspect-ratio:16/9}
+  .remote{aspect-ratio:16/11}
+  .viewer{aspect-ratio:16/9}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:8% 9%;font-family:var(--display);opacity:0;transition:opacity .35s ease}
+  .slide.on{opacity:1}
+  .slide b{font-size:clamp(1rem,2.4vw,2rem);line-height:1.05;display:block;font-weight:700}
+  .slide small{display:block;font-size:clamp(.6rem,1.1vw,.9rem);opacity:.75;margin-top:.5em}
+  .slide[data-n="1"]{background:linear-gradient(135deg,#1E6E74,#0C1A2C)}
+  .slide[data-n="2"]{background:#F2EFE6;color:var(--ink)}
+  .slide[data-n="3"]{background:#C9A227;color:var(--ink)}
+  .slide[data-n="4"]{background:#0C1A2C}
+  .remote .pad{position:absolute;inset:0;display:grid;grid-template-rows:auto 1fr auto;padding:26px 12px 12px;gap:8px}
+  .remote .thumb{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .remote .thumb div{aspect-ratio:16/9;border-radius:4px;background:#1E2F45;position:relative;overflow:hidden}
+  .remote .thumb div span{position:absolute;inset:0;font-size:.55rem;padding:4px;font-family:var(--display);opacity:.8}
+  .remote .thumb .cur{outline:2px solid var(--brass);outline-offset:-2px}
+  .remote .notes{font-family:var(--serif);font-size:.72rem;line-height:1.3;color:rgba(255,255,255,.85);overflow:hidden}
+  .remote .btns{display:flex;gap:6px;align-items:center;justify-content:space-between}
+  .remote button{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:var(--white);font-family:var(--display);font-weight:700;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:.8rem}
+  .remote .timer{font-family:var(--display);font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--brass)}
+  .viewer .slide{padding:10% 9%}
+  .viewer .follow{position:absolute;bottom:6px;right:8px;font-family:var(--display);font-size:.62rem;color:var(--brass);z-index:2}
+  .laser{position:absolute;width:10px;height:10px;border-radius:50%;background:#FF3B30;box-shadow:0 0 12px #FF3B30;transform:translate(-50%,-50%);pointer-events:none;z-index:3;opacity:0;transition:opacity .2s}
+  .laser.on{opacity:1}
+  @media (max-width:560px){.demo{grid-template-columns:1fr}.stage{grid-row:auto}}
+
+  /* ---------- manifesto ---------- */
+  .manifesto{background:var(--fog)}
+  .manifesto .inner{max-width:68ch}
+  .manifesto p{font-size:1.15rem}
+  .pull{font-family:var(--display);font-size:clamp(1.5rem,2.8vw,2.2rem);line-height:1.15;color:var(--ink);border-left:5px solid var(--brass);padding-left:22px;margin:2em 0;max-width:30ch;font-weight:500}
+
+  /* reasons: a definition list, not cards */
+  .reasons{max-width:74ch}
+  .reasons dl{margin:0}
+  .reasons dt{font-family:var(--display);font-size:1.3rem;font-weight:700;color:var(--ink);margin-top:1.8em}
+  .reasons dd{margin:.35em 0 0}
+
+  /* roles */
+  .roles{background:var(--ink);color:var(--white)}
+  .roles h2,.roles h3{color:var(--white)}
+  .roles .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,4vw,56px);margin-top:2.5em}
+  @media (max-width:800px){.roles .grid{grid-template-columns:1fr}}
+  .roles .grid h3{margin-top:0;display:flex;align-items:center;gap:12px}
+  .roles .grid h3 svg{width:30px;height:30px;flex:none}
+  .roles p{color:rgba(255,255,255,.82)}
+
+  /* format */
+  pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92rem;line-height:1.5;background:var(--ink);color:#E9EEEF;padding:20px 24px;border-radius:8px;overflow:auto;max-width:60ch}
+  pre i{color:var(--brass);font-style:normal}
+  .format .cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,72px);align-items:start}
+  @media (max-width:860px){.format .cols{grid-template-columns:1fr}}
+
+  /* two modes */
+  .modes table{border-collapse:collapse;width:100%;max-width:74ch;font-family:var(--display);font-size:1rem;margin-top:2em}
+  .modes th,.modes td{text-align:left;padding:14px 12px;border-bottom:1px solid var(--fog);vertical-align:top}
+  .modes th{color:var(--ink);font-weight:700}
+  .modes td:first-child{color:var(--muted)}
+  .modes .yes{color:var(--sea);font-weight:700}
+
+  /* faq */
+  details{border-top:1px solid var(--fog);padding:16px 0;max-width:74ch}
+  details:last-of-type{border-bottom:1px solid var(--fog)}
+  summary{font-family:var(--display);font-weight:700;font-size:1.15rem;color:var(--ink);cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";color:var(--sea);font-weight:500}
+  details[open] summary::after{content:"–"}
+  details p{margin-top:.8em}
+
+  footer{padding:40px clamp(20px,5vw,72px);font-family:var(--display);font-size:.95rem;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;border-top:1px solid var(--fog)}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="#">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="7" width="26" height="16" rx="2" fill="#12233B"/><path d="M6 27h20" stroke="#C9A227" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="15" r="3.2" fill="#C9A227"/></svg>
+    Deckhand
+  </a>
+  <nav>
+    <a href="#why" lang="en">Why HTML</a><a href="#why" lang="fr">Pourquoi HTML</a>
+    <a href="#how" lang="en">How it works</a><a href="#how" lang="fr">Comment ça marche</a>
+    <a href="#format" lang="en">The format</a><a href="#format" lang="fr">Le format</a>
+    <a href="#faq">FAQ</a>
+    <span class="lang"><button class="lang-en" data-set="en">EN</button><button class="lang-fr" data-set="fr">FR</button></span>
+  </nav>
+</header>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div>
+    <h1 lang="en">Your slides are already web pages. Present them like it.</h1>
+    <h1 lang="fr">Vos slides sont déjà des pages web. Présentez-les comme telles.</h1>
+
+    <p class="lede" lang="en">Deckhand takes a folder of HTML pages and gives you a stage, a remote in your pocket, and a live copy on every screen in the room.</p>
+    <p class="lede" lang="fr">Deckhand prend un dossier de pages HTML et vous donne une scène, une télécommande dans la poche, et une copie en direct sur chaque écran de la salle.</p>
+
+    <a class="cta" href="#how" lang="en">See how it works</a>
+    <a class="cta" href="#how" lang="fr">Voir comment ça marche</a>
+    <a class="cta alt" href="https://github.com/stranix/deckhand" lang="en">Get the open-source CLI</a>
+    <a class="cta alt" href="https://github.com/stranix/deckhand" lang="fr">Télécharger le CLI open source</a>
+
+    <p class="hint" lang="en">Try it now: press <kbd>→</kbd> and <kbd>←</kbd>, or tap the remote. All three screens stay in step.</p>
+    <p class="hint" lang="fr">Essayez : appuyez sur <kbd>→</kbd> et <kbd>←</kbd>, ou tapez sur la télécommande. Les trois écrans restent synchronisés.</p>
+  </div>
+
+  <div class="demo" id="demo" aria-label="Live demo of a synced presentation">
+    <div class="screen stage" id="stage">
+      <span class="tag" lang="en">STAGE · the projector</span><span class="tag" lang="fr">SCÈNE · le projecteur</span>
+      <div class="laser" id="laser"></div>
+      <div class="slide on" data-n="1"><b lang="en">Ship it before lunch</b><b lang="fr">Livrer avant midi</b><small lang="en">Why small teams win the deploy game</small><small lang="fr">Pourquoi les petites équipes gagnent au déploiement</small></div>
+      <div class="slide" data-n="2"><b lang="en">One decision per slide</b><b lang="fr">Une décision par slide</b><small lang="en">If it needs a second, it needs a second slide</small><small lang="fr">S'il en faut deux, il faut deux slides</small></div>
+      <div class="slide" data-n="3"><b lang="en">Rollback is a feature</b><b lang="fr">Le rollback est une fonctionnalité</b><small lang="en">Not an apology</small><small lang="fr">Pas une excuse</small></div>
+      <div class="slide" data-n="4"><b lang="en">Questions?</b><b lang="fr">Des questions ?</b><small lang="en">deckhand.stranix.net/s/ship</small><small lang="fr">deckhand.stranix.net/s/ship</small></div>
+    </div>
+
+    <div class="screen remote" id="remote">
+      <span class="tag" lang="en">REMOTE · your phone</span><span class="tag" lang="fr">TÉLÉCOMMANDE · votre téléphone</span>
+      <div class="pad">
+        <div class="thumb"><div id="thNow" class="cur"><span></span></div><div id="thNext"><span></span></div></div>
+        <div class="notes" id="notes"></div>
+        <div class="btns">
+          <button id="prev" aria-label="Previous slide">‹</button>
+          <span class="timer" id="timer">00:00</span>
+          <button id="next" aria-label="Next slide">›</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen viewer" id="viewer">
+      <span class="tag" lang="en">VIEWER · everyone else</span><span class="tag" lang="fr">PUBLIC · tous les autres</span>
+      <div class="slide on" data-n="1"><b lang="en">Ship it before lunch</b><b lang="fr">Livrer avant midi</b></div>
+      <div class="slide" data-n="2"><b lang="en">One decision per slide</b><b lang="fr">Une décision par slide</b></div>
+      <div class="slide" data-n="3"><b lang="en">Rollback is a feature</b><b lang="fr">Le rollback est une fonctionnalité</b></div>
+      <div class="slide" data-n="4"><b lang="en">Questions?</b><b lang="fr">Des questions ?</b></div>
+      <span class="follow" lang="en">● following</span><span class="follow" lang="fr">● en direct</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MANIFESTO ================= -->
+<section class="manifesto" id="why">
+  <div class="inner">
+    <h2 lang="en">PowerPoint was designed for a printer. Your audience is looking at a screen.</h2>
+    <h2 lang="fr">PowerPoint a été conçu pour une imprimante. Votre public regarde un écran.</h2>
+
+    <div lang="en">
+      <p>The slide deck as we know it was invented in 1987, when the output was a 35 mm transparency. Everything about it still carries that DNA: fixed pages, a proprietary file, an application you must own and open, and a rendering that changes depending on who opens it, on what, with which fonts installed.</p>
+      <p>Meanwhile, every screen in the room — the projector, the laptop, the phone in every hand — already speaks one language natively. It is the language your bank, your newspaper and your colleagues' dashboards are written in. It renders the same everywhere, it has been backward-compatible for thirty years, and, since last year, it is also the language every AI model writes most fluently.</p>
+      <p class="pull">A deck should be a URL, not an attachment.</p>
+      <p>When your presentation is HTML, it stops being a file you send and becomes a place people go. It opens without an app. It looks identical on the projector and on the iPad in the back row. It can hold a live chart, a working demo, a video that plays without a plugin. It lives in git, with a history and a diff. And when you ask an AI to write it, you get exactly what you asked for, not an approximation squeezed into a 1997 object model.</p>
+      <p>Deckhand doesn't try to replace your slide software. It takes the one thing HTML was missing — the act of <em>presenting</em>: the clicker, the notes, the timer, the room following along — and gives it back to you.</p>
+    </div>
+
+    <div lang="fr">
+      <p>Le diaporama tel qu'on le connaît est né en 1987, quand la sortie était une diapositive 35 mm. Tout en lui porte encore cet ADN : des pages fixes, un fichier propriétaire, une application qu'il faut posséder et ouvrir, et un rendu qui change selon qui l'ouvre, sur quoi, avec quelles polices installées.</p>
+      <p>Pendant ce temps, chaque écran de la salle — le projecteur, l'ordinateur portable, le téléphone dans chaque main — parle déjà une même langue nativement. C'est celle dans laquelle sont écrits votre banque, votre journal et les tableaux de bord de vos collègues. Elle s'affiche à l'identique partout, elle est rétrocompatible depuis trente ans, et, depuis l'an dernier, c'est aussi celle que tous les modèles d'IA écrivent le plus couramment.</p>
+      <p class="pull">Une présentation devrait être une URL, pas une pièce jointe.</p>
+      <p>Quand votre présentation est en HTML, elle cesse d'être un fichier qu'on envoie pour devenir un endroit où l'on va. Elle s'ouvre sans application. Elle est identique sur le projecteur et sur l'iPad du dernier rang. Elle peut contenir un graphique en direct, une démo qui fonctionne, une vidéo qui se lance sans plugin. Elle vit dans git, avec un historique et un diff. Et quand vous demandez à une IA de l'écrire, vous obtenez exactement ce que vous avez demandé, pas une approximation coincée dans un modèle d'objets de 1997.</p>
+      <p>Deckhand ne cherche pas à remplacer votre logiciel de slides. Il prend la seule chose qui manquait au HTML — l'acte de <em>présenter</em> : le clicker, les notes, le chrono, la salle qui suit — et vous la rend.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REASONS ================= -->
+<section class="reasons">
+  <h2 lang="en">Six things HTML does that a .pptx never will</h2>
+  <h2 lang="fr">Six choses que fait le HTML et qu'un .pptx ne fera jamais</h2>
+
+  <dl lang="en">
+    <dt>It renders the same for everyone</dt>
+    <dd>No missing fonts, no "compatibility mode", no colleague opening it in Keynote and wondering where the diagram went. The browser is the most tested rendering engine ever built, and it is already on every device in the room.</dd>
+    <dt>It is what AI writes best</dt>
+    <dd>Ask any model for a deck and it will produce HTML in one pass — real typography, real layout, real code. Ask for a .pptx and it drives a fragile library through a spreadsheet of coordinates. You will feel the difference on slide one.</dd>
+    <dt>It can be alive</dt>
+    <dd>A chart that pulls today's numbers. A calculator the audience can try. A demo that runs, not a screenshot of one. Slides stop being pictures of things and become the things.</dd>
+    <dt>It has a history</dt>
+    <dd>Text files in a folder means git, branches, pull requests and a diff that shows exactly which word changed between v3 and v4. Try that with a binary blob.</dd>
+    <dt>It is a link</dt>
+    <dd>Share a URL, not a 40 MB attachment. Update it after the talk and everyone who bookmarked it sees the fix. Put it behind a password or leave it open — it's your web server.</dd>
+    <dt>It will still open in 2056</dt>
+    <dd>Pages written in 1995 still render today. Nothing built on a vendor's file format can promise that. Your ideas deserve a format that outlives the company that sold it.</dd>
+  </dl>
+
+  <dl lang="fr">
+    <dt>Ça s'affiche pareil pour tout le monde</dt>
+    <dd>Pas de police manquante, pas de « mode de compatibilité », pas de collègue qui l'ouvre dans Keynote et se demande où est passé le schéma. Le navigateur est le moteur de rendu le plus testé jamais construit, et il est déjà sur chaque appareil de la salle.</dd>
+    <dt>C'est ce que l'IA écrit le mieux</dt>
+    <dd>Demandez une présentation à n'importe quel modèle et il produira du HTML en une passe — vraie typographie, vraie mise en page, vrai code. Demandez un .pptx et il pilote une bibliothèque fragile à coups de coordonnées. Vous sentirez la différence dès la première slide.</dd>
+    <dt>Ça peut être vivant</dt>
+    <dd>Un graphique qui tire les chiffres du jour. Un calculateur que le public peut essayer. Une démo qui tourne, pas une capture d'écran. Les slides cessent d'être des images de choses pour devenir les choses.</dd>
+    <dt>Ça a un historique</dt>
+    <dd>Des fichiers texte dans un dossier, c'est git, des branches, des pull requests et un diff qui montre exactement quel mot a changé entre la v3 et la v4. Essayez ça avec un blob binaire.</dd>
+    <dt>C'est un lien</dt>
+    <dd>Partagez une URL, pas une pièce jointe de 40 Mo. Corrigez-la après la conférence et tous ceux qui l'ont mise en favori voient la correction. Mettez-la derrière un mot de passe ou laissez-la ouverte — c'est votre serveur.</dd>
+    <dt>Ça s'ouvrira encore en 2056</dt>
+    <dd>Les pages écrites en 1995 s'affichent toujours aujourd'hui. Rien de bâti sur le format d'un éditeur ne peut promettre ça. Vos idées méritent un format qui survit à l'entreprise qui l'a vendu.</dd>
+  </dl>
+</section>
+
+<!-- ================= ROLES ================= -->
+<section class="roles" id="how">
+  <h2 lang="en">One deck, three screens, zero setup</h2>
+  <h2 lang="fr">Une présentation, trois écrans, zéro configuration</h2>
+  <p lang="en">Run <code>deckhand present talk.zip</code>. Deckhand opens the stage and shows two QR codes: one for you, one for the room.</p>
+  <p lang="fr">Lancez <code>deckhand present talk.zip</code>. Deckhand ouvre la scène et affiche deux QR codes : un pour vous, un pour la salle.</p>
+
+  <div class="grid">
+    <div>
+      <h3><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="6" width="26" height="17" rx="2" fill="none" stroke="#C9A227" stroke-width="2"/><path d="M11 27h10" stroke="#C9A227" stroke-width="2" stroke-linecap="round"/></svg><span lang="en">Stage</span><span lang="fr">Scène</span></h3>
+      <p lang="en">Full screen, no chrome, one slide at a time on the projector or the big TV. It's just a browser tab, so it works on any machine — including the venue's laptop you've never seen before.</p>
+      <p lang="fr">Plein écran, sans interface, une slide à la fois sur le projecteur ou le grand écran. C'est un simple onglet de navigateur, donc ça marche sur n'importe quelle machine — y compris le portable de la salle que vous n'avez jamais vu.</p>
+    </div>
+    <div>
+      <h3><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="10" y="3" width="12" height="26" rx="3" fill="none" stroke="#C9A227" stroke-width="2"/><circle cx="16" cy="24" r="1.5" fill="#C9A227"/></svg><span lang="en">Remote</span><span lang="fr">Télécommande</span></h3>
+      <p lang="en">Your phone. Current and next slide, your notes, a timer, a laser pointer, and the link to hand out. It talks to your own machine over the local network, so the venue's Wi‑Fi can die and you keep clicking.</p>
+      <p lang="fr">Votre téléphone. Slide courante et suivante, vos notes, un chrono, un pointeur laser, et le lien à partager. Il parle à votre propre machine sur le réseau local : le Wi‑Fi de la salle peut tomber, vous continuez à cliquer.</p>
+    </div>
+    <div>
+      <h3><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="9" cy="12" r="4" fill="none" stroke="#C9A227" stroke-width="2"/><circle cx="23" cy="12" r="4" fill="none" stroke="#C9A227" stroke-width="2"/><path d="M2 27c1-5 4-8 7-8s6 3 7 8M16 27c1-5 4-8 7-8s6 3 7 8" fill="none" stroke="#C9A227" stroke-width="2"/></svg><span lang="en">Viewer</span><span lang="fr">Public</span></h3>
+      <p lang="en">Everyone else, on whatever they hold. They follow you live, can scroll back to re‑read a slide without disturbing the room, and snap back to you with one tap. After the talk, the same link is the deck.</p>
+      <p lang="fr">Tous les autres, sur ce qu'ils ont en main. Ils vous suivent en direct, peuvent revenir en arrière pour relire une slide sans gêner la salle, et reviennent à vous d'un tap. Après la conférence, le même lien est la présentation.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FORMAT ================= -->
+<section class="format" id="format">
+  <div class="cols">
+    <div>
+      <h2 lang="en">The format is a folder</h2>
+      <h2 lang="fr">Le format, c'est un dossier</h2>
+      <p lang="en">One HTML file per slide, zipped. That's the whole specification. No framework to learn, no plugin to install, nothing to import. Any tool that can write HTML — a text editor, a static site generator, an AI — can write a Deckhand deck.</p>
+      <p lang="fr">Un fichier HTML par slide, dans un zip. C'est toute la spécification. Aucun framework à apprendre, aucun plugin à installer, rien à importer. Tout ce qui sait écrire du HTML — un éditeur de texte, un générateur de site, une IA — sait écrire une présentation Deckhand.</p>
+      <p lang="en">A <code>deck.json</code> is optional: use it to fix the slide order, add speaker notes, or set the aspect ratio. Without it, files are shown in alphabetical order at 16:9.</p>
+      <p lang="fr">Un <code>deck.json</code> est facultatif : il fixe l'ordre des slides, ajoute les notes de l'orateur ou le ratio. Sans lui, les fichiers sont affichés par ordre alphabétique en 16:9.</p>
+      <p lang="en">Each slide is rendered in an isolated sandbox and scaled to the screen, so a page you designed at 1920×1080 looks right on a projector, an iPad, or a phone held sideways.</p>
+      <p lang="fr">Chaque slide est rendue dans un bac à sable isolé et mise à l'échelle de l'écran : une page conçue en 1920×1080 est correcte sur un projecteur, un iPad ou un téléphone tenu en paysage.</p>
+    </div>
+    <pre>talk.zip
+├── <i>deck.json</i>        <span lang="en">← optional</span><span lang="fr">← facultatif</span>
+├── 01-title.html
+├── 02-problem.html
+├── 03-demo.html
+├── 04-thanks.html
+└── assets/
+    ├── logo.svg
+    └── chart.js
+
+<i>deck.json</i>
+{
+  "title": "Ship it before lunch",
+  "ratio": "16:9",
+  "slides": [
+    { "file": "01-title.html",
+      "notes": "Wait for the room to settle." },
+    { "file": "03-demo.html",
+      "notes": "Keep it under two minutes." }
+  ]
+}</pre>
+  </div>
+</section>
+
+<!-- ================= MODES ================= -->
+<section class="modes">
+  <h2 lang="en">Free on your laptop. Paid when the room is the whole internet.</h2>
+  <h2 lang="fr">Gratuit sur votre portable. Payant quand la salle, c'est tout Internet.</h2>
+  <p lang="en">The CLI is open source and does everything you need to present in a room. Deckhand Hub adds what a laptop on a local network can't: an audience anywhere, a permanent link, and a record of who followed.</p>
+  <p lang="fr">Le CLI est open source et fait tout ce qu'il faut pour présenter dans une salle. Deckhand Hub ajoute ce qu'un portable sur un réseau local ne peut pas faire : un public n'importe où, un lien permanent, et une trace de qui a suivi.</p>
+
+  <table lang="en">
+    <thead><tr><th></th><th>Deckhand CLI</th><th>Deckhand Hub</th></tr></thead>
+    <tbody>
+      <tr><td>Stage, remote, viewers on the local network</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+      <tr><td>Speaker notes, timer, laser pointer</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+      <tr><td>Viewers outside the room</td><td>—</td><td class="yes">Yes</td></tr>
+      <tr><td>Permanent public link after the talk</td><td>—</td><td class="yes">Yes</td></tr>
+      <tr><td>Audience stats: how many, until which slide</td><td>—</td><td class="yes">Yes</td></tr>
+      <tr><td>Team library, versions, custom domain</td><td>—</td><td class="yes">Yes</td></tr>
+      <tr><td>Price</td><td>Free, MIT</td><td>From €9/month</td></tr>
+    </tbody>
+  </table>
+  <table lang="fr">
+    <thead><tr><th></th><th>Deckhand CLI</th><th>Deckhand Hub</th></tr></thead>
+    <tbody>
+      <tr><td>Scène, télécommande, public sur le réseau local</td><td class="yes">Oui</td><td class="yes">Oui</td></tr>
+      <tr><td>Notes, chrono, pointeur laser</td><td class="yes">Oui</td><td class="yes">Oui</td></tr>
+      <tr><td>Public hors de la salle</td><td>—</td><td class="yes">Oui</td></tr>
+      <tr><td>Lien public permanent après la conférence</td><td>—</td><td class="yes">Oui</td></tr>
+      <tr><td>Statistiques : combien, jusqu'à quelle slide</td><td>—</td><td class="yes">Oui</td></tr>
+      <tr><td>Bibliothèque d'équipe, versions, domaine personnalisé</td><td>—</td><td class="yes">Oui</td></tr>
+      <tr><td>Prix</td><td>Gratuit, MIT</td><td>À partir de 9 €/mois</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq">
+  <h2 lang="en">Questions people ask</h2>
+  <h2 lang="fr">Les questions qu'on nous pose</h2>
+
+  <div lang="en">
+    <details><summary>I have 400 old PowerPoint files. What do I do with them?</summary><p>Keep them. Deckhand is for the next deck, not the last one. If you want to bring one over, export it to PDF and let an AI rebuild it as HTML — you'll get a better version than the original in ten minutes.</p></details>
+    <details><summary>Does the audience need an app?</summary><p>No. They scan a QR code and Safari or Chrome does the rest. On iPhone and iPad, "Add to Home Screen" makes it full screen.</p></details>
+    <details><summary>What if the venue's Wi‑Fi is terrible?</summary><p>Your remote talks to your own laptop, not to the cloud. Put both on your phone's hotspot and you're independent of the venue entirely. Viewers in the room need some network to follow; viewers elsewhere use the Hub.</p></details>
+    <details><summary>Can I use reveal.js, Slidev or Marp decks?</summary><p>Yes, if you export one HTML per slide. A converter for the common tools is on the roadmap. Anything that produces a folder of pages works today.</p></details>
+    <details><summary>Is running unknown HTML safe?</summary><p>Every slide runs in a sandboxed iframe with a strict content-security policy, and decks are served from a separate origin. A malicious slide can't read your session or anyone else's.</p></details>
+    <details><summary>Who is behind this?</summary><p>Deckhand is built by CODE79, a small Belgian company that runs databases for a living and got tired of sending .pptx attachments. The CLI is MIT-licensed on GitHub.</p></details>
+  </div>
+  <div lang="fr">
+    <details><summary>J'ai 400 vieux fichiers PowerPoint. J'en fais quoi ?</summary><p>Gardez-les. Deckhand est pour la prochaine présentation, pas pour la dernière. Si vous voulez en migrer une, exportez-la en PDF et laissez une IA la reconstruire en HTML — vous aurez une meilleure version que l'originale en dix minutes.</p></details>
+    <details><summary>Le public a besoin d'une application ?</summary><p>Non. Il scanne un QR code et Safari ou Chrome fait le reste. Sur iPhone et iPad, « Ajouter à l'écran d'accueil » donne le plein écran.</p></details>
+    <details><summary>Et si le Wi‑Fi de la salle est catastrophique ?</summary><p>Votre télécommande parle à votre propre portable, pas au cloud. Mettez les deux sur le partage de connexion de votre téléphone et vous êtes totalement indépendant de la salle. Le public dans la salle a besoin d'un réseau pour suivre ; le public ailleurs passe par le Hub.</p></details>
+    <details><summary>Je peux utiliser mes présentations reveal.js, Slidev ou Marp ?</summary><p>Oui, si vous exportez un HTML par slide. Un convertisseur pour les outils courants est prévu. Tout ce qui produit un dossier de pages fonctionne dès aujourd'hui.</p></details>
+    <details><summary>Exécuter du HTML inconnu, c'est sûr ?</summary><p>Chaque slide tourne dans une iframe isolée avec une politique de sécurité stricte, et les présentations sont servies depuis un domaine séparé. Une slide malveillante ne peut lire ni votre session ni celle de quelqu'un d'autre.</p></details>
+    <details><summary>Qui est derrière ?</summary><p>Deckhand est développé par CODE79, une petite société belge qui fait tourner des bases de données pour vivre et en a eu assez d'envoyer des pièces jointes .pptx. Le CLI est sous licence MIT sur GitHub.</p></details>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 CODE79 SCOMM · Ecaussinnes, Belgium</span>
+  <span><a href="https://github.com/stranix/deckhand">GitHub</a> · <a href="https://stranix.net">stranix.net</a> · <a href="mailto:hello@deckhand.app">hello@deckhand.app</a></span>
+</footer>
+
+<script>
+/* ---------- language ---------- */
+(function(){
+  const html=document.documentElement;
+  const saved=location.hash.replace('#','');
+  const browser=(navigator.language||'en').slice(0,2)==='fr'?'fr':'en';
+  const set=l=>{html.setAttribute('data-lang',l);html.lang=l;history.replaceState(null,'','#'+l);renderRemote();};
+  set(saved==='fr'||saved==='en'?saved:browser);
+  document.querySelectorAll('[data-set]').forEach(b=>b.addEventListener('click',()=>set(b.dataset.set)));
+})();
+
+/* ---------- live demo: one state, three screens ---------- */
+const NOTES={
+  en:["Wait for the room to settle. Smile.","One point. If they remember one thing, this is it.","Tell the outage story from March. Two minutes, no more.","Point at the URL. Everyone has the deck already."],
+  fr:["Attendre que la salle se calme. Sourire.","Un seul point. S'ils retiennent une chose, c'est ça.","Raconter la panne de mars. Deux minutes, pas plus.","Montrer l'URL. Tout le monde a déjà la présentation."]
+};
+const TITLES={en:["Ship it before lunch","One decision per slide","Rollback is a feature","Questions?"],fr:["Livrer avant midi","Une décision par slide","Le rollback est une fonctionnalité","Des questions ?"]};
+let n=1,t0=null;
+function renderRemote(){
+  const l=document.documentElement.getAttribute('data-lang')||'en';
+  document.querySelector('#thNow span').textContent=n+' · '+TITLES[l][n-1];
+  document.querySelector('#thNext span').textContent=n<4?(n+1)+' · '+TITLES[l][n]:'—';
+  document.getElementById('notes').textContent=NOTES[l][n-1];
+}
+function go(k){
+  n=Math.max(1,Math.min(4,k));
+  ['stage','viewer'].forEach(id=>document.querySelectorAll('#'+id+' .slide').forEach(s=>s.classList.toggle('on',+s.dataset.n===n)));
+  renderRemote();
+  if(!t0)t0=Date.now();
+}
+document.getElementById('next').addEventListener('click',()=>go(n+1));
+document.getElementById('prev').addEventListener('click',()=>go(n-1));
+document.addEventListener('keydown',e=>{
+  if(e.target.closest('input,textarea'))return;
+  if(e.key==='ArrowRight'||e.key===' '){go(n+1);e.preventDefault();}
+  if(e.key==='ArrowLeft'){go(n-1);e.preventDefault();}
+});
+setInterval(()=>{if(!t0)return;const s=Math.floor((Date.now()-t0)/1000);document.getElementById('timer').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');},500);
+/* laser pointer: move over the stage */
+const stage=document.getElementById('stage'),laser=document.getElementById('laser');
+stage.addEventListener('pointermove',e=>{const r=stage.getBoundingClientRect();laser.style.left=(e.clientX-r.left)+'px';laser.style.top=(e.clientY-r.top)+'px';laser.classList.add('on');});
+stage.addEventListener('pointerleave',()=>laser.classList.remove('on'));
+renderRemote();
+</script>
+</body>
+</html>

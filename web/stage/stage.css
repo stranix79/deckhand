@@ -1,0 +1,20 @@
+/* Stage: nothing but the slide. Black background so letterboxing is invisible. */
+body.stage { background: #000; overflow: hidden; cursor: default; }
+body.stage.hide-cursor { cursor: none; }
+#frame { position: fixed; inset: 0; background: #000; }
+.overlay { position: fixed; inset: 0; z-index: 10; }
+.overlay.black { background: #000; }
+.overlay.qr {
+  background: rgba(18, 35, 59, .96); color: var(--white);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px;
+}
+.overlay.qr img { width: min(60vh, 70vw); height: auto; background: #fff; padding: 2vh; border-radius: 12px; }
+.qr-url { font-family: var(--mono); font-size: clamp(1rem, 3vw, 2.4rem); }
+.qr-hint { font-size: clamp(.9rem, 2vw, 1.5rem); color: var(--fog); }
+.status { position: fixed; top: 16px; right: 16px; z-index: 20; background: rgba(233,238,239,.9); }
+.hint {
+  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 20;
+  color: rgba(255,255,255,.7); background: rgba(0,0,0,.5); padding: 6px 12px; border-radius: 999px;
+  font-size: .9rem; transition: opacity .5s;
+}
+.hint.gone { opacity: 0; pointer-events: none; }

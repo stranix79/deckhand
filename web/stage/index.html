@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deckhand · Stage</title>
+<link rel="stylesheet" href="/static/shared/base.css">
+<link rel="stylesheet" href="/static/stage/stage.css">
+</head>
+<body class="stage">
+  <!-- The slide, scaled to the screen. The laser and the overlays sit on top. -->
+  <div id="frame" class="frame">
+    <div id="laser" class="laser"></div>
+  </div>
+
+  <!-- Black screen (key B, or the remote's button). -->
+  <div id="black" class="overlay black" hidden></div>
+
+  <!-- Audience QR, shown for 15 s when the remote asks for it. -->
+  <div id="qr" class="overlay qr" hidden>
+    <img id="qr-img" alt="QR code">
+    <div id="qr-url" class="qr-url"></div>
+    <div class="qr-hint" data-i18n="scanToFollow"></div>
+  </div>
+
+  <!-- Discreet status: hidden while everything is fine. -->
+  <div id="status" class="pill status" hidden><span class="dot"></span><span id="status-text"></span></div>
+  <div id="hint" class="hint" data-i18n="fullscreenHint"></div>
+
+  <script src="/static/shared/i18n.js"></script>
+  <script src="/static/shared/ws.js"></script>
+  <script src="/static/shared/slides.js"></script>
+  <script src="/static/stage/stage.js"></script>
+</body>
+</html>

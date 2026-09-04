@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12233B">
+<title>Deckhand</title>
+<link rel="stylesheet" href="/static/shared/base.css">
+<link rel="stylesheet" href="/static/viewer/viewer.css">
+</head>
+<body class="viewer">
+  <header class="bar">
+    <span id="title" class="title"></span>
+    <span id="mode" class="pill live"><span class="dot"></span><span id="mode-text"></span></span>
+    <span id="counter" class="counter"></span>
+    <span id="viewers" class="viewers"></span>
+    <button id="back" class="primary" data-i18n="backToLive" hidden></button>
+  </header>
+
+  <main id="main">
+    <div id="frame" class="frame"><div id="laser" class="laser"></div></div>
+  </main>
+
+  <section id="notes-wrap" class="notes" hidden>
+    <div class="notes-label" data-i18n="publicNotes"></div>
+    <div id="notes" class="notes-text"></div>
+  </section>
+
+  <div id="banner" class="banner" hidden></div>
+  <div id="hint" class="hint" data-i18n="swipeHint"></div>
+
+  <script src="/static/shared/i18n.js"></script>
+  <script src="/static/shared/ws.js"></script>
+  <script src="/static/shared/slides.js"></script>
+  <script src="/static/viewer/viewer.js"></script>
+</body>
+</html>
