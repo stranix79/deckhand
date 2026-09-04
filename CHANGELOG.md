@@ -4,6 +4,10 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-09-04
+
+Local mode: validate and present a deck on your LAN.
+
 ### Added
 - Deck format: directory, `.zip` or `.tar.gz`, optional `deck.json`, natural ordering of `*.html` slides.
 - `deckhand validate <deck>`: loads a deck, reports every problem, exits 1 on error.

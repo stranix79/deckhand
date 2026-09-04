@@ -11,19 +11,44 @@ deckhand present  talk/     # stage + remote + viewer on your LAN     (milestone
 deckhand push     talk/     # publish on a Hub, get a public link      (milestone 5)
 ```
 
-Status: **milestone 1 of 6**. `validate`, the deck format and the example deck
-exist. `present`, the three screens and the Hub are next. Roadmap in
-[CLAUDE.md](CLAUDE.md), decisions in [docs/DECISIONS.md](docs/DECISIONS.md).
+<p align="center">
+  <img src="docs/img/stage.jpg" alt="The stage: a slide with fragments and the laser pointer" width="70%">
+  <img src="docs/img/remote.jpg" alt="The remote on a phone: thumbnails, notes, timer, laser" width="27%">
+</p>
+
+Status: **local mode is usable (v0.1.0)**. `validate`, `present`, the three
+screens. The hosted Hub (remote viewers, permanent links, stats) is next.
+Roadmap in [CLAUDE.md](CLAUDE.md), decisions in [docs/DECISIONS.md](docs/DECISIONS.md).
 
 ## Install
 
-Binaries come with milestone 3 (goreleaser). Until then, with Go 1.23+:
+```
+brew install stranix79/tap/deckhand          # macOS / Linux, builds from source (needs Go)
+```
+
+Or grab a binary for macOS, Linux or Windows from the
+[releases](https://github.com/stranix79/deckhand/releases), or build it:
 
 ```
 git clone https://github.com/stranix79/deckhand && cd deckhand
 make build          # → ./deckhand
-./deckhand validate examples/ship-it
+./deckhand present examples/ship-it --open
 ```
+
+## Presenting
+
+```
+deckhand present talk/
+```
+
+prints three links and two QR codes. Scan **REMOTE** with your phone: it
+shows the current and next slide, your notes, a timer, and drives the
+presentation (prev/next, laser pointer by dragging on the thumbnail, black
+screen, show the audience QR on the stage). Open the stage link on the
+projector and press `f`. Share **AUDIENCE** with the room: everybody follows
+live on their own screen, can browse alone and come back to live.
+
+Everything runs on your machine, on your LAN, offline. No account.
 
 ## The deck format
 

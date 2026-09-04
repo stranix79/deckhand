@@ -15,3 +15,32 @@ The brief names `github.com/stranix/deckhand`, but no `stranix` GitHub
 organisation exists; the personal account is `stranix79` (same as asm-m1).
 The module path follows the repository so that `go install` works. Homebrew
 tap will be `stranix79/tap`.
+
+## 2026-09-04 — Homebrew formula builds from source, maintained by a script
+
+goreleaser's `brews` needs a PAT on the tap repository in CI. Instead,
+`scripts/update-tap.sh <tag>` writes a formula that compiles the tag's
+source tarball with Go (like homebrew-core does) and pushes it to
+`stranix79/homebrew-tap`. No secret in CI, `brew install --build-from-source`
+works the same way.
+
+## 2026-09-04 — Stage needs the token on the hub only
+
+The brief lets the presenter drive from the stage keyboard, so locally
+`/s/{code}` needs no token (LAN, session code is random). On the hub the
+stage URL is guessable, so `StageNeedsToken` is on there: the stage link
+carries `?t=` like the remote.
+
+## 2026-09-04 — State carries `black`, plus two transient ops
+
+The brief's state is `{slide, fragment, pointer, startedAt}`. `black` is in
+the state too so a reconnecting stage restores it. "Show the QR" and "reset
+the timer" are ops (`qr`, `reset`), not state: nothing to restore.
+
+## 2026-09-04 — Fragment question is answered by the stage
+
+The server cannot know whether a slide has fragments. When a stage is
+connected, `next`/`prev` become a question to the stage (`ask`), which
+forwards it to the slide via postMessage and answers within 150 ms; the
+server falls back to a slide change after 400 ms. Without a stage the slide
+changes immediately. Documented in docs/PROTOCOL.md.
