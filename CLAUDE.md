@@ -3,7 +3,7 @@
 Read this before touching the repo. The full brief lives in docs/BRIEF.md.
 
 ## Non-negotiable decisions (from the brief)
-- Go 1.23+, single module `github.com/stranix79/deckhand`, single binary `deckhand`, no CGO. Cross-compile darwin/arm64, darwin/amd64, linux/arm64, linux/amd64, windows/amd64.
+- Go 1.25+, single module `github.com/stranix79/deckhand`, single binary `deckhand`, no CGO. Cross-compile darwin/arm64, darwin/amd64, linux/arm64, linux/amd64, windows/amd64.
 - HTTP: stdlib `net/http` + `github.com/go-chi/chi/v5`. WebSocket: `github.com/coder/websocket`.
 - Front (web/): HTML/CSS/JS vanilla, no framework, no build step, embedded with `embed`. Readable by a human with a text editor. Comment the JS for a sysadmin/DBA who is not a front-end dev.
 - Local mode (`present`): no database, state in memory. Hub (`serve`): PostgreSQL 16 via `pgx/v5`, migrations with `golang-migrate`, embedded.

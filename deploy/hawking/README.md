@@ -18,7 +18,7 @@ cd ~/git/stranix/stranix-git/terraform/cloudflare-dns && terraform apply \
 ssh stranix@hawking.code79.com 'sudo mkdir -p /var/lib/deckhand/decks /var/lib/deckhand/postgres && sudo chown 65532:65532 /var/lib/deckhand/decks'
 
 # 3. Image
-rsync -az --delete --exclude .git --exclude .pg --exclude dist ~/git/stranix/deckhand/ stranix@hawking.code79.com:/tmp/deckhand/
+rsync -az --delete --exclude .git --exclude .pg --exclude dist --exclude /deckhand ~/git/stranix/deckhand/ stranix@hawking.code79.com:/tmp/deckhand/
 ssh stranix@hawking.code79.com 'docker build --build-arg VERSION=0.2.0 -t deckhand:0.2.0 /tmp/deckhand'
 
 # 4. Cert (AVANT de charger le vhost)
