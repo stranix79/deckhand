@@ -1,0 +1,25 @@
+{
+  "title": "Ship it before lunch",
+  "ratio": "16:9",
+  "width": 1920,
+  "slides": [
+    { "file": "01-title.html",
+      "notes": "Wait for the room to settle. Say the one-liner, then click." },
+    { "file": "02-problem.html",
+      "notes": "Ask who has already had an AI generate slides. Most hands go up.",
+      "public": true },
+    { "file": "03-demo.html",
+      "notes": "This slide has fragments: each → reveals one command. Deckhand asks the slide first, the slide answers handled:true. Last → changes slide." },
+    { "file": "04-how.html",
+      "notes": "Insist on 'no build step': a folder is enough. deck.json is optional." },
+    { "file": "05-remote.html",
+      "notes": "Show the phone. Trigger the laser on the thumbnail. Show the QR for 15 s on the stage." },
+    { "file": "06-viewer.html",
+      "notes": "Ask the room to scan. Watch the viewer count climb. Detach, then come back to live.",
+      "public": true },
+    { "file": "07-hub.html",
+      "notes": "Free: rooms up to 30 viewers. Paid plan for bigger rooms. Self-host if you prefer." },
+    { "file": "08-thanks.html",
+      "notes": "Leave the repo URL on screen. Stop the timer." }
+  ]
+}

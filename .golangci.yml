@@ -1,0 +1,27 @@
+version: "2"
+run:
+  timeout: 3m
+linters:
+  default: standard
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - misspell
+    - gosec
+    - revive
+  settings:
+    errcheck:
+      exclude-functions:
+        - fmt.Fprintf
+        - fmt.Fprintln
+        - fmt.Fprint
+    gosec:
+      excludes:
+        - G304 # file paths come from validated deck entries
+        - G115 # int conversions on sizes we bound ourselves
+formatters:
+  enable:
+    - gofmt

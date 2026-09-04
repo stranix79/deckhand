@@ -1,0 +1,7 @@
+/dist/
+/deckhand
+/bin/
+*.test
+coverage.out
+.DS_Store
+/site/docs/

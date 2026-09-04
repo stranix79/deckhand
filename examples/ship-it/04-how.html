@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>How it works</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="kicker">How it works</div>
+  <h2>One binary, no build step.</h2>
+  <div class="cols">
+    <ul>
+      <li>Slides are plain HTML, served as-is in a sandboxed iframe.</li>
+      <li><code>deck.json</code> is optional: title, ratio, notes.</li>
+      <li>Natural order: <code>2-intro</code> before <code>10-end</code>.</li>
+    </ul>
+    <ul>
+      <li>One WebSocket per session, three roles: stage, remote, viewer.</li>
+      <li>Works offline on the LAN, or through the Hub for the internet.</li>
+      <li>Written in Go, ships as a single file.</li>
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Live demo</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+  <div class="kicker">Live demo · this slide has fragments</div>
+  <h2>Three commands.</h2>
+  <pre>$ deckhand validate talk/
+<span class="fragment">✓ Ship it before lunch · 16:9 · 8 slides</span>
+<span class="fragment">$ deckhand present talk/
+stage   http://192.168.1.20:7777/s/K7RTQP
+remote  scan the QR in the terminal</span>
+<span class="fragment">$ deckhand push talk/ --hub https://deckhand.stranix.net
+https://deckhand.stranix.net/v/K7RTQP</span></pre>
+  <p class="fragment muted">Press → to reveal each step. Deckhand asks the slide first, then changes slide.</p>
+  <script src="assets/fragments.js"></script>
+</body>
+</html>

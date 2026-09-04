@@ -1,0 +1,43 @@
+/* Shared look of the "Ship it before lunch" example deck.
+   Slides are designed at 1920×1080 (16:9); Deckhand scales the whole page. */
+:root {
+  --ink: #12233B;
+  --sea: #1E6E74;
+  --brass: #C9A227;
+  --fog: #E9EEEF;
+  --paper: #FFFFFF;
+  --ui: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; }
+body {
+  font-family: var(--body);
+  font-size: 44px;
+  line-height: 1.35;
+  color: var(--ink);
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 120px 160px;
+}
+body.dark { background: var(--ink); color: var(--fog); }
+body.sea  { background: var(--sea); color: var(--fog); }
+h1, h2 { font-family: var(--ui); font-weight: 700; letter-spacing: -0.02em; margin: 0 0 40px; }
+h1 { font-size: 128px; line-height: 1.05; }
+h2 { font-size: 88px; line-height: 1.1; }
+p  { margin: 0 0 24px; max-width: 1400px; }
+ul { margin: 0; padding-left: 1em; }
+li { margin-bottom: 20px; }
+li::marker { color: var(--brass); }
+.kicker { font-family: var(--ui); font-size: 32px; text-transform: uppercase; letter-spacing: .18em; color: var(--brass); margin-bottom: 32px; }
+.muted { opacity: .7; }
+.brass { color: var(--brass); }
+code, pre { font-family: "SF Mono", Menlo, Consolas, monospace; }
+pre { font-size: 36px; line-height: 1.4; background: var(--fog); color: var(--ink); padding: 40px 48px; border-radius: 16px; }
+body.dark pre, body.sea pre { background: rgba(255,255,255,.08); color: var(--fog); }
+.foot { position: absolute; left: 160px; bottom: 60px; font-family: var(--ui); font-size: 28px; opacity: .55; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+.fragment { opacity: 0; transform: translateY(12px); transition: opacity .25s ease, transform .25s ease; }
+.fragment.on { opacity: 1; transform: none; }
