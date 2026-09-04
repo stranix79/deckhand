@@ -1,0 +1,51 @@
+# Deckhand hub: PostgreSQL 16 + the hub. Put the secrets in .env (see docs/HUB.md).
+#
+#   cp .env.example .env && edit
+#   docker compose -f docker-compose.hub.yml up -d
+#   curl -s http://localhost:8080/healthz
+
+name: deckhand
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: deckhand
+      POSTGRES_USER: deckhand
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U deckhand -d deckhand"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  hub:
+    build:
+      context: .
+      args:
+        VERSION: ${DECKHAND_VERSION:-dev}
+    image: ghcr.io/stranix79/deckhand:${DECKHAND_VERSION:-latest}
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DECKHAND_PG: postgres://deckhand:${POSTGRES_PASSWORD}@postgres:5432/deckhand?sslmode=disable
+      DECKHAND_ADDR: ":8080"
+      DECKHAND_DATA_DIR: /data
+    volumes:
+      - decks:/data
+    ports:
+      - "${DECKHAND_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "/deckhand", "version"]
+      interval: 30s
+
+volumes:
+  pgdata:
+  decks:

@@ -20,9 +20,9 @@ Read this before touching the repo. The full brief lives in docs/BRIEF.md.
 1. ✅ (2026-09-04) Deck & validation (internal/deck, `deckhand validate`, examples/ship-it) — DONE when `deckhand validate examples/ship-it` exits 0 and a zip with `../` exits 1 with a clear message.
 2. ✅ (2026-09-04) Present local: server, WebSocket, stage + remote, ASCII QR codes, integration test.
 3. ✅ (2026-09-04) Viewer + local polish, goreleaser snapshot, Homebrew tap. v0.1.0.
-4. Hub: auth, decks, remote viewers, relay.
-5. Hub: stats, Stripe, limits, metrics, deployment.
-6. Site and docs. v1.0.0.
+4. ✅ (2026-09-04) Hub: auth, decks, remote viewers, relay.
+5. ✅ (2026-09-04) Hub: stats, Stripe, limits, metrics, deployment (deckhand.stranix.net on hawking).
+6. ✅ (2026-09-04) Site and docs. v1.0.0.
 
 ## Makefile commands
 - `make build`   → ./deckhand (current OS)
@@ -35,3 +35,7 @@ Read this before touching the repo. The full brief lives in docs/BRIEF.md.
 
 ## Layout
 cmd/deckhand (cobra CLI) · internal/deck (format, parsing, validation, archives, natural sort) · internal/session (state, WS protocol, broadcast) · internal/local (present server, LAN IP, ASCII QR) · internal/hub (serve: auth, decks, stats, stripe, relay) · internal/ui (serves embedded web/) · web/ (stage, remote, viewer, shared) · site/ (landing + docs) · docs/ · examples/ship-it · migrations/
+
+## Local development of the hub
+- `make dev-hub` starts a throwaway PostgreSQL (`scripts/dev-pg.sh`, port 5499, needs Homebrew `postgresql@16`) and the hub on :8080 with magic links printed in the log.
+- Deployment on hawking: `deploy/hawking/README.md` (compose + vhost also live in stranix-git).

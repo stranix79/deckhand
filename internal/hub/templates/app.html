@@ -1,0 +1,64 @@
+{{define "content"}}
+<section class="head">
+  <h1>Your decks</h1>
+  <p class="muted">{{if .User.Paid}}Pro plan: unlimited decks, unlimited viewers, permanent links.{{else}}Free plan: {{.Cfg.FreeMaxDecks}} deck, {{.Cfg.FreeMaxViewers}} remote viewers, links live {{.Cfg.FreeLinkDays}} days. <a href="/billing">Upgrade</a>.{{end}}</p>
+</section>
+{{if .Error}}<p class="error">{{.Error}}</p>{{end}}
+{{if .Errors}}<ul class="error">{{range .Errors}}<li>{{.}}</li>{{end}}</ul>{{end}}
+
+<section class="grid">
+  <div class="card">
+    <h2>Upload a deck</h2>
+    <form method="post" action="/app/decks" enctype="multipart/form-data">
+      <label for="file">Archive (.zip or .tar.gz of the deck folder)</label>
+      <input id="file" name="file" type="file" accept=".zip,.tar.gz,.tgz" required>
+      <label for="slug">Slug (optional, from the title if empty)</label>
+      <input id="slug" name="slug" type="text" pattern="[a-z0-9-]{1,48}" placeholder="ship-it">
+      <button class="primary">Upload</button>
+    </form>
+    <p class="muted">Or from a terminal: <code>deckhand push talk/</code>. <form method="post" action="/app/token" class="inline"><button class="link">Get an API token</button></form></p>
+  </div>
+
+  <div class="card">
+    <h2>Live now</h2>
+    {{if not .Live}}<p class="muted">Nothing is being presented.</p>{{end}}
+    {{range .Live}}
+      <div class="row">
+        <div><strong>{{.Title}}</strong> <span class="muted">· {{.Mode}} · code {{.Code}}</span><br>
+          <a href="/v/{{.Code}}" target="_blank">audience link</a> ·
+          <a href="/r/{{.Code}}?t={{.Token}}" target="_blank">remote</a> ·
+          <a href="/s/{{.Code}}?t={{.Token}}" target="_blank">stage</a> ·
+          <a href="/app/presentations/{{.ID}}/stats">stats</a></div>
+        <form method="post" action="/app/presentations/{{.ID}}/end"><button>End</button></form>
+      </div>
+    {{end}}
+  </div>
+</section>
+
+<section class="card">
+  {{if not .Decks}}<p class="muted">No deck yet. Upload one above, or run <code>deckhand push talk/</code>.</p>{{end}}
+  {{range .Decks}}
+    <div class="row deck">
+      <div>
+        <strong>{{.Title}}</strong> <span class="muted">· v{{.Version}} · {{.SlideCount}} slides · {{.Ratio}}</span><br>
+        <a href="/d/{{$.User.Handle}}/{{.Slug}}">{{$.BaseURL}}/d/{{$.User.Handle}}/{{.Slug}}</a>
+        {{if .ExpiresAt}}<span class="muted"> · link until {{.ExpiresAt.Format "2006-01-02"}}</span>{{end}}
+      </div>
+      <div class="actions">
+        <form method="post" action="/app/decks/{{.ID}}/present"><button class="primary">Present now</button></form>
+        <form method="post" action="/app/decks/{{.ID}}/delete" onsubmit="return confirm('Delete this deck and its links?')"><button>Delete</button></form>
+      </div>
+    </div>
+  {{end}}
+</section>
+
+{{if .Past}}
+<section class="card">
+  <h2>Past presentations</h2>
+  {{range .Past}}
+    <div class="row"><div>{{.Title}} <span class="muted">· {{.StartedAt.Format "2006-01-02 15:04"}} · {{.Mode}}</span></div>
+      <a href="/app/presentations/{{.ID}}/stats">stats</a></div>
+  {{end}}
+</section>
+{{end}}
+{{end}}

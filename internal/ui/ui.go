@@ -69,7 +69,7 @@ func (u *Server) csp() string {
 		"manifest-src 'self'",
 		"base-uri 'none'",
 		"form-action 'none'",
-		"frame-ancestors 'none'",
+		"frame-ancestors 'self'",
 	}, "; ")
 }
 

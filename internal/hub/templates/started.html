@@ -1,0 +1,13 @@
+{{define "content"}}
+<section class="card narrow">
+  <h1>{{.Deck.Title}} is live</h1>
+  <p>Open the <strong>stage</strong> on the projector, the <strong>remote</strong> on your phone, and share the <strong>audience</strong> link.</p>
+  <dl class="links">
+    <dt>Stage</dt><dd><a href="{{.StageURL}}" target="_blank">{{.StageURL}}</a></dd>
+    <dt>Remote</dt><dd><a href="{{.RemoteURL}}" target="_blank">{{.RemoteURL}}</a></dd>
+    <dt>Audience</dt><dd><a href="{{.ViewerURL}}" target="_blank">{{.ViewerURL}}</a></dd>
+  </dl>
+  <p><img class="qr" src="/qr/{{.Code}}/viewer.png" alt="Audience QR code" width="240" height="240"></p>
+  <p class="muted">The stage and remote links contain a secret token: do not share them. <a href="/app">Back to decks</a>.</p>
+</section>
+{{end}}

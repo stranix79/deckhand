@@ -16,9 +16,10 @@ deckhand push     talk/     # publish on a Hub, get a public link      (mileston
   <img src="docs/img/remote.jpg" alt="The remote on a phone: thumbnails, notes, timer, laser" width="27%">
 </p>
 
-Status: **local mode is usable (v0.1.0)**. `validate`, `present`, the three
-screens. The hosted Hub (remote viewers, permanent links, stats) is next.
-Roadmap in [CLAUDE.md](CLAUDE.md), decisions in [docs/DECISIONS.md](docs/DECISIONS.md).
+Local mode (`validate`, `present`, the three screens) is MIT. The hosted
+**Hub** at [deckhand.stranix.net](https://deckhand.stranix.net) adds remote
+viewers, permanent links and statistics; you can also
+[self-host it](docs/HUB.md). Decisions in [docs/DECISIONS.md](docs/DECISIONS.md).
 
 ## Install
 
@@ -49,6 +50,19 @@ projector and press `f`. Share **AUDIENCE** with the room: everybody follows
 live on their own screen, can browse alone and come back to live.
 
 Everything runs on your machine, on your LAN, offline. No account.
+
+## Beyond the LAN: the Hub
+
+```
+deckhand login --hub https://deckhand.stranix.net --token …   # token from the hub, once
+deckhand push talk/                 # permanent link: https://deckhand.stranix.net/d/you/talk
+deckhand present talk/ --hub https://deckhand.stranix.net     # people outside the room follow live
+```
+
+Free: one deck, ten remote viewers, links for a week. Pro: no limits.
+Details in [docs/HUB.md](docs/HUB.md), the CLI in [docs/CLI.md](docs/CLI.md),
+the wire protocol in [docs/PROTOCOL.md](docs/PROTOCOL.md), the threat model
+in [docs/SECURITY.md](docs/SECURITY.md).
 
 ## The deck format
 

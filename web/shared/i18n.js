@@ -22,6 +22,8 @@ const I18N = {
     of: 'of', slide: 'Slide', publicNotes: 'Notes', tapToStart: 'Tap to start',
     addToHome: 'Tip: add this page to your home screen for a full-screen remote.',
     swipeHint: 'Swipe or use ← → to browse on your own',
+    roomFull: 'This room is full (free plan limit). Ask the presenter to upgrade.',
+    browse: 'Browse',
   },
   fr: {
     stage: 'Scène', remote: 'Télécommande', viewer: 'Public',
@@ -38,6 +40,8 @@ const I18N = {
     of: 'sur', slide: 'Slide', publicNotes: 'Notes', tapToStart: 'Toucher pour démarrer',
     addToHome: 'Astuce : ajoutez cette page à l’écran d’accueil pour une télécommande plein écran.',
     swipeHint: 'Glissez ou utilisez ← → pour naviguer seul',
+    roomFull: 'Cette salle est pleine (limite du plan gratuit). Demandez au présentateur de passer au plan payant.',
+    browse: 'Parcourir',
   },
 };
 

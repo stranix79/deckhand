@@ -263,6 +263,9 @@ func TestLoadZipWithWrappingFolder(t *testing.T) {
 	if len(d.Slides) != 2 || d.Slides[0].File != "1-a.html" {
 		t.Fatalf("slides = %+v", d.Slides)
 	}
+	if d.Title != "deck" {
+		t.Fatalf("archive default title should be the archive name, got %q", d.Title)
+	}
 	if _, err := os.Stat(filepath.Join(d.Root, "assets", "style.css")); err != nil {
 		t.Fatalf("assets not extracted: %v", err)
 	}

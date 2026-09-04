@@ -5,3 +5,6 @@
 coverage.out
 .DS_Store
 /site/docs/
+/.pg/
+.env
+/docs/CHANGELOG.md

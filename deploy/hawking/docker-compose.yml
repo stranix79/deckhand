@@ -1,0 +1,74 @@
+## deckhand.stranix.net — Deckhand hub (repo ~/git/stranix/deckhand).
+##
+## Routage : vhost nginx shared/nginx/conf.d/deckhand.stranix.net.conf →
+## deckhand_hub:8080 via le réseau stranixnet_ghost_external, pour DEUX noms :
+## deckhand.stranix.net (app) et decks.deckhand.stranix.net (fichiers des decks,
+## origine séparée). DNS : CNAME deckhand + decks.deckhand → hawking
+## (terraform cloudflare-dns/dns-stranix.tf).
+##
+## Emails : liens de connexion par le même SMTP que Ghost (env_file ../ghost/.env : MAIL_*).
+##
+## Image construite sur hawking : rsync du repo → /tmp/deckhand puis
+## `docker build -t deckhand:X.Y.Z /tmp/deckhand` (cf. README.md ici).
+
+name: deckhand
+
+services:
+  hub:
+    image: deckhand:0.2.0
+    container_name: deckhand_hub
+    restart: unless-stopped
+    env_file:
+      - ../ghost/.env   # MAIL_HOST / MAIL_PORT / MAIL_USER / MAIL_PASSWORD / MAIL_FROM
+      - .env            # DECKHAND_SECRET, POSTGRES_PASSWORD, DECKHAND_STRIPE_*
+    environment:
+      DECKHAND_PG: postgres://deckhand:${POSTGRES_PASSWORD}@postgres:5432/deckhand?sslmode=disable
+      DECKHAND_BASE_URL: https://deckhand.stranix.net
+      DECKHAND_DECK_ORIGIN: https://decks.deckhand.stranix.net
+      DECKHAND_ADDR: ":8080"
+      DECKHAND_DATA_DIR: /data
+      MAIL_FROM: "Deckhand <hello@stranix.net>"
+    volumes:
+      - /var/lib/deckhand/decks:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - ghost_external
+      - internal
+    expose:
+      - "8080"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: deckhand_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: deckhand
+      POSTGRES_USER: deckhand
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - /var/lib/deckhand/postgres:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U deckhand -d deckhand"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  ghost_external:
+    external: true
+    name: stranixnet_ghost_external
+  internal:

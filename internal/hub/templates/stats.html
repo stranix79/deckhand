@@ -1,0 +1,20 @@
+{{define "content"}}
+<section class="card">
+  <h1>{{.Deck.Title}} <span class="muted">· {{.Pres.StartedAt.Format "2006-01-02 15:04"}}{{if .Pres.EndedAt}} → {{.Pres.EndedAt.Format "15:04"}}{{end}}</span></h1>
+  <div class="kpis">
+    <div><strong>{{.Stats.Unique}}</strong><span>unique viewers</span></div>
+    <div><strong>{{.Stats.Peak}}</strong><span>peak audience</span></div>
+    <div><strong>{{.Stats.TotalHuman}}</strong><span>presented</span></div>
+  </div>
+  <h2>Audience per slide</h2>
+  <img class="chart" src="/app/presentations/{{.Pres.ID}}/stats.svg" alt="Viewers present per slide">
+  <h2>Time per slide</h2>
+  <table>
+    <thead><tr><th>Slide</th><th>Shown</th><th>Viewers</th></tr></thead>
+    <tbody>
+    {{range .Stats.Slides}}<tr><td>{{.Index}}</td><td>{{.DurationHuman}}</td><td>{{.Viewers}}</td></tr>{{end}}
+    </tbody>
+  </table>
+  <p class="muted">Viewers are anonymous connections; the same person on two devices counts twice. <a href="/app">Back</a>.</p>
+</section>
+{{end}}

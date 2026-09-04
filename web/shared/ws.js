@@ -49,6 +49,7 @@ class DeckhandSocket {
       // session is gone. Reconnecting would not help; tell the screen.
       if (e.code === 1008 || e.code === 4403) { this.onStatus('forbidden'); return; }
       if (e.code === 4404) { this.onStatus('gone'); return; }
+      if (e.code === 4429) { this.onStatus('full'); return; }
       this.onStatus('closed');
       setTimeout(() => this.connect(), this.delay);
       this.delay = Math.min(this.delay * 2, 8000);

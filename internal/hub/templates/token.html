@@ -1,0 +1,9 @@
+{{define "content"}}
+<section class="card narrow">
+  <h1>Your API token</h1>
+  <p>Shown once. Paste this in a terminal to connect the CLI to this hub:</p>
+  <pre>deckhand login --hub {{.Hub}} --token {{.Token}}</pre>
+  <p class="muted">Then <code>deckhand push talk/</code> publishes a deck and <code>deckhand present talk/ --hub {{.Hub}}</code> relays a local presentation to remote viewers.</p>
+  <p><a href="/app">Back to decks</a></p>
+</section>
+{{end}}

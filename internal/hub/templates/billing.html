@@ -1,0 +1,19 @@
+{{define "content"}}
+<section class="card narrow">
+  <h1>Your plan</h1>
+  {{if .User.Paid}}
+    <p>You are on <strong>Pro</strong>: unlimited decks and viewers, permanent links.</p>
+    {{if .Sub}}<p class="muted">Status: {{.Sub.Status}}{{if .Sub.PeriodEnd}} · renews {{.Sub.PeriodEnd.Format "2006-01-02"}}{{end}}</p>{{end}}
+    <form method="post" action="/billing/portal"><button class="primary">Manage subscription</button></form>
+  {{else}}
+    <p>You are on <strong>Free</strong>: {{.Cfg.FreeMaxDecks}} deck, {{.Cfg.FreeMaxViewers}} remote viewers per presentation, permanent links for {{.Cfg.FreeLinkDays}} days.</p>
+    <p><strong>Pro</strong> removes every limit. Monthly subscription, cancel anytime.</p>
+    {{if .StripeEnabled}}
+      <form method="post" action="/billing/checkout"><button class="primary">Subscribe</button></form>
+    {{else}}
+      <p class="error">Billing is not configured on this hub.</p>
+    {{end}}
+  {{end}}
+  {{if .Message}}<p class="muted">{{.Message}}</p>{{end}}
+</section>
+{{end}}

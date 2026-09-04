@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS subscriptions;
+DROP TABLE IF EXISTS viewers_events;
+DROP TABLE IF EXISTS presentations;
+DROP TABLE IF EXISTS decks;
+DROP TABLE IF EXISTS sessions_auth;
+DROP TABLE IF EXISTS users;

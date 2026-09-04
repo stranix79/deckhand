@@ -17,7 +17,10 @@
   const back = $('back'), banner = $('banner'), hint = $('hint');
 
   let deck = null, state = null, frame = null;
-  let detached = false, local = 0; // local = slide shown while detached
+  // ?detached=1 is the permanent link (/d/{user}/{slug}): nobody is presenting,
+  // the visitor browses alone from the first slide and "back to live" is hidden.
+  const permalink = new URLSearchParams(location.search).get('detached') === '1';
+  let detached = permalink, local = 0; // local = slide shown while detached
 
   function shownSlide() { return detached ? local : (state ? state.slide : 0); }
 
@@ -33,8 +36,8 @@
     notes.textContent = hasNotes ? s.notes : '';
     placeLaser(laser, frame, detached ? null : (state && state.pointer));
     mode.className = 'pill ' + (detached ? 'warn' : 'live');
-    modeText.textContent = detached ? t('detached') : t('live');
-    back.hidden = !detached;
+    modeText.textContent = permalink ? t('browse') : (detached ? t('detached') : t('live'));
+    back.hidden = !detached || permalink;
     frame.fit();
   }
 
@@ -44,13 +47,13 @@
     local = Math.min(deck.slides.length - 1, Math.max(0, local + delta));
     render();
   }
-  back.addEventListener('click', () => { detached = false; render(); });
+  back.addEventListener('click', () => { if (!permalink) { detached = false; render(); } });
 
   // Keyboard and swipe navigation detach the viewer.
   document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); detach(+1); }
     if (e.key === 'ArrowLeft') { e.preventDefault(); detach(-1); }
-    if (e.key === 'Escape' || e.key === 'l') { detached = false; render(); }
+    if ((e.key === 'Escape' || e.key === 'l') && !permalink) { detached = false; render(); }
   });
   let touchX = null, touchY = null;
   box.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; touchY = e.touches[0].clientY; }, { passive: true });
@@ -87,6 +90,7 @@
     onStatus: function (s) {
       banner.hidden = true;
       if (s === 'gone') { banner.textContent = t('notFound'); banner.hidden = false; }
+      else if (s === 'full') { banner.textContent = t('roomFull'); banner.hidden = false; mode.className = 'pill off'; modeText.textContent = t('offline'); }
       else if (s === 'closed') { mode.className = 'pill off'; modeText.textContent = t('reconnecting'); }
     },
   });

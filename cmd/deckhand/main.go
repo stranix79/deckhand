@@ -19,7 +19,7 @@ func main() {
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
-	root.AddCommand(presentCmd(), validateCmd(), versionCmd(), importCmd())
+	root.AddCommand(presentCmd(), validateCmd(), pushCmd(), loginCmd(), serveCmd(), versionCmd(), importCmd())
 
 	if err := root.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, ui.err("error:"), err)

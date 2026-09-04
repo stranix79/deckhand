@@ -1,0 +1,30 @@
+{{define "layout"}}<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.Title}} · Deckhand</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="/static/hub/hub.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/">Deckhand</a>
+  <nav>
+    {{if .User}}
+      <a href="/app">Decks</a>
+      <a href="/billing">Plan{{if .User.Paid}}: Pro{{else}}: Free{{end}}</a>
+      <a href="/docs/CLI">Docs</a>
+      <form method="post" action="/logout" class="inline"><button class="link">Sign out ({{.User.Email}})</button></form>
+    {{else}}
+      <a href="/docs/CLI">Docs</a>
+      <a href="/login">Sign in</a>
+    {{end}}
+  </nav>
+</header>
+<main>
+{{template "content" .}}
+</main>
+<footer>Deckhand · made in Belgium by <a href="https://stranix.net">CODE79</a> · <a href="/changelog">changelog</a> · <a href="/docs/HUB">self-host</a></footer>
+</body>
+</html>{{end}}

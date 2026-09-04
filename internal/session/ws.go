@@ -66,6 +66,10 @@ func (s *Session) ServeWS(w http.ResponseWriter, r *http.Request, acceptOrigins 
 		buf = 16
 	}
 	c := &client{role: role, id: NewToken()[:12], conn: conn, out: make(chan []byte, buf), done: make(chan struct{})}
+	if role == RoleViewer && s.MaxViewers > 0 && s.Viewers() >= s.MaxViewers {
+		_ = conn.Close(websocket.StatusCode(4429), "room is full")
+		return
+	}
 	s.attach(c)
 	defer s.detach(c)
 

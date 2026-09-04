@@ -3,8 +3,9 @@
 ```
 deckhand present  <deck> [--port 7777] [--ip 192.168.1.20] [--open] [--no-lan] [--hub https://…] [--slug ship-it]
 deckhand validate <deck> [--quiet]
-deckhand push     <deck> --hub https://… [--slug ship-it]
-deckhand serve    [--addr :8080] [--pg postgres://…] [--deck-origin https://decks.…]
+deckhand login    --hub https://… --token …
+deckhand push     <deck> [--hub https://…] [--slug ship-it]
+deckhand serve    [--addr :8080] [--pg postgres://…] [--deck-origin https://decks.…] [--base-url https://…]
 deckhand version
 deckhand import   <file.pptx>          (stub: explains that it is planned)
 ```
@@ -34,6 +35,22 @@ Exit codes: 0 on Ctrl-C, 1 on an invalid deck or a port that cannot be bound.
 Prints title, ratio, slides (● has notes, ◎ has public notes), warnings and
 errors. Exit 0 when the deck can be presented, 1 otherwise. `--quiet` prints
 only warnings and errors.
+
+## `login`, `push`, `present --hub`
+
+1. On the hub, *Decks → Get an API token*, then `deckhand login --hub https://deckhand.stranix.net --token …`.
+   The token is saved in `~/.config/deckhand/config.toml` (`DECKHAND_HUB` /
+   `DECKHAND_TOKEN` override it).
+2. `deckhand push talk/` validates, zips and uploads the deck; it prints the
+   permanent link `/d/{you}/{slug}`. Pushing the same slug again makes a new
+   version. `--slug` picks the slug (default: from the title).
+3. `deckhand present talk/ --hub https://…` does the push, starts a relayed
+   presentation and prints the hub's audience link next to the local ones.
+   Remote viewers follow through the hub; the stage and the remote stay local.
+
+## `serve`
+
+Runs the hub; see [HUB.md](HUB.md) for the environment and deployment.
 
 ## Terminal output
 

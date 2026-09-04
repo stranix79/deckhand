@@ -1,0 +1,6 @@
+{{define "content"}}
+<article class="doc">
+  <nav class="docnav">{{range .Docs}}<a href="/docs/{{.}}"{{if eq . $.Name}} class="on"{{end}}>{{.}}</a>{{end}}</nav>
+  {{.Body}}
+</article>
+{{end}}

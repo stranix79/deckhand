@@ -1,0 +1,9 @@
+{{define "content"}}
+<section class="permalink">
+  <div class="permalink-head">
+    <h1>{{.Deck.Title}}</h1>
+    <p class="muted">by {{.Handle}} · {{.Deck.SlideCount}} slides · <a href="/v/{{.Code}}?detached=1" target="_blank">open full screen</a></p>
+  </div>
+  <div class="permalink-frame"><iframe src="/v/{{.Code}}?detached=1" title="{{.Deck.Title}}" allowfullscreen></iframe></div>
+</section>
+{{end}}

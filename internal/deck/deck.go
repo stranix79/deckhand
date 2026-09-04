@@ -99,30 +99,32 @@ func Load(path string, opts ...Option) (*Deck, error) {
 	}
 
 	if info.IsDir() {
-		return ld.loadDir(path, nil)
+		return ld.loadDir(path, filepath.Base(filepath.Clean(path)), nil)
 	}
 
 	lower := strings.ToLower(path)
+	base := filepath.Base(path)
 	switch {
 	case strings.HasSuffix(lower, ".zip"):
 		root, cleanup, err := ld.extractZip(path)
 		if err != nil {
 			return nil, err
 		}
-		return ld.loadDir(root, cleanup)
+		return ld.loadDir(root, strings.TrimSuffix(base, base[len(base)-4:]), cleanup)
 	case strings.HasSuffix(lower, ".tar.gz"), strings.HasSuffix(lower, ".tgz"):
 		root, cleanup, err := ld.extractTarGz(path)
 		if err != nil {
 			return nil, err
 		}
-		return ld.loadDir(root, cleanup)
+		return ld.loadDir(root, strings.TrimSuffix(strings.TrimSuffix(base, ".tar.gz"), ".tgz"), cleanup)
 	default:
 		return nil, &Report{Errors: []string{fmt.Sprintf("%q is neither a directory, a .zip nor a .tar.gz", path)}}
 	}
 }
 
-// loadDir does the real work once the files are on disk.
-func (ld *loader) loadDir(root string, cleanup func() error) (*Deck, error) {
+// loadDir does the real work once the files are on disk. defaultTitle is
+// used when deck.json has no title: the directory or archive name.
+func (ld *loader) loadDir(root, defaultTitle string, cleanup func() error) (*Deck, error) {
 	rep := &Report{}
 	fail := func() (*Deck, error) {
 		if cleanup != nil {
@@ -181,7 +183,7 @@ func (ld *loader) loadDir(root string, cleanup func() error) (*Deck, error) {
 
 	// 2. deck.json (optional).
 	d := &Deck{
-		Title:   filepath.Base(root),
+		Title:   defaultTitle,
 		Ratio:   "16:9",
 		Width:   1920,
 		Root:    root,

@@ -4,6 +4,26 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-09-04
+
+The hub, the site and the docs.
+
+### Added
+- `deckhand serve`: multi-user hub on PostgreSQL 16 (embedded migrations), magic-link
+  sign-in, deck uploads (web and `deckhand push`), hosted presentations ("Present now"),
+  relayed presentations (`deckhand present --hub`), permanent links `/d/{user}/{slug}`,
+  API tokens, `deckhand login`.
+- Free plan limits (1 deck, 10 remote viewers, 7-day links) from the environment; Stripe
+  Checkout, customer portal and webhooks for the Pro plan.
+- Statistics per presentation: unique viewers, peak, audience per slide (server-side SVG),
+  time per slide. Prometheus metrics on `/metrics`, `/healthz`.
+- Deck files served from a separate origin (`DECKHAND_DECK_ORIGIN`); stage needs the token on the hub.
+- Landing page, rendered docs (`/docs/*`), `/changelog`, Open Graph tags.
+- Dockerfile (distroless), `docker-compose.hub.yml`, `docs/HUB.md`, `docs/SECURITY.md`.
+
+### Fixed
+- Default title of an archive deck is the archive name, not the temporary directory.
+
 ## [0.1.0] - 2026-09-04
 
 Local mode: validate and present a deck on your LAN.

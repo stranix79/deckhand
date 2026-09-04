@@ -73,6 +73,14 @@ type Session struct {
 	// OnEvent, when set, receives join/leave/slide events (hub statistics).
 	OnEvent func(Event)
 
+	// OnState, when set, is called after every state change (relay to a hub,
+	// persistence). Called synchronously under the session lock: keep it fast
+	// (hand off to a channel).
+	OnState func(State)
+
+	// MaxViewers, when > 0, refuses viewers beyond that count (close code 4429).
+	MaxViewers int
+
 	mu       sync.Mutex
 	state    State
 	clients  map[*client]struct{}
@@ -124,6 +132,13 @@ func (s *Session) SetState(st State) {
 	s.state = st
 	s.broadcastStateLocked()
 	s.mu.Unlock()
+}
+
+// Clients is the number of connected clients of any role.
+func (s *Session) Clients() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return len(s.clients)
 }
 
 // Viewers is the number of connected viewers.
@@ -301,6 +316,9 @@ func (s *Session) startClockLocked() {
 
 func (s *Session) broadcastStateLocked() {
 	s.broadcastLocked(mustJSON(map[string]any{"op": "state", "state": s.state}), nil)
+	if s.OnState != nil {
+		s.OnState(s.state)
+	}
 }
 
 // broadcastLocked sends raw to every client (or only to those for which
