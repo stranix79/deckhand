@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.0.5] - 2026-09-04
+
+### Fixed
+- Screens' JS/CSS were cached for an hour by browsers, so an upgraded binary could still run the previous stage script. They are now revalidated on every load (ETag = version).
+
 ## [1.0.4] - 2026-09-04
 
 ### Fixed

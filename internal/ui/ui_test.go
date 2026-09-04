@@ -79,8 +79,8 @@ func TestPagesAndCSP(t *testing.T) {
 	if resp := get(t, srv.URL+"/s/NOPE", nil); resp.StatusCode != 404 {
 		t.Fatalf("bad code should be 404, got %d", resp.StatusCode)
 	}
-	if resp := get(t, srv.URL+"/static/shared/ws.js", nil); resp.StatusCode != 200 || !strings.Contains(resp.Header.Get("Content-Type"), "javascript") {
-		t.Fatalf("static: %d %s", resp.StatusCode, resp.Header.Get("Content-Type"))
+	if resp := get(t, srv.URL+"/static/shared/ws.js", nil); resp.StatusCode != 200 || !strings.Contains(resp.Header.Get("Content-Type"), "javascript") || resp.Header.Get("Cache-Control") != "no-cache" || resp.Header.Get("ETag") == "" {
+		t.Fatalf("static: %d %s cache=%s etag=%s", resp.StatusCode, resp.Header.Get("Content-Type"), resp.Header.Get("Cache-Control"), resp.Header.Get("ETag"))
 	}
 	if resp := get(t, srv.URL+"/static/../embed.go", nil); resp.StatusCode == 200 {
 		t.Fatal("static must not escape web/")

@@ -15,6 +15,7 @@ import (
 
 	"github.com/stranix79/deckhand/internal/deck"
 	"github.com/stranix79/deckhand/internal/session"
+	"github.com/stranix79/deckhand/internal/version"
 	"github.com/stranix79/deckhand/web"
 )
 
@@ -111,7 +112,16 @@ func (u *Server) static(w http.ResponseWriter, r *http.Request) {
 	if ct := deck.ContentType(name); ct != "" {
 		w.Header().Set("Content-Type", ct)
 	}
-	w.Header().Set("Cache-Control", "public, max-age=3600")
+	// The screens' JS/CSS live in the binary and change with every release:
+	// browsers must revalidate them each time (cheap 304), never serve a
+	// stale stage.js for an hour after an upgrade. The ETag is the version.
+	etag := `"` + version.Version + `"`
+	if r.Header.Get("If-None-Match") == etag && version.Version != "dev" {
+		w.WriteHeader(http.StatusNotModified)
+		return
+	}
+	w.Header().Set("ETag", etag)
+	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	rs, ok := f.(interface {
 		fs.File
