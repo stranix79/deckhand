@@ -23,6 +23,8 @@ label { display: block; font-family: var(--display); font-size: .9rem; color: va
 input[type=email], input[type=text], input[type=file] { width: 100%; padding: 10px 12px; border: 1px solid var(--muted); border-radius: 8px; font: inherit; }
 button { font-family: var(--display); font-weight: 700; margin-top: 12px; }
 button.primary { background: var(--ink); color: var(--white); }
+a.button { display: inline-block; font-family: var(--display); font-weight: 700; padding: 10px 14px; border-radius: 8px; background: var(--fog); color: var(--ink); text-decoration: none; }
+a.button.primary { background: var(--ink); color: var(--white); }
 .row { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 12px 0; border-top: 1px solid var(--fog); }
 .row:first-of-type { border-top: 0; }
 .row form { margin: 0; } .row button { margin: 0; }

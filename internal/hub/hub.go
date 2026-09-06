@@ -30,6 +30,8 @@ type Hub struct {
 	tmpl     *template.Template
 	metrics  *metrics
 
+	odoo *odooClient // nil unless Billing == "odoo"
+
 	loadMu sync.Mutex // serialises lazy session loading per process
 	relay  relayState
 	events chan eventRow
@@ -55,6 +57,9 @@ func Serve(ctx context.Context, cfg Config) error {
 	}
 	go h.eventWriter(ctx) //nolint:gosec // server context, not a request
 	go h.janitor(ctx)     //nolint:gosec // idem
+	if h.odoo != nil {
+		go h.odooSyncLoop(ctx) //nolint:gosec // idem
+	}
 
 	srv := &http.Server{
 		Addr:              cfg.Addr,
@@ -98,6 +103,9 @@ func New(cfg Config, db *pgxpool.Pool) (*Hub, error) {
 	}
 	h.relay.last = map[string]time.Time{}
 	h.metrics.bind(h.sessions)
+	if cfg.OdooEnabled() {
+		h.odoo = newOdooClient(cfg.OdooURL, cfg.OdooDB, cfg.OdooUser, cfg.OdooPassword)
+	}
 	h.ui = &ui.Server{Lookup: h.Lookup, DeckOrigin: cfg.DeckOrigin}
 	return h, nil
 }

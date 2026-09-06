@@ -43,7 +43,9 @@ with the environment below. Migrations run automatically at start.
 | `DECKHAND_MAX_DECK_MB` | `200` | Upload limit. |
 | `DECKHAND_MAGIC_LINK_TTL` | `15m` | Sign-in link validity. |
 | `DECKHAND_COOKIE_TTL` | `720h` | Browser session. |
-| `DECKHAND_STRIPE_SECRET_KEY` `DECKHAND_STRIPE_WEBHOOK_SECRET` `DECKHAND_STRIPE_PRICE_ID` | | Billing. All three or nothing. |
+| `DECKHAND_BILLING` | | `odoo`, `stripe` or empty. |
+| `ODOO_URL` `ODOO_DB` `ODOO_USER` `ODOO_PASSWORD` `ODOO_PRODUCT_URL` `ODOO_PORTAL_URL` `ODOO_SYNC_INTERVAL` | | Odoo billing (see below). |
+| `DECKHAND_STRIPE_SECRET_KEY` `DECKHAND_STRIPE_WEBHOOK_SECRET` `DECKHAND_STRIPE_PRICE_ID` | | Stripe billing. All three or nothing. |
 
 ## Routes
 
@@ -72,6 +74,22 @@ Two ways:
 
 After a presentation, `/app` → *stats*: unique viewers, peak audience,
 audience per slide (SVG drawn server-side), time per slide.
+
+## Billing
+
+`DECKHAND_BILLING` selects the backend:
+
+* `odoo` — [Odoo Subscriptions](https://www.odoo.com/app/subscriptions) is the
+  subscription engine. The hub's *Subscribe* button links to the product page
+  of your shop (`ODOO_PRODUCT_URL`); Odoo takes the payment with its own
+  provider, renews monthly and issues invoices; *Manage subscription* opens
+  the customer portal (`ODOO_PORTAL_URL`, default `<ODOO_URL>/my/subscriptions`).
+  Every `ODOO_SYNC_INTERVAL` (5 m) the hub reads the in-progress subscriptions
+  over XML-RPC (`ODOO_URL`, `ODOO_DB`, `ODOO_USER`, `ODOO_PASSWORD`, a user
+  with *Sales / User: All Documents*) and matches them to hub users **by
+  e-mail**. Customers must use the same address on the shop and on the hub.
+* `stripe` — Stripe Checkout, customer portal and webhooks, see below.
+* empty — no billing; the plan page says so and everybody stays on Free.
 
 ## Stripe
 

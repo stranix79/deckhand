@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-06
+
+### Added
+- Billing through Odoo Subscriptions (`DECKHAND_BILLING=odoo`): the hub links to the shop product, syncs in-progress subscriptions over XML-RPC and matches them by e-mail. Stripe remains available (`DECKHAND_BILLING=stripe`).
+
 ## [1.0.5] - 2026-09-04
 
 ### Fixed

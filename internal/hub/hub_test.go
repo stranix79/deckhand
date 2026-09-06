@@ -38,6 +38,19 @@ func TestConfigValidate(t *testing.T) {
 	if err := c.Validate(); err == nil {
 		t.Fatal("short secret accepted")
 	}
+	c.Secret = strings.Repeat("s", 32)
+	c.Billing = "odoo"
+	if err := c.Validate(); err == nil {
+		t.Fatal("odoo billing without credentials accepted")
+	}
+	c.OdooURL, c.OdooDB, c.OdooUser, c.OdooPassword, c.OdooProductURL = "https://o.example", "db", "u", "p", "https://o.example/shop/x"
+	if err := c.Validate(); err != nil || !c.OdooEnabled() || c.StripeEnabled() || c.OdooPortal() != "https://o.example/my/subscriptions" {
+		t.Fatalf("odoo billing: %v", err)
+	}
+	c.Billing = "paypal"
+	if err := c.Validate(); err == nil {
+		t.Fatal("unknown billing accepted")
+	}
 }
 
 func TestReplayStats(t *testing.T) {

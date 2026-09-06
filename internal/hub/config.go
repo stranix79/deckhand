@@ -33,6 +33,14 @@ type Config struct {
 	MagicLinkTTL   time.Duration // DECKHAND_MAGIC_LINK_TTL, 15m
 	CookieTTL      time.Duration // DECKHAND_COOKIE_TTL, 720h
 
+	// Billing: "stripe" (Checkout + webhooks), "odoo" (Odoo Subscriptions,
+	// synced over XML-RPC) or "" (no billing: the plan page says so).
+	Billing string // DECKHAND_BILLING
+
+	OdooURL, OdooDB, OdooUser, OdooPassword string        // ODOO_URL, ODOO_DB, ODOO_USER, ODOO_PASSWORD
+	OdooProductURL, OdooPortalURL           string        // ODOO_PRODUCT_URL (shop page of the Pro product), ODOO_PORTAL_URL (default <url>/my/subscriptions)
+	OdooSyncInterval                        time.Duration // ODOO_SYNC_INTERVAL, 5m
+
 	StripeSecretKey     string // DECKHAND_STRIPE_SECRET_KEY
 	StripeWebhookSecret string // DECKHAND_STRIPE_WEBHOOK_SECRET
 	StripePriceID       string // DECKHAND_STRIPE_PRICE_ID (monthly price)
@@ -62,6 +70,15 @@ func FromEnv() Config {
 		MagicLinkTTL:   envDuration("DECKHAND_MAGIC_LINK_TTL", 15*time.Minute),
 		CookieTTL:      envDuration("DECKHAND_COOKIE_TTL", 30*24*time.Hour),
 
+		Billing:          env("DECKHAND_BILLING", ""),
+		OdooURL:          strings.TrimRight(env("ODOO_URL", ""), "/"),
+		OdooDB:           env("ODOO_DB", ""),
+		OdooUser:         env("ODOO_USER", ""),
+		OdooPassword:     env("ODOO_PASSWORD", ""),
+		OdooProductURL:   env("ODOO_PRODUCT_URL", ""),
+		OdooPortalURL:    env("ODOO_PORTAL_URL", ""),
+		OdooSyncInterval: envDuration("ODOO_SYNC_INTERVAL", 5*time.Minute),
+
 		StripeSecretKey:     env("DECKHAND_STRIPE_SECRET_KEY", ""),
 		StripeWebhookSecret: env("DECKHAND_STRIPE_WEBHOOK_SECRET", ""),
 		StripePriceID:       env("DECKHAND_STRIPE_PRICE_ID", ""),
@@ -87,6 +104,15 @@ func (c Config) Validate() error {
 	if len(c.Secret) < 32 {
 		return fmt.Errorf("DECKHAND_SECRET must be at least 32 characters (openssl rand -hex 32)")
 	}
+	switch c.Billing {
+	case "", "stripe":
+	case "odoo":
+		if c.OdooURL == "" || c.OdooDB == "" || c.OdooUser == "" || c.OdooPassword == "" || c.OdooProductURL == "" {
+			return fmt.Errorf("DECKHAND_BILLING=odoo needs ODOO_URL, ODOO_DB, ODOO_USER, ODOO_PASSWORD and ODOO_PRODUCT_URL")
+		}
+	default:
+		return fmt.Errorf("DECKHAND_BILLING must be \"stripe\", \"odoo\" or empty, got %q", c.Billing)
+	}
 	if c.MailHost == "" && !c.DevLogMagicLinks {
 		return fmt.Errorf("MAIL_HOST is required to send magic links (or set DECKHAND_DEV_LOG_MAGIC_LINKS=1 for development)")
 	}
@@ -105,9 +131,20 @@ func (c Config) DeckOriginHost() string {
 	return u.Host
 }
 
-// StripeEnabled is true when billing is configured.
+// StripeEnabled is true when Stripe billing is configured.
 func (c Config) StripeEnabled() bool {
-	return c.StripeSecretKey != "" && c.StripeWebhookSecret != "" && c.StripePriceID != ""
+	return c.Billing != "odoo" && c.StripeSecretKey != "" && c.StripeWebhookSecret != "" && c.StripePriceID != ""
+}
+
+// OdooEnabled is true when Odoo billing is configured.
+func (c Config) OdooEnabled() bool { return c.Billing == "odoo" && c.OdooURL != "" }
+
+// OdooPortal is the customer portal link for "manage subscription".
+func (c Config) OdooPortal() string {
+	if c.OdooPortalURL != "" {
+		return c.OdooPortalURL
+	}
+	return c.OdooURL + "/my/subscriptions"
 }
 
 func env(k, def string) string {

@@ -4,11 +4,15 @@
   {{if .User.Paid}}
     <p>You are on <strong>Pro</strong>: unlimited decks and viewers, permanent links.</p>
     {{if .Sub}}<p class="muted">Status: {{.Sub.Status}}{{if .Sub.PeriodEnd}} · renews {{.Sub.PeriodEnd.Format "2006-01-02"}}{{end}}</p>{{end}}
-    <form method="post" action="/billing/portal"><button class="primary">Manage subscription</button></form>
+    {{if .OdooEnabled}}<p><a class="button" href="{{.OdooPortalURL}}">Manage subscription</a> <span class="muted">(customer portal: invoices, card, cancellation)</span></p>
+    {{else}}<form method="post" action="/billing/portal"><button class="primary">Manage subscription</button></form>{{end}}
   {{else}}
     <p>You are on <strong>Free</strong>: {{.Cfg.FreeMaxDecks}} deck, {{.Cfg.FreeMaxViewers}} remote viewers per presentation, permanent links for {{.Cfg.FreeLinkDays}} days.</p>
     <p><strong>Pro</strong> removes every limit. Monthly subscription, cancel anytime.</p>
-    {{if .StripeEnabled}}
+    {{if .OdooEnabled}}
+      <p><a class="button primary" href="{{.OdooProductURL}}">Subscribe — 9 € / month</a></p>
+      <p class="muted">Payment and invoices are handled by our shop. <strong>Use the same e-mail as here ({{.User.Email}})</strong>: your Pro plan is activated within a few minutes of the payment.</p>
+    {{else if .StripeEnabled}}
       <form method="post" action="/billing/checkout"><button class="primary">Subscribe</button></form>
     {{else}}
       <p class="error">Billing is not configured on this hub.</p>

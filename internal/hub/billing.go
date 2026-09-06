@@ -46,7 +46,8 @@ func (h *Hub) billingPage(w http.ResponseWriter, r *http.Request) {
 	case "cancel":
 		msg = "Checkout cancelled."
 	}
-	h.render(w, r, "billing.html", map[string]any{"Title": "Plan", "Sub": sub, "StripeEnabled": h.cfg.StripeEnabled(), "Message": msg})
+	h.render(w, r, "billing.html", map[string]any{"Title": "Plan", "Sub": sub, "StripeEnabled": h.cfg.StripeEnabled(), "OdooEnabled": h.cfg.OdooEnabled(),
+		"OdooProductURL": h.cfg.OdooProductURL, "OdooPortalURL": h.cfg.OdooPortal(), "Message": msg})
 }
 
 // billingCheckout starts a Stripe Checkout session for the monthly price.
@@ -80,6 +81,10 @@ func (h *Hub) billingCheckout(w http.ResponseWriter, r *http.Request) {
 
 // billingPortal opens the Stripe customer portal (cancel, invoices, card).
 func (h *Hub) billingPortal(w http.ResponseWriter, r *http.Request) {
+	if h.cfg.OdooEnabled() {
+		http.Redirect(w, r, h.cfg.OdooPortal(), http.StatusSeeOther)
+		return
+	}
 	u := userOf(r)
 	sub, err := h.getSubscription(r.Context(), u.ID)
 	if err != nil || !h.cfg.StripeEnabled() {

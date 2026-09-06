@@ -85,3 +85,13 @@ at most a few thousand events.
 `/docs/{FORMAT,CLI,HUB,PROTOCOL,SECURITY}` and `/changelog` render the
 Markdown files with goldmark inside the hub's page template, so the docs on
 the site are always those of the running version.
+
+## 2026-09-06 — Billing through Odoo Subscriptions, Stripe kept as an option
+
+The brief said "Stripe Checkout, nothing else". CODE79 runs its accounting
+in Odoo 19 Enterprise, which already has Stripe as a payment provider and
+the Subscriptions app. So `DECKHAND_BILLING=odoo` makes Odoo the
+subscription engine (card storage, monthly renewal, invoices, dunning,
+customer portal) and the hub only mirrors "who is Pro" every 5 minutes over
+XML-RPC, matched by e-mail. The Stripe backend stays for self-hosters
+(`DECKHAND_BILLING=stripe`). Product: "Deckhand Pro", 9 € excl. VAT / month.
