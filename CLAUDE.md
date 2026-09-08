@@ -21,7 +21,7 @@ Read this before touching the repo. The full brief lives in docs/BRIEF.md.
 2. ✅ (2026-09-04) Present local: server, WebSocket, stage + remote, ASCII QR codes, integration test.
 3. ✅ (2026-09-04) Viewer + local polish, goreleaser snapshot, Homebrew tap. v0.1.0.
 4. ✅ (2026-09-04) Hub: auth, decks, remote viewers, relay.
-5. ✅ (2026-09-04) Hub: stats, Stripe, limits, metrics, deployment (deckhand.stranix.net on hawking).
+5. ✅ (2026-09-04) Hub: stats, Stripe, limits, metrics, deployment (deckhand.show on hawking).
 6. ✅ (2026-09-04) Site and docs. v1.0.0.
 
 ## Makefile commands

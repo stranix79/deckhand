@@ -1,8 +1,8 @@
-## deckhand.stranix.net — Deckhand hub (repo ~/git/stranix/deckhand).
+## deckhand.show — Deckhand hub (repo ~/git/stranix/deckhand).
 ##
-## Routage : vhost nginx shared/nginx/conf.d/deckhand.stranix.net.conf →
+## Routage : vhost nginx shared/nginx/conf.d/deckhand.show.conf →
 ## deckhand_hub:8080 via le réseau stranixnet_ghost_external, pour DEUX noms :
-## deckhand.stranix.net (app) et decks.deckhand.stranix.net (fichiers des decks,
+## deckhand.show (app) et decks.deckhand.show (fichiers des decks,
 ## origine séparée). DNS : CNAME deckhand + decks.deckhand → hawking
 ## (terraform cloudflare-dns/dns-stranix.tf).
 ##
@@ -15,7 +15,7 @@ name: deckhand
 
 services:
   hub:
-    image: deckhand:0.2.0
+    image: deckhand:1.1.1
     container_name: deckhand_hub
     restart: unless-stopped
     env_file:
@@ -23,8 +23,8 @@ services:
       - .env            # DECKHAND_SECRET, POSTGRES_PASSWORD, DECKHAND_STRIPE_*
     environment:
       DECKHAND_PG: postgres://deckhand:${POSTGRES_PASSWORD}@postgres:5432/deckhand?sslmode=disable
-      DECKHAND_BASE_URL: https://deckhand.stranix.net
-      DECKHAND_DECK_ORIGIN: https://decks.deckhand.stranix.net
+      DECKHAND_BASE_URL: https://deckhand.show
+      DECKHAND_DECK_ORIGIN: https://decks.deckhand.show
       DECKHAND_ADDR: ":8080"
       DECKHAND_DATA_DIR: /data
       MAIL_FROM: "Deckhand <hello@stranix.net>"

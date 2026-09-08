@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-09-08
+
+### Changed
+- Public domain is now deckhand.show (deck origin decks.deckhand.show); deckhand.stranix.net redirects.
+
 ## [1.1.0] - 2026-09-06
 
 ### Added

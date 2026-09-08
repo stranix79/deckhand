@@ -14,7 +14,7 @@ mkdir -p "$tap/Formula"
 cat > "$tap/Formula/deckhand.rb" <<RUBY
 class Deckhand < Formula
   desc "Turn a folder of HTML slides into a presentation: stage, phone remote, live audience"
-  homepage "https://deckhand.stranix.net"
+  homepage "https://deckhand.show"
   url "${url}"
   sha256 "${sha}"
   license "MIT"

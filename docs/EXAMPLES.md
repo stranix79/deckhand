@@ -7,7 +7,7 @@ photos, a section of slides that **are running code** (a live clock and a
 canvas particle field, a slider that drives an SVG chart, a git diff of a
 slide, a scorecard), fragments, an animated chart, and a photo grid.
 
-* **Browse it live**: [deckhand.stranix.net/d/stranix79/field-notes](https://deckhand.stranix.net/d/stranix79/field-notes)
+* **Browse it live**: [deckhand.show/d/stranix79/field-notes](https://deckhand.show/d/stranix79/field-notes)
 * **Source**: [examples/keynote on GitHub](https://github.com/stranix79/deckhand/tree/main/examples/keynote)
   (photo credits in `CREDITS.md`).
 * Present it: `deckhand present deckhand/examples/keynote --open`. On slide 5,
@@ -19,7 +19,7 @@ The deck that ships with the repository: eight slides, speaker notes, two
 public notes, and one slide with **fragments** (step-by-step reveal driven by
 the remote).
 
-* **Browse it live**: [deckhand.stranix.net/d/stranix79/ship-it-before-lunch](https://deckhand.stranix.net/d/stranix79/ship-it-before-lunch)
+* **Browse it live**: [deckhand.show/d/stranix79/ship-it-before-lunch](https://deckhand.show/d/stranix79/ship-it-before-lunch)
   (viewer in detached mode: swipe or use the arrow keys).
 * **Source**: [examples/ship-it on GitHub](https://github.com/stranix79/deckhand/tree/main/examples/ship-it)
   — `deck.json`, the eight HTML files, a shared `assets/style.css` and the
@@ -45,7 +45,7 @@ command.
 ### Publish it on the hub
 
 ```
-deckhand login --hub https://deckhand.stranix.net --token …   # token from Decks → Get an API token
+deckhand login --hub https://deckhand.show --token …   # token from Decks → Get an API token
 deckhand push deckhand/examples/ship-it
 ```
 

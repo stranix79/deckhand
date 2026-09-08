@@ -17,7 +17,7 @@ deckhand push     talk/     # publish on a Hub, get a public link      (mileston
 </p>
 
 Local mode (`validate`, `present`, the three screens) is MIT. The hosted
-**Hub** at [deckhand.stranix.net](https://deckhand.stranix.net) adds remote
+**Hub** at [deckhand.show](https://deckhand.show) adds remote
 viewers, permanent links and statistics; you can also
 [self-host it](docs/HUB.md). Decisions in [docs/DECISIONS.md](docs/DECISIONS.md).
 
@@ -54,9 +54,9 @@ Everything runs on your machine, on your LAN, offline. No account.
 ## Beyond the LAN: the Hub
 
 ```
-deckhand login --hub https://deckhand.stranix.net --token …   # token from the hub, once
-deckhand push talk/                 # permanent link: https://deckhand.stranix.net/d/you/talk
-deckhand present talk/ --hub https://deckhand.stranix.net     # people outside the room follow live
+deckhand login --hub https://deckhand.show --token …   # token from the hub, once
+deckhand push talk/                 # permanent link: https://deckhand.show/d/you/talk
+deckhand present talk/ --hub https://deckhand.show     # people outside the room follow live
 ```
 
 Free: one deck, ten remote viewers, links for a week. Pro: no limits.

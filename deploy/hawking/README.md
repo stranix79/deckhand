@@ -7,9 +7,9 @@ certificat (SAN).
 ## Première fois
 
 ```
-# 1. DNS (depuis le Mac) : CNAME deckhand + decks.deckhand → hawking.stranix.net
+# 1. DNS (depuis le Mac) : zone deckhand.show chez Cloudflare (NS ignacio/rosalyn), @ + www + decks en CNAME → hawking.stranix.net
 cd ~/git/stranix/stranix-git/terraform/cloudflare-dns && terraform apply \
-  -target=cloudflare_record.stranix_deckhand_cname -target=cloudflare_record.stranix_deckhand_decks_cname
+  -target=cloudflare_record.deckhand_apex -target=cloudflare_record.deckhand_www -target=cloudflare_record.deckhand_decks
 
 # 2. Fichiers sur hawking : compose + .env dans stranix-git
 #    docker-compose/hawking/stranix/deckhand/ ; vhost dans shared/nginx/conf.d/.
@@ -23,12 +23,12 @@ ssh stranix@hawking.code79.com 'docker build --build-arg VERSION=0.2.0 -t deckha
 
 # 4. Cert (AVANT de charger le vhost)
 ssh stranix@hawking.code79.com 'docker exec ghost_certbot certbot certonly --webroot -w /var/www/certbot \
-  -d deckhand.stranix.net -d decks.deckhand.stranix.net --cert-name deckhand.stranix.net -n --agree-tos -m stranix79@gmail.com'
+  -d deckhand.show -d www.deckhand.show -d decks.deckhand.show --cert-name deckhand.show -n --agree-tos -m stranix79@gmail.com'
 
 # 5. Up + reload nginx
 ssh stranix@hawking.code79.com 'cd /opt/stranix-git/docker-compose/hawking/stranix/deckhand && docker compose up -d \
   && docker exec ghost_nginx nginx -t && docker exec ghost_nginx nginx -s reload'
-curl -s https://deckhand.stranix.net/healthz
+curl -s https://deckhand.show/healthz
 ```
 
 Le conteneur tourne en `nonroot` (uid 65532) : le dossier des decks doit lui
@@ -47,7 +47,7 @@ Dump : `docker exec deckhand_postgres pg_dump -U deckhand deckhand | gzip > deck
 ## Stripe
 
 Créer le produit « Deckhand Pro » (prix mensuel), le webhook
-`https://deckhand.stranix.net/webhooks/stripe` (événements
+`https://deckhand.show/webhooks/stripe` (événements
 `checkout.session.completed`, `customer.subscription.*`), puis mettre
 `DECKHAND_STRIPE_SECRET_KEY`, `DECKHAND_STRIPE_WEBHOOK_SECRET`,
 `DECKHAND_STRIPE_PRICE_ID` dans `.env` et `docker compose up -d`.

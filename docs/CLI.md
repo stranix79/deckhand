@@ -38,7 +38,7 @@ only warnings and errors.
 
 ## `login`, `push`, `present --hub`
 
-1. On the hub, *Decks → Get an API token*, then `deckhand login --hub https://deckhand.stranix.net --token …`.
+1. On the hub, *Decks → Get an API token*, then `deckhand login --hub https://deckhand.show --token …`.
    The token is saved in `~/.config/deckhand/config.toml` (`DECKHAND_HUB` /
    `DECKHAND_TOKEN` override it).
 2. `deckhand push talk/` validates, zips and uploads the deck; it prints the

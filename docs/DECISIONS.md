@@ -95,3 +95,10 @@ subscription engine (card storage, monthly renewal, invoices, dunning,
 customer portal) and the hub only mirrors "who is Pro" every 5 minutes over
 XML-RPC, matched by e-mail. The Stripe backend stays for self-hosters
 (`DECKHAND_BILLING=stripe`). Product: "Deckhand Pro", 9 € excl. VAT / month.
+
+## 2026-09-08 — Public domain: deckhand.show
+
+The hub moves from deckhand.stranix.net to **deckhand.show** (deck origin
+`decks.deckhand.show`, `www` redirected). Zone at Cloudflare, records by
+Terraform, TLS by Let's Encrypt on hawking. The old names keep a 301 for
+the links already shared. Homebrew tap and landing point to the new domain.
