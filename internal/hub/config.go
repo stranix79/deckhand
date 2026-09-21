@@ -50,6 +50,13 @@ type Config struct {
 	// AnalyticsID is a Google Analytics 4 measurement ID (G-XXXXXXX). When
 	// set, the public landing page loads gtag.js; app pages never do.
 	AnalyticsID string // DECKHAND_ANALYTICS_ID
+
+	// Newsletter: the landing's sign-up form posts to /newsletter, which
+	// subscribes the address to a Listmonk list (one per language) through
+	// Listmonk's public API, server to server. Empty URL = form disabled.
+	ListmonkURL      string // DECKHAND_LISTMONK_URL, e.g. http://listmonk_app:9000
+	NewsletterListFR string // DECKHAND_NEWSLETTER_LIST_FR, Listmonk list UUID
+	NewsletterListEN string // DECKHAND_NEWSLETTER_LIST_EN, Listmonk list UUID
 }
 
 // FromEnv reads the configuration. Missing optional values get defaults;
@@ -88,8 +95,16 @@ func FromEnv() Config {
 		StripePriceID:       env("DECKHAND_STRIPE_PRICE_ID", ""),
 		DevLogMagicLinks:    env("DECKHAND_DEV_LOG_MAGIC_LINKS", "") == "1",
 		AnalyticsID:         strings.TrimSpace(env("DECKHAND_ANALYTICS_ID", "")),
+		ListmonkURL:         strings.TrimRight(env("DECKHAND_LISTMONK_URL", ""), "/"),
+		NewsletterListFR:    strings.TrimSpace(env("DECKHAND_NEWSLETTER_LIST_FR", "")),
+		NewsletterListEN:    strings.TrimSpace(env("DECKHAND_NEWSLETTER_LIST_EN", "")),
 	}
 	return c
+}
+
+// NewsletterEnabled is true when the landing's sign-up form can be served.
+func (c Config) NewsletterEnabled() bool {
+	return c.ListmonkURL != "" && c.NewsletterListFR != "" && c.NewsletterListEN != ""
 }
 
 // Validate refuses a configuration that cannot work.
@@ -120,6 +135,9 @@ func (c Config) Validate() error {
 	}
 	if c.MailHost == "" && !c.DevLogMagicLinks {
 		return fmt.Errorf("MAIL_HOST is required to send magic links (or set DECKHAND_DEV_LOG_MAGIC_LINKS=1 for development)")
+	}
+	if c.ListmonkURL != "" && (c.NewsletterListFR == "" || c.NewsletterListEN == "") {
+		return fmt.Errorf("DECKHAND_LISTMONK_URL needs DECKHAND_NEWSLETTER_LIST_FR and DECKHAND_NEWSLETTER_LIST_EN (Listmonk list UUIDs)")
 	}
 	return nil
 }

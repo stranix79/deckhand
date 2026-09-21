@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/yuin/goldmark"
@@ -22,6 +23,7 @@ var docPages = []string{"EXAMPLES", "FORMAT", "CLI", "HUB", "PROTOCOL", "SECURIT
 
 func (h *Hub) siteRoutes(r chi.Router) {
 	r.Get("/", h.landing)
+	r.Post("/newsletter", h.newsletterSubscribe)
 	r.Get("/docs", func(w http.ResponseWriter, r *http.Request) { http.Redirect(w, r, "/docs/FORMAT", http.StatusFound) })
 	r.Get("/docs/{name}", h.docPage)
 	r.Get("/changelog", h.changelog)
@@ -46,13 +48,18 @@ func (h *Hub) siteRoutes(r chi.Router) {
 func (h *Hub) landing(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Cache-Control", "public, max-age=300")
+	// The newsletter form carries a signed timestamp (see newsletter.go);
+	// with the 5 minute cache it is always at least a few seconds old when
+	// a human posts it, which is exactly the point.
+	page := bytes.ReplaceAll(site.Index, []byte(newsletterPlaceholder),
+		[]byte(newsletterToken(h.cfg.Secret, time.Now())))
 	if h.cfg.AnalyticsID == "" {
 		w.Header().Set("Content-Security-Policy", pageCSP)
-		_, _ = w.Write(site.Index)
+		_, _ = w.Write(page)
 		return
 	}
 	w.Header().Set("Content-Security-Policy", landingAnalyticsCSP)
-	_, _ = w.Write(bytes.Replace(site.Index, []byte("</head>"), []byte(analyticsSnippet(h.cfg.AnalyticsID)+"</head>"), 1))
+	_, _ = w.Write(bytes.Replace(page, []byte("</head>"), []byte(analyticsSnippet(h.cfg.AnalyticsID)+"</head>"), 1))
 }
 
 // landingAnalyticsCSP is pageCSP plus what gtag.js needs: its script host,

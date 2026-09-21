@@ -133,6 +133,17 @@
   details[open] summary::after{content:"–"}
   details p{margin-top:.8em}
 
+  /* newsletter: one field, one button, nothing loaded from outside */
+  .newsletter{border-top:1px solid var(--fog)}
+  .newsletter p{max-width:60ch}
+  .nl{display:flex;gap:12px;flex-wrap:wrap;max-width:60ch;margin-top:1.2em;position:relative}
+  .nl input[type=email]{flex:1 1 260px;font:inherit;padding:12px 14px;border:2px solid var(--fog);border-radius:6px;background:var(--white);color:var(--ink)}
+  .nl input[type=email]:focus{outline:none;border-color:var(--sea)}
+  .nl .cta{margin:0}
+  .nl .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;opacity:0}
+  .nl-msg{font-family:var(--display);font-weight:700;color:var(--sea);min-height:1.4em;margin-top:.8em}
+  .nl-msg.bad{color:#B3261E}
+
   footer{padding:40px clamp(20px,5vw,72px);font-family:var(--display);font-size:.95rem;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;border-top:1px solid var(--fog)}
   @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
 </style>
@@ -387,6 +398,33 @@
   </div>
 </section>
 
+<section id="newsletter" class="newsletter">
+  <div lang="en">
+    <h2>Hear about the next release</h2>
+    <p>A short e-mail when something ships. No weekly digest, no tracking pixel, one click to leave. You can reply to every mail.</p>
+    <form method="post" action="/newsletter" class="nl">
+      <input type="hidden" name="lang" value="en">
+      <input type="hidden" name="t" value="{{NEWSLETTER_TOKEN}}">
+      <label class="hp" aria-hidden="true">Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      <input type="email" name="email" required placeholder="you@example.com" aria-label="Your e-mail address" autocomplete="email">
+      <button class="cta" type="submit">Keep me posted</button>
+    </form>
+    <p class="nl-msg" role="status" data-ok="You're on the list. Thanks, and talk soon." data-wait="Too many attempts from your connection. Try again in an hour." data-invalid="That address doesn't look right." data-error="Something failed on our side. Please try again later, or write to hello@deckhand.app." data-off="Sign-up isn't available right now."></p>
+  </div>
+  <div lang="fr">
+    <h2>Être prévenu de la prochaine version</h2>
+    <p>Un mail court quand quelque chose sort. Pas de digest hebdomadaire, pas de pixel de suivi, un clic pour partir. Vous pouvez répondre à chaque mail.</p>
+    <form method="post" action="/newsletter" class="nl">
+      <input type="hidden" name="lang" value="fr">
+      <input type="hidden" name="t" value="{{NEWSLETTER_TOKEN}}">
+      <label class="hp" aria-hidden="true">Laissez vide <input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+      <input type="email" name="email" required placeholder="vous@exemple.be" aria-label="Votre adresse e-mail" autocomplete="email">
+      <button class="cta" type="submit">Me tenir au courant</button>
+    </form>
+    <p class="nl-msg" role="status" data-ok="C'est noté. Merci, à bientôt." data-wait="Trop de tentatives depuis votre connexion. Réessayez dans une heure." data-invalid="Cette adresse n'a pas l'air correcte." data-error="Ça a coincé de notre côté. Réessayez plus tard, ou écrivez à hello@deckhand.app." data-off="L'inscription n'est pas disponible pour le moment."></p>
+  </div>
+</section>
+
 <footer>
   <span>© 2026 CODE79 SCOMM · Ecaussinnes, Belgium</span>
   <span><a href="https://github.com/stranix79/deckhand">GitHub</a> · <a href="https://stranix.net">stranix.net</a> · <a href="mailto:hello@deckhand.app">hello@deckhand.app</a></span>
@@ -401,6 +439,16 @@
   const set=l=>{html.setAttribute('data-lang',l);html.lang=l;history.replaceState(null,'','#'+l);renderRemote();};
   set(saved==='fr'||saved==='en'?saved:browser);
   document.querySelectorAll('[data-set]').forEach(b=>b.addEventListener('click',()=>set(b.dataset.set)));
+})();
+
+/* ---------- newsletter: the server answers with ?newsletter=<status> ---------- */
+(function(){
+  const s=new URLSearchParams(location.search).get('newsletter');
+  if(!s)return;
+  document.querySelectorAll('.nl-msg').forEach(m=>{m.textContent=m.dataset[s]||'';m.classList.toggle('bad',s!=='ok');});
+  history.replaceState(null,'',location.pathname+location.hash);
+  const sec=document.getElementById('newsletter');
+  if(sec)sec.scrollIntoView({block:'center'});
 })();
 
 /* ---------- live demo: one state, three screens ---------- */

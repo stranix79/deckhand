@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-22
+
+### Added
+- Newsletter sign-up on the landing page (`POST /newsletter`), subscribing through Listmonk's public API server to server, with built-in anti-spam: honeypot field, signed timestamp (refused under 3 s or after 2 h), 5 sign-ups per IP per hour, address validation. Configured with `DECKHAND_LISTMONK_URL`, `DECKHAND_NEWSLETTER_LIST_FR` and `DECKHAND_NEWSLETTER_LIST_EN`.
+
 ## [1.1.2] - 2026-09-21
 
 ### Added

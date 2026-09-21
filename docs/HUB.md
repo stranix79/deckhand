@@ -38,6 +38,9 @@ with the environment below. Migrations run automatically at start.
 | `MAIL_HOST` `MAIL_PORT` `MAIL_USER` `MAIL_PASSWORD` `MAIL_FROM` | | SMTP for magic links. 465 = TLS, other ports = STARTTLS. |
 | `DECKHAND_DEV_LOG_MAGIC_LINKS` | | `1` logs sign-in links instead of e-mailing them (development). |
 | `DECKHAND_ANALYTICS_ID` | | Google Analytics 4 measurement ID (`G-…`). When set, the public landing page loads gtag.js and its CSP allows the Google Analytics hosts. App pages, stage, remote and viewer never load it. |
+| `DECKHAND_LISTMONK_URL` | | Base URL of a Listmonk instance reachable from the hub (e.g. `http://listmonk_app:9000`). Enables the landing's newsletter form: `POST /newsletter` subscribes the address through Listmonk's public API, server to server. Anti-spam is built in (honeypot, signed timestamp, 5 sign-ups per IP per hour). |
+| `DECKHAND_NEWSLETTER_LIST_FR` | | UUID of the Listmonk list for the French form. Required with the URL above. |
+| `DECKHAND_NEWSLETTER_LIST_EN` | | UUID of the Listmonk list for the English form. Required with the URL above. |
 | `DECKHAND_FREE_MAX_DECKS` | `1` | Free plan: decks per user. |
 | `DECKHAND_FREE_MAX_VIEWERS` | `10` | Free plan: remote viewers per presentation (the 11th gets "room is full"). |
 | `DECKHAND_FREE_LINK_DAYS` | `7` | Free plan: lifetime of `/d/{user}/{slug}` after the last upload. |
