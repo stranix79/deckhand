@@ -39,12 +39,41 @@ func (h *Hub) siteRoutes(r chi.Router) {
 }
 
 // landing serves site/index.html as provided (brief §8), with the CSP that
-// lets it load its Google Fonts and run its inline language switch.
+// lets it load its Google Fonts and run its inline language switch. With
+// DECKHAND_ANALYTICS_ID set, the gtag.js snippet is inserted before </head>
+// at request time (index.html itself stays untouched) and the CSP opens the
+// Google Analytics hosts; this is the only page that ever loads it.
 func (h *Hub) landing(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Header().Set("Content-Security-Policy", pageCSP)
 	w.Header().Set("Cache-Control", "public, max-age=300")
-	_, _ = w.Write(site.Index)
+	if h.cfg.AnalyticsID == "" {
+		w.Header().Set("Content-Security-Policy", pageCSP)
+		_, _ = w.Write(site.Index)
+		return
+	}
+	w.Header().Set("Content-Security-Policy", landingAnalyticsCSP)
+	_, _ = w.Write(bytes.Replace(site.Index, []byte("</head>"), []byte(analyticsSnippet(h.cfg.AnalyticsID)+"</head>"), 1))
+}
+
+// landingAnalyticsCSP is pageCSP plus what gtag.js needs: its script host,
+// the collection endpoints (fetch/beacon) and the fallback tracking pixel.
+const landingAnalyticsCSP = "default-src 'self'; " +
+	"script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; " +
+	"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+	"font-src 'self' https://fonts.gstatic.com; " +
+	"img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; " +
+	"frame-src 'self'; " +
+	"connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; " +
+	"base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+
+// analyticsSnippet is the standard GA4 tag with IP anonymisation left to
+// Google's defaults; the ID is escaped so a malformed env value cannot
+// break out of the attribute or the script.
+func analyticsSnippet(id string) string {
+	id = template.JSEscapeString(template.HTMLEscapeString(id))
+	return `<script async src="https://www.googletagmanager.com/gtag/js?id=` + id + `"></script>` +
+		`<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}` +
+		`gtag('js',new Date());gtag('config','` + id + `');</script>` + "\n"
 }
 
 var md = goldmark.New(

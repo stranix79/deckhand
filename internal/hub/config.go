@@ -46,6 +46,10 @@ type Config struct {
 	StripePriceID       string // DECKHAND_STRIPE_PRICE_ID (monthly price)
 
 	DevLogMagicLinks bool // DECKHAND_DEV_LOG_MAGIC_LINKS=1: print links instead of mailing them
+
+	// AnalyticsID is a Google Analytics 4 measurement ID (G-XXXXXXX). When
+	// set, the public landing page loads gtag.js; app pages never do.
+	AnalyticsID string // DECKHAND_ANALYTICS_ID
 }
 
 // FromEnv reads the configuration. Missing optional values get defaults;
@@ -83,6 +87,7 @@ func FromEnv() Config {
 		StripeWebhookSecret: env("DECKHAND_STRIPE_WEBHOOK_SECRET", ""),
 		StripePriceID:       env("DECKHAND_STRIPE_PRICE_ID", ""),
 		DevLogMagicLinks:    env("DECKHAND_DEV_LOG_MAGIC_LINKS", "") == "1",
+		AnalyticsID:         strings.TrimSpace(env("DECKHAND_ANALYTICS_ID", "")),
 	}
 	return c
 }

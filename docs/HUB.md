@@ -37,6 +37,7 @@ with the environment below. Migrations run automatically at start.
 | `DECKHAND_SECRET` | required | ≥ 32 random characters. |
 | `MAIL_HOST` `MAIL_PORT` `MAIL_USER` `MAIL_PASSWORD` `MAIL_FROM` | | SMTP for magic links. 465 = TLS, other ports = STARTTLS. |
 | `DECKHAND_DEV_LOG_MAGIC_LINKS` | | `1` logs sign-in links instead of e-mailing them (development). |
+| `DECKHAND_ANALYTICS_ID` | | Google Analytics 4 measurement ID (`G-…`). When set, the public landing page loads gtag.js and its CSP allows the Google Analytics hosts. App pages, stage, remote and viewer never load it. |
 | `DECKHAND_FREE_MAX_DECKS` | `1` | Free plan: decks per user. |
 | `DECKHAND_FREE_MAX_VIEWERS` | `10` | Free plan: remote viewers per presentation (the 11th gets "room is full"). |
 | `DECKHAND_FREE_LINK_DAYS` | `7` | Free plan: lifetime of `/d/{user}/{slug}` after the last upload. |
