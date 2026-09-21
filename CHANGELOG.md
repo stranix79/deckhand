@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-09-21
+
+### Added
+- Optional Google Analytics 4 tag on the landing page (`DECKHAND_ANALYTICS_ID`); app pages never load it.
+
 ## [1.1.1] - 2026-09-08
 
 ### Changed
