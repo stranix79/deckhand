@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-09-22
+
+### Changed
+- New Open Graph image for the landing (dark card with the terminal and the tagline) so link previews on LinkedIn, Facebook and chat apps stop showing a cropped screenshot of the page.
+
 ## [1.2.0] - 2026-09-22
 
 ### Added
