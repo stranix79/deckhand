@@ -1,0 +1,90 @@
+package hub
+
+import (
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+)
+
+// newSiteServer serves the public site routes without a database: nothing
+// under / , /docs, /changelog or /vs touches it for an anonymous visitor.
+func newSiteServer(t *testing.T) *httptest.Server {
+	t.Helper()
+	h, err := New(Config{BaseURL: "https://h.example", Secret: testSecret}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	srv := httptest.NewServer(h.Router())
+	t.Cleanup(srv.Close)
+	return srv
+}
+
+func getBody(t *testing.T, url string) (*http.Response, string) {
+	t.Helper()
+	resp, err := http.Get(url) //nolint:gosec // test server URL
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = resp.Body.Close() }()
+	b, _ := io.ReadAll(resp.Body)
+	return resp, string(b)
+}
+
+func TestComparisonPages(t *testing.T) {
+	srv := newSiteServer(t)
+	pages := map[string]string{
+		"/vs":               "Deckhand compared with reveal.js, Slidev and Google Slides",
+		"/vs/reveal-js":     "Deckhand vs reveal.js",
+		"/vs/slidev":        "Deckhand vs Slidev",
+		"/vs/google-slides": "Deckhand vs Google Slides",
+	}
+	for path, title := range pages {
+		resp, body := getBody(t, srv.URL+path)
+		if resp.StatusCode != 200 {
+			t.Fatalf("%s: %d", path, resp.StatusCode)
+		}
+		if ct := resp.Header.Get("Content-Type"); !strings.HasPrefix(ct, "text/html") {
+			t.Fatalf("%s: content type %q", path, ct)
+		}
+		if resp.Header.Get("Content-Security-Policy") != pageCSP {
+			t.Fatalf("%s: csp %q", path, resp.Header.Get("Content-Security-Policy"))
+		}
+		if !strings.Contains(body, "<title>"+title+" · Deckhand</title>") {
+			t.Fatalf("%s: title %q missing", path, title)
+		}
+		if !strings.Contains(body, `<link rel="canonical" href="https://h.example`+path+`">`) {
+			t.Fatalf("%s: canonical missing", path)
+		}
+		if !strings.Contains(body, `og:image" content="https://h.example/static/site/og.png"`) || !strings.Contains(body, `<meta name="description"`) {
+			t.Fatalf("%s: open graph / description missing", path)
+		}
+		if strings.Contains(body, "noindex") {
+			t.Fatalf("%s: must be indexable", path)
+		}
+		if path != "/vs" && (!strings.Contains(body, "<table>") || !strings.Contains(body, "instead")) {
+			t.Fatalf("%s: comparison table or 'when to pick X instead' missing", path)
+		}
+	}
+	if resp, _ := getBody(t, srv.URL+"/vs/keynote"); resp.StatusCode != 404 {
+		t.Fatalf("unknown comparison: %d", resp.StatusCode)
+	}
+	// App pages keep noindex.
+	if _, body := getBody(t, srv.URL+"/login"); !strings.Contains(body, `<meta name="robots" content="noindex">`) {
+		t.Fatal("login page must stay noindex")
+	}
+}
+
+func TestDocPageNames(t *testing.T) {
+	srv := newSiteServer(t)
+	for _, path := range []string{"/docs/LLM", "/docs/LLM.md", "/docs/llm"} {
+		resp, body := getBody(t, srv.URL+path)
+		if resp.StatusCode != 200 || !strings.Contains(body, "Generate a deck with an LLM") {
+			t.Fatalf("%s: %d", path, resp.StatusCode)
+		}
+	}
+	if resp, _ := getBody(t, srv.URL+"/docs/NOPE"); resp.StatusCode != 404 {
+		t.Fatalf("unknown doc: %d", resp.StatusCode)
+	}
+}

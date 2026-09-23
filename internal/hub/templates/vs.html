@@ -1,0 +1,7 @@
+{{define "content"}}
+<article class="doc">
+  <nav class="docnav"><a href="/vs"{{if eq .Slug ""}} class="on"{{end}}>Compared</a>{{range .Pages}}<a href="/vs/{{.Slug}}"{{if eq .Slug $.Slug}} class="on"{{end}}>vs {{.Nav}}</a>{{end}}</nav>
+  {{.Body}}
+  <p class="cta"><a class="button primary" href="https://github.com/stranix79/deckhand#readme">Read the README</a> <a class="button" href="/">deckhand.show</a></p>
+</article>
+{{end}}

@@ -63,6 +63,29 @@ func (h *Hub) render(w http.ResponseWriter, r *http.Request, name string, data m
 	}
 }
 
+// renderPublic is render for pages that anyone may read and that search
+// engines may index (comparisons, later maybe more). Same templates, same
+// CSP, but cacheable: the page is rendered for an anonymous visitor even when
+// a session cookie is present, so a shared cache can never leak a signed-in
+// header to someone else.
+func (h *Hub) renderPublic(w http.ResponseWriter, r *http.Request, name string, data map[string]any) {
+	t, err := h.page(name)
+	if err != nil {
+		h.serverError(w, r, err)
+		return
+	}
+	data["User"] = nil
+	data["Cfg"] = h.cfg
+	data["BaseURL"] = h.cfg.BaseURL
+	data["Year"] = time.Now().Year()
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Content-Security-Policy", pageCSP)
+	w.Header().Set("Cache-Control", "public, max-age=300")
+	if err := t.ExecuteTemplate(w, "layout", data); err != nil {
+		slog.Error("render", "page", name, "err", err)
+	}
+}
+
 func (h *Hub) serverError(w http.ResponseWriter, r *http.Request, err error) {
 	slog.Error("request failed", "path", r.URL.Path, "err", err)
 	w.WriteHeader(http.StatusInternalServerError)

@@ -4,8 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{.Title}} · Deckhand</title>
-<meta name="robots" content="noindex">
-<link rel="stylesheet" href="/static/hub/hub.css">
+{{with .SEO}}<meta name="description" content="{{.Description}}">
+<link rel="canonical" href="{{.Canonical}}">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Deckhand">
+<meta property="og:title" content="{{$.Title}}">
+<meta property="og:description" content="{{.Description}}">
+<meta property="og:url" content="{{.Canonical}}">
+<meta property="og:image" content="{{$.BaseURL}}/static/site/og.png">
+<meta name="twitter:card" content="summary_large_image">
+{{else}}<meta name="robots" content="noindex">
+{{end}}<link rel="stylesheet" href="/static/hub/hub.css">
 </head>
 <body>
 <header class="top">

@@ -27,6 +27,8 @@ func (h *Hub) siteRoutes(r chi.Router) {
 	r.Get("/docs", func(w http.ResponseWriter, r *http.Request) { http.Redirect(w, r, "/docs/FORMAT", http.StatusFound) })
 	r.Get("/docs/{name}", h.docPage)
 	r.Get("/changelog", h.changelog)
+	r.Get("/vs", h.vsIndex)
+	r.Get("/vs/{slug}", h.vsPage)
 	r.Get("/static/site/og.png", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "image/png")
 		w.Header().Set("Cache-Control", "public, max-age=86400")

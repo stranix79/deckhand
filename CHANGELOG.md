@@ -6,6 +6,7 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ### Added
 - `docs/LLM.md` and a README section with a ready-to-paste prompt that makes any language model produce a deck that passes `deckhand validate`; served at `/docs/LLM` on the hub.
+- Comparison pages on the site: `/vs` and `/vs/reveal-js`, `/vs/slidev`, `/vs/google-slides`, with a table, where each tool is the better pick, and proper title, description, canonical and Open Graph tags. Hub pages only carry `noindex` when they do not declare that metadata.
 
 ## [1.2.1] - 2026-09-22
 
