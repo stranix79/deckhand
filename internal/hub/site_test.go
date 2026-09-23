@@ -88,3 +88,38 @@ func TestDocPageNames(t *testing.T) {
 		t.Fatalf("unknown doc: %d", resp.StatusCode)
 	}
 }
+
+func TestSitemapAndRobots(t *testing.T) {
+	srv := newSiteServer(t)
+	resp, body := getBody(t, srv.URL+"/sitemap.xml")
+	if resp.StatusCode != 200 || !strings.HasPrefix(resp.Header.Get("Content-Type"), "application/xml") {
+		t.Fatalf("sitemap: %d %s", resp.StatusCode, resp.Header.Get("Content-Type"))
+	}
+	for _, loc := range []string{"https://h.example/", "https://h.example/docs/FORMAT", "https://h.example/docs/LLM", "https://h.example/changelog", "https://h.example/vs", "https://h.example/vs/google-slides"} {
+		if !strings.Contains(body, "<loc>"+loc+"</loc>") {
+			t.Fatalf("sitemap lacks %s:\n%s", loc, body)
+		}
+	}
+	if strings.Contains(body, "/app") || strings.Contains(body, "/d/") {
+		t.Fatal("sitemap must not list app pages or deck permalinks")
+	}
+	// Every listed page must answer 200 and be indexable.
+	for _, line := range strings.Split(body, "\n") {
+		if !strings.Contains(line, "<loc>") {
+			continue
+		}
+		path := strings.TrimPrefix(strings.TrimSuffix(strings.TrimSpace(line), "</loc></url>"), "<url><loc>https://h.example")
+		r2, b2 := getBody(t, srv.URL+path)
+		if r2.StatusCode != 200 || strings.Contains(b2, "noindex") {
+			t.Fatalf("%s: %d indexable=%v", path, r2.StatusCode, !strings.Contains(b2, "noindex"))
+		}
+	}
+
+	resp, body = getBody(t, srv.URL+"/robots.txt")
+	if resp.StatusCode != 200 || !strings.HasPrefix(resp.Header.Get("Content-Type"), "text/plain") {
+		t.Fatalf("robots: %d %s", resp.StatusCode, resp.Header.Get("Content-Type"))
+	}
+	if !strings.Contains(body, "Sitemap: https://h.example/sitemap.xml") || !strings.Contains(body, "Disallow: /app") {
+		t.Fatalf("robots:\n%s", body)
+	}
+}

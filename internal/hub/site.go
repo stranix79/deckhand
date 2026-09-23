@@ -29,6 +29,8 @@ func (h *Hub) siteRoutes(r chi.Router) {
 	r.Get("/changelog", h.changelog)
 	r.Get("/vs", h.vsIndex)
 	r.Get("/vs/{slug}", h.vsPage)
+	r.Get("/sitemap.xml", h.sitemap)
+	r.Get("/robots.txt", h.robots)
 	r.Get("/static/site/og.png", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "image/png")
 		w.Header().Set("Cache-Control", "public, max-age=86400")
@@ -115,7 +117,20 @@ func (h *Hub) docPage(w http.ResponseWriter, r *http.Request) {
 		h.serverError(w, r, err)
 		return
 	}
-	h.render(w, r, "doc.html", map[string]any{"Title": name, "Name": name, "Docs": docPages, "Body": body})
+	h.render(w, r, "doc.html", map[string]any{"Title": name, "Name": name, "Docs": docPages, "Body": body,
+		"SEO": seo{Description: docDescriptions[name], Canonical: h.cfg.BaseURL + "/docs/" + name}})
+}
+
+// docDescriptions feed the meta description of each doc page; a doc without
+// one (a file dropped in docs/ later) still renders, with noindex.
+var docDescriptions = map[string]string{
+	"EXAMPLES": "Example Deckhand decks: the Field notes showcase and the minimal Ship it deck, live on the hub and as source on GitHub.",
+	"FORMAT":   "The Deckhand deck format: one HTML file per slide, natural order, optional deck.json with title, ratio and presenter notes, limits, and the postMessage protocol for fragments.",
+	"LLM":      "A prompt that makes Claude, ChatGPT or a local model produce a complete Deckhand deck that passes deckhand validate, with the reasons behind each rule and the usual failures.",
+	"CLI":      "The deckhand command line: validate, present, login, push, serve, and what each one prints.",
+	"HUB":      "The Deckhand Hub: hosted at deckhand.show or self-hosted, plans, configuration and deployment.",
+	"PROTOCOL": "The Deckhand wire protocol between stage, remote, viewers and hub.",
+	"SECURITY": "How Deckhand isolates untrusted slides: sandboxed iframes, strict CSP, separate deck origin, upload checks.",
 }
 
 // changelog renders CHANGELOG.md from the working directory at build time is
@@ -136,5 +151,42 @@ func (h *Hub) changelog(w http.ResponseWriter, r *http.Request) {
 		h.serverError(w, r, err)
 		return
 	}
-	h.render(w, r, "doc.html", map[string]any{"Title": "Changelog", "Name": "CHANGELOG", "Docs": docPages, "Body": body})
+	h.render(w, r, "doc.html", map[string]any{"Title": "Changelog", "Name": "CHANGELOG", "Docs": docPages, "Body": body,
+		"SEO": seo{Description: "What changed in each Deckhand release.", Canonical: h.cfg.BaseURL + "/changelog"}})
+}
+
+// sitemap lists the public pages: landing, docs, changelog, comparisons.
+// Deck permalinks are deliberately absent; their owners share them.
+func (h *Hub) sitemap(w http.ResponseWriter, _ *http.Request) {
+	var b strings.Builder
+	b.WriteString(`<?xml version="1.0" encoding="UTF-8"?>` + "\n")
+	b.WriteString(`<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">` + "\n")
+	for _, p := range h.publicPaths() {
+		b.WriteString("  <url><loc>" + template.HTMLEscapeString(h.cfg.BaseURL+p) + "</loc></url>\n")
+	}
+	b.WriteString("</urlset>\n")
+	w.Header().Set("Content-Type", "application/xml; charset=utf-8")
+	w.Header().Set("Cache-Control", "public, max-age=3600")
+	_, _ = w.Write([]byte(b.String()))
+}
+
+// publicPaths is every path a crawler should know about, in sitemap order.
+func (h *Hub) publicPaths() []string {
+	paths := []string{"/"}
+	for _, n := range docPages {
+		paths = append(paths, "/docs/"+n)
+	}
+	paths = append(paths, "/changelog", "/vs")
+	for _, p := range vsPages {
+		paths = append(paths, "/vs/"+p.Slug)
+	}
+	return paths
+}
+
+// robots keeps crawlers out of the signed-in app and the live screens, which
+// are useless without a session anyway, and points at the sitemap.
+func (h *Hub) robots(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Cache-Control", "public, max-age=3600")
+	_, _ = w.Write([]byte("User-agent: *\nAllow: /\nDisallow: /app\nDisallow: /billing\nDisallow: /login\nDisallow: /auth/\nDisallow: /api/\nDisallow: /s/\nDisallow: /r/\nDisallow: /v/\n\nSitemap: " + h.cfg.BaseURL + "/sitemap.xml\n"))
 }
