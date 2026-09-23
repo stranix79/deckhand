@@ -123,3 +123,28 @@ func TestSitemapAndRobots(t *testing.T) {
 		t.Fatalf("robots:\n%s", body)
 	}
 }
+
+func TestDemoVideo(t *testing.T) {
+	srv := newSiteServer(t)
+	resp, body := getBody(t, srv.URL+"/static/site/demo.mp4")
+	if resp.StatusCode != 200 || resp.Header.Get("Content-Type") != "video/mp4" || len(body) < 100000 {
+		t.Fatalf("demo.mp4: status=%d type=%q len=%d", resp.StatusCode, resp.Header.Get("Content-Type"), len(body))
+	}
+	req, _ := http.NewRequest(http.MethodGet, srv.URL+"/static/site/demo.mp4", nil)
+	req.Header.Set("Range", "bytes=0-99")
+	r2, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer r2.Body.Close()
+	if r2.StatusCode != http.StatusPartialContent || r2.ContentLength != 100 {
+		t.Fatalf("range request: status=%d len=%d", r2.StatusCode, r2.ContentLength)
+	}
+	if resp, body := getBody(t, srv.URL+"/static/site/demo-poster.jpg"); resp.StatusCode != 200 || resp.Header.Get("Content-Type") != "image/jpeg" || len(body) < 10000 {
+		t.Fatalf("poster: status=%d type=%q len=%d", resp.StatusCode, resp.Header.Get("Content-Type"), len(body))
+	}
+	_, landing := getBody(t, srv.URL+"/")
+	if !strings.Contains(landing, `<source src="/static/site/demo.mp4"`) || !strings.Contains(landing, `poster="/static/site/demo-poster.jpg"`) {
+		t.Fatal("landing does not embed the demo video")
+	}
+}

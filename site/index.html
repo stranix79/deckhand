@@ -60,6 +60,12 @@
   .hint{font-family:var(--display);font-size:.95rem;color:var(--muted);margin-top:18px}
   kbd{font-family:var(--display);border:1px solid var(--muted);border-radius:4px;padding:1px 6px;font-size:.85em;color:var(--ink)}
 
+  /* ---------- real recording ---------- */
+  .real{padding-top:0}
+  .real .frame{background:var(--ink);border-radius:14px;padding:clamp(12px,2vw,22px);box-shadow:0 30px 60px -30px rgba(18,35,59,.55);max-width:1100px;margin:1.6em auto 0}
+  .real video{display:block;width:100%;height:auto;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:#0C1A2C}
+  .real h2,.real p{margin-left:auto;margin-right:auto;text-align:center}
+  .real .cap{font-family:var(--display);font-size:.95rem;color:var(--muted);margin-top:14px}
   /* ---------- live demo ---------- */
   .demo{background:var(--ink);border-radius:14px;padding:clamp(16px,2.5vw,28px);display:grid;grid-template-columns:1.9fr 1fr;grid-template-rows:auto auto;gap:14px;color:var(--white);box-shadow:0 30px 60px -30px rgba(18,35,59,.6)}
   .screen{background:#0C1A2C;border-radius:8px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
@@ -214,6 +220,23 @@
       <span class="follow" lang="en">● following</span><span class="follow" lang="fr">● en direct</span>
     </div>
   </div>
+</section>
+
+<!-- ================= REAL RECORDING ================= -->
+<section class="real" id="video">
+  <h2 lang="en">The real thing, in fifteen seconds</h2>
+  <h2 lang="fr">En vrai, en quinze secondes</h2>
+  <p lang="en">The mock-up above is a simulation. This is a screen recording of Deckhand presenting the example deck: the stage on the left, the remote on a phone, the audience view on the right.</p>
+  <p lang="fr">La maquette ci-dessus est une simulation. Ceci est un enregistrement d'écran de Deckhand avec le deck d'exemple : la scène à gauche, la télécommande sur un téléphone, la vue du public à droite.</p>
+  <div class="frame">
+    <video autoplay muted loop playsinline preload="metadata" poster="/static/site/demo-poster.jpg" width="1600" height="1040" aria-label="Deckhand in fifteen seconds: stage, remote, audience">
+      <source src="/static/site/demo.mp4" type="video/mp4">
+      <a href="https://github.com/stranix79/deckhand/raw/main/docs/img/demo.gif" lang="en">Watch the demo as a GIF</a>
+      <a href="https://github.com/stranix79/deckhand/raw/main/docs/img/demo.gif" lang="fr">Voir la démo en GIF</a>
+    </video>
+  </div>
+  <p class="cap" lang="en">No sound. Recorded with <code>deckhand present examples/ship-it</code>, nothing else running.</p>
+  <p class="cap" lang="fr">Sans son. Enregistré avec <code>deckhand present examples/ship-it</code>, rien d'autre en marche.</p>
 </section>
 
 <!-- ================= MANIFESTO ================= -->
