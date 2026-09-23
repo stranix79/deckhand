@@ -140,7 +140,7 @@ func TestDemoVideo(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer r2.Body.Close()
+	defer func() { _ = r2.Body.Close() }()
 	if r2.StatusCode != http.StatusPartialContent || r2.ContentLength != 100 {
 		t.Fatalf("range request: status=%d len=%d", r2.StatusCode, r2.ContentLength)
 	}
