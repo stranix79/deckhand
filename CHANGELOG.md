@@ -4,6 +4,9 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+### Added
+- `docs/LLM.md` and a README section with a ready-to-paste prompt that makes any language model produce a deck that passes `deckhand validate`; served at `/docs/LLM` on the hub.
+
 ## [1.2.1] - 2026-09-22
 
 ### Changed

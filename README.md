@@ -71,6 +71,39 @@ opt into fragments with a tiny `postMessage` protocol. Everything is in
 [docs/FORMAT.md](docs/FORMAT.md); [examples/ship-it](examples/ship-it) is an
 eight-slide deck that uses all of it.
 
+## Generate a deck with an LLM
+
+The format is plain enough that any model can write a whole deck from one
+prompt: Claude, ChatGPT, Gemini, a local model. The prompt below is precise
+about what `deckhand validate` checks and what the sandbox forbids, so the
+result presents without fixes. Replace TOPIC, AUDIENCE and N, paste, save
+the files, then `deckhand validate my-talk/` and `deckhand present my-talk/`.
+The long version with explanations, fragments and common failures is in
+[docs/LLM.md](docs/LLM.md).
+
+```
+Create a slide deck for Deckhand (https://deckhand.show) about TOPIC, for AUDIENCE, in about N slides.
+
+Output a folder named my-talk/ with one HTML file per slide plus a deck.json manifest. Rules:
+
+1. File names: 01-title.html, 02-<short-name>.html, ... up to the last slide. Two-digit prefix, lowercase, hyphens, .html extension. The first slide is a title slide, the last one a closing slide with a one-line takeaway.
+2. Each file is a complete, self-contained HTML document: <!doctype html>, <html lang="en">, <meta charset="utf-8">, a <title>, all CSS inside a <style> tag in the head, any JavaScript inside a <script> tag. No external resources at all: no CDN, no Google Fonts, no <link href="https://...">, no <img src="https://...">, no fetch or XMLHttpRequest. Slides run inside a sandboxed iframe (sandbox="allow-scripts", no allow-same-origin) and must work offline, so nothing outside the folder will load, and there is no localStorage, no cookies, no form submission, no window.open and no navigation of the parent window. Draw illustrations with inline SVG or CSS.
+3. Each slide is designed for a fixed 1920x1080 canvas (16:9). Set html and body to width: 1920px; height: 1080px; margin: 0; overflow: hidden. Use pixel sizes, never vw, vh or viewport units: Deckhand scales the whole page to fit the screen. Keep text big: titles 88px or more, body text 40px or more, at most six lines of text per slide. Use system fonts (font-family: system-ui, sans-serif).
+4. deck.json at the root of the folder, exactly this shape and no other keys:
+{
+  "title": "Deck title",
+  "ratio": "16:9",
+  "slides": [
+    { "file": "01-title.html", "notes": "What to say on this slide, two to four sentences of plain text." },
+    { "file": "02-short-name.html", "notes": "..." }
+  ]
+}
+List every slide file in order. Every entry has "file" and "notes" (presenter notes, plain text, shown on the presenter's phone only). Add "public": true to an entry when its notes should also be shown to the audience. Unknown keys are an error.
+5. One idea per slide, consistent colours and typography across all slides, high contrast.
+
+Print each file in its own code block, preceded by its path.
+```
+
 ## Development
 
 ```
