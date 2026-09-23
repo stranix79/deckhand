@@ -7,13 +7,12 @@ Your AI already writes one HTML file per slide. Deckhand is what presents them.
 
 ```
 deckhand validate talk/     # check the deck, list every problem
-deckhand present  talk/     # stage + remote + viewer on your LAN     (milestone 3)
-deckhand push     talk/     # publish on a Hub, get a public link      (milestone 5)
+deckhand present  talk/     # stage + remote + viewer on your LAN
+deckhand push     talk/     # publish on a Hub, get a public link
 ```
 
 <p align="center">
-  <img src="docs/img/stage.jpg" alt="The stage: a slide with fragments and the laser pointer" width="70%">
-  <img src="docs/img/remote.jpg" alt="The remote on a phone: thumbnails, notes, timer, laser" width="27%">
+  <img src="docs/img/demo.gif" alt="Deckhand in 15 seconds: the stage on the big screen, the remote on a phone with notes, laser and QR, the audience following live" width="100%">
 </p>
 
 Local mode (`validate`, `present`, the three screens) is MIT. The hosted
