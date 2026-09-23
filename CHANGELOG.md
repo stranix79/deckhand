@@ -4,6 +4,12 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-09-23
+
+### Fixed
+- `/changelog` on the hub is now served by every build: the changelog is embedded from the repository root instead of being copied into `docs/` by the Makefile, which the CI, goreleaser and Homebrew builds never did (their binaries answered 404, and the release pipeline failed on that test).
+- The indexability test matches the exact robots meta tag instead of the word "noindex", which the changelog text itself contains.
+
 ## [1.3.0] - 2026-09-23
 
 ### Added

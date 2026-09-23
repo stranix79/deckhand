@@ -6,7 +6,6 @@ LDFLAGS := -s -w -X github.com/stranix79/deckhand/internal/version.Version=$(VER
 .PHONY: build test lint fmt validate run-local run-hub release clean
 
 build:
-	cp CHANGELOG.md docs/CHANGELOG.md
 	CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o $(BIN) ./cmd/deckhand
 
 test:

@@ -8,6 +8,10 @@ import (
 	"testing"
 )
 
+// noindexTag is the exact robots tag the layout emits; the word alone also
+// appears in the changelog text, so tests must match the tag.
+const noindexTag = `<meta name="robots" content="noindex">`
+
 // newSiteServer serves the public site routes without a database: nothing
 // under / , /docs, /changelog or /vs touches it for an anonymous visitor.
 func newSiteServer(t *testing.T) *httptest.Server {
@@ -60,7 +64,7 @@ func TestComparisonPages(t *testing.T) {
 		if !strings.Contains(body, `og:image" content="https://h.example/static/site/og.png"`) || !strings.Contains(body, `<meta name="description"`) {
 			t.Fatalf("%s: open graph / description missing", path)
 		}
-		if strings.Contains(body, "noindex") {
+		if strings.Contains(body, noindexTag) {
 			t.Fatalf("%s: must be indexable", path)
 		}
 		if path != "/vs" && (!strings.Contains(body, "<table>") || !strings.Contains(body, "instead")) {
@@ -71,7 +75,7 @@ func TestComparisonPages(t *testing.T) {
 		t.Fatalf("unknown comparison: %d", resp.StatusCode)
 	}
 	// App pages keep noindex.
-	if _, body := getBody(t, srv.URL+"/login"); !strings.Contains(body, `<meta name="robots" content="noindex">`) {
+	if _, body := getBody(t, srv.URL+"/login"); !strings.Contains(body, noindexTag) {
 		t.Fatal("login page must stay noindex")
 	}
 }
@@ -110,8 +114,8 @@ func TestSitemapAndRobots(t *testing.T) {
 		}
 		path := strings.TrimPrefix(strings.TrimSuffix(strings.TrimSpace(line), "</loc></url>"), "<url><loc>https://h.example")
 		r2, b2 := getBody(t, srv.URL+path)
-		if r2.StatusCode != 200 || strings.Contains(b2, "noindex") {
-			t.Fatalf("%s: %d indexable=%v", path, r2.StatusCode, !strings.Contains(b2, "noindex"))
+		if r2.StatusCode != 200 || strings.Contains(b2, noindexTag) {
+			t.Fatalf("%s: %d indexable=%v", path, r2.StatusCode, !strings.Contains(b2, noindexTag))
 		}
 	}
 

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"html/template"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -13,6 +12,7 @@ import (
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
 
+	"github.com/stranix79/deckhand"
 	"github.com/stranix79/deckhand/docs"
 	"github.com/stranix79/deckhand/site"
 	"github.com/stranix79/deckhand/web"
@@ -143,19 +143,10 @@ var docDescriptions = map[string]string{
 	"SECURITY": "How Deckhand isolates untrusted slides: sandboxed iframes, strict CSP, separate deck origin, upload checks.",
 }
 
-// changelog renders CHANGELOG.md from the working directory at build time is
-// not possible (it lives at the repo root), so it is embedded via docs/:
-// the Makefile copies it there before building.
+// changelog renders the repository CHANGELOG.md, embedded by the root
+// package (a Go embed cannot reach a parent directory from docs/).
 func (h *Hub) changelog(w http.ResponseWriter, r *http.Request) {
-	src, err := docs.FS.ReadFile("CHANGELOG.md")
-	if err != nil {
-		if b, e := os.ReadFile("CHANGELOG.md"); e == nil {
-			src = b
-		} else {
-			h.notFound(w, r, "No changelog.")
-			return
-		}
-	}
+	src := deckhand.Changelog
 	body, err := renderMarkdown(src)
 	if err != nil {
 		h.serverError(w, r, err)
