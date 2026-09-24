@@ -117,3 +117,7 @@ make validate   # build + validate the example deck
 MIT for everything, except `internal/hub` (the hosted multi-tenant part) which
 is under the Business Source License 1.1, see [LICENSE.hub](LICENSE.hub).
 Made in Belgium by [CODE79](https://stranix.net).
+
+## Support
+
+Deckhand is free and MIT. If it saves you a talk, you can [sponsor the project on GitHub](https://github.com/sponsors/stranix79) or [buy me a Red Bull](https://ko-fi.com/stranix). Other ways: [stranix.net/soutenir](https://stranix.net/soutenir/).
