@@ -152,3 +152,38 @@ func TestDemoVideo(t *testing.T) {
 		t.Fatal("landing does not embed the demo video")
 	}
 }
+
+func TestBlog(t *testing.T) {
+	srv := newSiteServer(t)
+	for _, path := range []string{"/blog", "/blog/fr", "/blog/hello-deckhand", "/blog/fr/hello-deckhand", "/blog/help-deckhand-live"} {
+		resp, body := getBody(t, srv.URL+path)
+		if resp.StatusCode != 200 || strings.Contains(body, noindexTag) {
+			t.Fatalf("%s: %d indexable=%v", path, resp.StatusCode, !strings.Contains(body, noindexTag))
+		}
+		if !strings.Contains(body, `hreflang="fr"`) || !strings.Contains(body, `hreflang="en"`) {
+			t.Fatalf("%s: missing hreflang pair", path)
+		}
+	}
+	_, body := getBody(t, srv.URL+"/blog/fr/hello-deckhand")
+	if !strings.Contains(body, `<html lang="fr">`) || !strings.Contains(body, "/static/blog/launch.jpg") {
+		t.Fatal("french post: lang or image missing")
+	}
+	if !strings.Contains(body, `og:image" content="https://h.example/static/blog/launch.jpg"`) {
+		t.Fatal("french post: og:image should be the post image")
+	}
+	resp, _ := getBody(t, srv.URL+"/static/blog/launch.jpg")
+	if resp.StatusCode != 200 || resp.Header.Get("Content-Type") != "image/jpeg" {
+		t.Fatalf("image: %d %s", resp.StatusCode, resp.Header.Get("Content-Type"))
+	}
+	resp, body = getBody(t, srv.URL+"/blog/feed.xml")
+	if resp.StatusCode != 200 || !strings.HasPrefix(resp.Header.Get("Content-Type"), "application/rss+xml") || !strings.Contains(body, "<item>") {
+		t.Fatalf("feed: %d %s", resp.StatusCode, resp.Header.Get("Content-Type"))
+	}
+	if resp, _ := getBody(t, srv.URL+"/blog/nope"); resp.StatusCode != 404 {
+		t.Fatalf("unknown post: %d", resp.StatusCode)
+	}
+	_, body = getBody(t, srv.URL+"/sitemap.xml")
+	if !strings.Contains(body, "<loc>https://h.example/blog/fr/deckhand-1-3</loc>") {
+		t.Fatal("sitemap lacks the french release post")
+	}
+}

@@ -1,5 +1,5 @@
 {{define "layout"}}<!doctype html>
-<html lang="en">
+<html lang="{{if .Lang}}{{.Lang}}{{else}}en{{end}}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -11,9 +11,10 @@
 <meta property="og:title" content="{{$.Title}}">
 <meta property="og:description" content="{{.Description}}">
 <meta property="og:url" content="{{.Canonical}}">
-<meta property="og:image" content="{{$.BaseURL}}/static/site/og.png">
+<meta property="og:image" content="{{if $.OGImage}}{{$.OGImage}}{{else}}{{$.BaseURL}}/static/site/og.png{{end}}">
 <meta name="twitter:card" content="summary_large_image">
-{{else}}<meta name="robots" content="noindex">
+{{range $.Alternates}}<link rel="alternate" hreflang="{{.Lang}}" href="{{.URL}}">
+{{end}}{{else}}<meta name="robots" content="noindex">
 {{end}}<link rel="stylesheet" href="/static/hub/hub.css">
 </head>
 <body>
@@ -24,9 +25,11 @@
       <a href="/app">Decks</a>
       <a href="/billing">Plan{{if .User.Paid}}: Pro{{else}}: Free{{end}}</a>
       <a href="/docs/CLI">Docs</a>
+      <a href="/blog">Blog</a>
       <form method="post" action="/logout" class="inline"><button class="link">Sign out ({{.User.Email}})</button></form>
     {{else}}
       <a href="/docs/CLI">Docs</a>
+      <a href="/blog">Blog</a>
       <a href="/login">Sign in</a>
     {{end}}
   </nav>
@@ -34,6 +37,6 @@
 <main>
 {{template "content" .}}
 </main>
-<footer>Deckhand · made in Belgium by <a href="https://stranix.net">CODE79</a> · <a href="/changelog">changelog</a> · <a href="/docs/HUB">self-host</a></footer>
+<footer>Deckhand · made in Belgium by <a href="https://stranix.net">CODE79</a> · <a href="/blog">blog</a> · <a href="/changelog">changelog</a> · <a href="/docs/HUB">self-host</a></footer>
 </body>
 </html>{{end}}

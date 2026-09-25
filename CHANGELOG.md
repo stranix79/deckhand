@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-25
+
+### Added
+- A blog on the site, in English at `/blog` and in French at `/blog/fr`, with one Markdown file per post and per language embedded in the binary, `hreflang` pairs between translations, a per-post Open Graph image, RSS feeds (`/blog/feed.xml`, `/blog/fr/feed.xml`) and the posts in the sitemap. Three posts to start: the launch, the 1.3 release, and a call to try and share the project. Blog link in the landing navigation and the hub layout.
+
 ## [1.3.1] - 2026-09-23
 
 ### Fixed

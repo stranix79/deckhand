@@ -1,0 +1,22 @@
+{{define "content"}}
+<section class="blog">
+  <header class="blog-head">
+    <h1>{{if eq .Lang "fr"}}Le blog{{else}}The blog{{end}}</h1>
+    <p class="muted">{{if eq .Lang "fr"}}Versions, coulisses et petites leçons apprises en présentant des pages web.{{else}}Releases, behind the scenes, and small lessons learned while presenting web pages.{{end}}
+      {{with .OtherLang}}· <a href="{{.URL}}" hreflang="{{.Lang}}">{{if eq .Lang "fr"}}Lire en français{{else}}Read in English{{end}}</a>{{end}}
+      · <a href="{{if eq .Lang "fr"}}/blog/fr/feed.xml{{else}}/blog/feed.xml{{end}}">RSS</a></p>
+  </header>
+  <div class="posts">
+  {{range .Posts}}
+    <a class="post-card" href="{{.URL}}">
+      {{if .Image}}<img src="/static/blog/{{.Image}}" alt="" loading="lazy" width="1200" height="630">{{end}}
+      <div class="post-card-body">
+        <time datetime="{{.Date.Format "2006-01-02"}}">{{.DateText}}</time>
+        <h2>{{.Title}}</h2>
+        <p>{{.Summary}}</p>
+      </div>
+    </a>
+  {{end}}
+  </div>
+</section>
+{{end}}

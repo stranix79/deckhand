@@ -28,6 +28,7 @@ type Hub struct {
 	sessions *session.Manager
 	ui       *ui.Server
 	tmpl     *template.Template
+	blog     map[string][]blogPost // per language, newest first
 	metrics  *metrics
 
 	odoo *odooClient // nil unless Billing == "odoo"
@@ -98,6 +99,7 @@ func New(cfg Config, db *pgxpool.Pool) (*Hub, error) {
 		db:       db,
 		sessions: session.NewManager(),
 		tmpl:     tmpl,
+		blog:     loadBlog(),
 		metrics:  newMetrics(),
 		events:   make(chan eventRow, 1024),
 	}

@@ -1,0 +1,13 @@
+{{define "content"}}
+<article class="doc post">
+  <nav class="docnav"><a href="{{if eq .Lang "fr"}}/blog/fr{{else}}/blog{{end}}">{{if eq .Lang "fr"}}← Le blog{{else}}← The blog{{end}}</a>{{with .OtherLang}}<a href="{{.URL}}" hreflang="{{.Lang}}">{{if eq .Lang "fr"}}Lire en français{{else}}Read in English{{end}}</a>{{end}}</nav>
+  <header class="post-head">
+    <time datetime="{{.Post.Date.Format "2006-01-02"}}">{{.Post.DateText}}</time>
+    <h1>{{.Post.Title}}</h1>
+    <p class="lede">{{.Post.Summary}}</p>
+  </header>
+  {{if .Post.Image}}<figure class="post-hero"><img src="/static/blog/{{.Post.Image}}" alt="" width="1200" height="630">{{if .Post.Credit}}<figcaption>{{.Post.Credit}}</figcaption>{{end}}</figure>{{end}}
+  {{.Post.Body}}
+  <p class="cta"><a class="button primary" href="https://github.com/stranix79/deckhand">{{if eq .Lang "fr"}}Le code sur GitHub{{else}}The code on GitHub{{end}}</a> <a class="button" href="/">deckhand.show</a></p>
+</article>
+{{end}}

@@ -29,6 +29,7 @@ func (h *Hub) siteRoutes(r chi.Router) {
 	r.Get("/changelog", h.changelog)
 	r.Get("/vs", h.vsIndex)
 	r.Get("/vs/{slug}", h.vsPage)
+	h.blogRoutes(r)
 	r.Get("/sitemap.xml", h.sitemap)
 	r.Get("/robots.txt", h.robots)
 	r.Get("/static/site/og.png", func(w http.ResponseWriter, _ *http.Request) {
@@ -181,6 +182,7 @@ func (h *Hub) publicPaths() []string {
 	for _, p := range vsPages {
 		paths = append(paths, "/vs/"+p.Slug)
 	}
+	paths = append(paths, h.blogPaths()...)
 	return paths
 }
 
