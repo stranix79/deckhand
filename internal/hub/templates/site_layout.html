@@ -1,0 +1,42 @@
+{{define "site"}}<!doctype html>
+<html lang="{{if .Lang}}{{.Lang}}{{else}}en{{end}}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{.Title}} · Deckhand</title>
+{{with .SEO}}<meta name="description" content="{{.Description}}">
+<link rel="canonical" href="{{.Canonical}}">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Deckhand">
+<meta property="og:title" content="{{$.Title}}">
+<meta property="og:description" content="{{.Description}}">
+<meta property="og:url" content="{{.Canonical}}">
+<meta property="og:image" content="{{if $.OGImage}}{{$.OGImage}}{{else}}{{$.BaseURL}}/static/site/og.png{{end}}">
+<meta name="twitter:card" content="summary_large_image">
+{{range $.Alternates}}<link rel="alternate" hreflang="{{.Lang}}" href="{{.URL}}">
+{{end}}{{else}}<meta name="robots" content="noindex">
+{{end}}{{if .Feed}}<link rel="alternate" type="application/rss+xml" title="Deckhand blog" href="{{.Feed}}">
+{{end}}<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/hub/site.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/{{if eq .Lang "fr"}}#fr{{end}}">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="7" width="26" height="16" rx="2" fill="#12233B"/><path d="M6 27h20" stroke="#C9A227" stroke-width="3" stroke-linecap="round"/><circle cx="16" cy="15" r="3.2" fill="#C9A227"/></svg>
+    Deckhand
+  </a>
+  <nav>
+    {{if eq .Lang "fr"}}<a href="/#why#fr">Pourquoi HTML</a><a href="/#how#fr">Comment ça marche</a><a href="/#format#fr">Le format</a><a href="/blog/fr" class="on">Blog</a><a href="/docs/CLI">Docs</a>{{else}}<a href="/#why">Why HTML</a><a href="/#how">How it works</a><a href="/#format">The format</a><a href="/blog" class="on">Blog</a><a href="/docs/CLI">Docs</a>{{end}}
+    <span class="lang">{{if .LangEN}}<a href="{{.LangEN}}" hreflang="en"{{if ne .Lang "fr"}} class="cur"{{end}}>EN</a>{{end}}{{if .LangFR}}<a href="{{.LangFR}}" hreflang="fr"{{if eq .Lang "fr"}} class="cur"{{end}}>FR</a>{{end}}</span>
+  </nav>
+</header>
+<main class="site-main">
+{{template "content" .}}
+</main>
+<footer class="site-footer">
+  <span>© {{.Year}} CODE79 SCOMM · Ecaussinnes, Belgium</span>
+  <span><a href="https://github.com/stranix79/deckhand">GitHub</a> · <a href="https://stranix.net">stranix.net</a> · <a href="/changelog">changelog</a> · <a href="/docs/HUB">self-host</a></span>
+</footer>
+</body>
+</html>{{end}}

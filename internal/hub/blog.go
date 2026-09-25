@@ -168,11 +168,12 @@ func (h *Hub) blogIndex(w http.ResponseWriter, r *http.Request, lang string) {
 	if lang == "fr" {
 		other = "en"
 	}
-	h.renderPublic(w, r, "blog.html", map[string]any{
+	h.renderSite(w, r, "blog.html", map[string]any{
 		"Title": title, "Lang": lang, "Posts": h.blog[lang],
 		"Alternates": []blogAlternate{{lang, h.cfg.BaseURL + blogIndexURL(lang)}, {other, h.cfg.BaseURL + blogIndexURL(other)}},
-		"OtherLang":  blogAlternate{other, blogIndexURL(other)},
-		"SEO":        seo{Description: desc, Canonical: h.cfg.BaseURL + blogIndexURL(lang)},
+		"LangEN":     blogIndexURL("en"), "LangFR": blogIndexURL("fr"),
+		"Feed": blogIndexURL(lang) + "/feed.xml",
+		"SEO":  seo{Description: desc, Canonical: h.cfg.BaseURL + blogIndexURL(lang)},
 	})
 }
 
@@ -189,16 +190,35 @@ func (h *Hub) blogShow(w http.ResponseWriter, r *http.Request, lang, slug string
 	data := map[string]any{
 		"Title": p.Title, "Lang": lang, "Post": p,
 		"Alternates": []blogAlternate{{lang, h.cfg.BaseURL + p.URL()}},
+		"Feed":       blogIndexURL(lang) + "/feed.xml",
 		"SEO":        seo{Description: p.Summary, Canonical: h.cfg.BaseURL + p.URL()},
 	}
 	if p.Image != "" {
 		data["OGImage"] = h.cfg.BaseURL + "/static/blog/" + p.Image
 	}
+	// Language switch: the translation when it exists, the index otherwise.
+	data["LangEN"], data["LangFR"] = blogIndexURL("en"), blogIndexURL("fr")
 	if o, ok := h.blogPost(other, slug); ok {
 		data["Alternates"] = append(data["Alternates"].([]blogAlternate), blogAlternate{other, h.cfg.BaseURL + o.URL()})
-		data["OtherLang"] = blogAlternate{other, o.URL()}
+		if other == "fr" {
+			data["LangFR"] = o.URL()
+		} else {
+			data["LangEN"] = o.URL()
+		}
 	}
-	h.renderPublic(w, r, "post.html", data)
+	if lang == "fr" {
+		data["LangFR"] = p.URL()
+	} else {
+		data["LangEN"] = p.URL()
+	}
+	// Next = the post published just after this one (the list is newest first).
+	posts := h.blog[lang]
+	for i := range posts {
+		if posts[i].Slug == slug && i > 0 {
+			data["Next"] = posts[i-1]
+		}
+	}
+	h.renderSite(w, r, "post.html", data)
 }
 
 // blogImage serves the embedded post images (JPEG or PNG by extension).

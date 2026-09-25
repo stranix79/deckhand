@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.4.3] - 2026-09-25
+
+### Changed
+- The blog is now part of the site rather than of the app: it renders with the landing's header (logo, navigation, EN/FR switch that links to the translation), footer and fonts, in one text column. The index is a dated list of titles with a one-line summary; a post is a title, a date and the prose, followed by a next-post link. Post images are kept only for link previews (Open Graph). New stylesheet `/static/hub/site.css`.
+
 ## [1.4.2] - 2026-09-25
 
 ### Changed

@@ -21,7 +21,7 @@ var templateFS embed.FS
 // parseTemplates loads layout + one template set per page. Each page file
 // defines "content"; we clone the layout for each so names do not clash.
 func parseTemplates() (*template.Template, error) {
-	return template.ParseFS(templateFS, "templates/layout.html")
+	return template.ParseFS(templateFS, "templates/layout.html", "templates/site_layout.html")
 }
 
 func (h *Hub) page(name string) (*template.Template, error) {
@@ -82,6 +82,27 @@ func (h *Hub) renderPublic(w http.ResponseWriter, r *http.Request, name string, 
 	w.Header().Set("Content-Security-Policy", pageCSP)
 	w.Header().Set("Cache-Control", "public, max-age=300")
 	if err := t.ExecuteTemplate(w, "layout", data); err != nil {
+		slog.Error("render", "page", name, "err", err)
+	}
+}
+
+// renderSite is renderPublic with the landing's chrome instead of the app's:
+// same header, footer and fonts as site/index.html, for pages that belong to
+// the public site (the blog).
+func (h *Hub) renderSite(w http.ResponseWriter, r *http.Request, name string, data map[string]any) {
+	t, err := h.page(name)
+	if err != nil {
+		h.serverError(w, r, err)
+		return
+	}
+	data["User"] = nil
+	data["Cfg"] = h.cfg
+	data["BaseURL"] = h.cfg.BaseURL
+	data["Year"] = time.Now().Year()
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Content-Security-Policy", pageCSP)
+	w.Header().Set("Cache-Control", "public, max-age=300")
+	if err := t.ExecuteTemplate(w, "site", data); err != nil {
 		slog.Error("render", "page", name, "err", err)
 	}
 }

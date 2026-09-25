@@ -47,6 +47,12 @@ func (h *Hub) siteRoutes(r chi.Router) {
 		w.Header().Set("Cache-Control", "public, max-age=86400")
 		_, _ = w.Write(site.Poster)
 	})
+	r.Get("/static/hub/site.css", func(w http.ResponseWriter, _ *http.Request) {
+		b, _ := web.FS.ReadFile("hub/site.css")
+		w.Header().Set("Content-Type", "text/css; charset=utf-8")
+		w.Header().Set("Cache-Control", "public, max-age=3600")
+		_, _ = w.Write(b)
+	})
 	r.Get("/static/hub/hub.css", func(w http.ResponseWriter, _ *http.Request) {
 		b, _ := web.FS.ReadFile("hub/hub.css")
 		w.Header().Set("Content-Type", "text/css; charset=utf-8")

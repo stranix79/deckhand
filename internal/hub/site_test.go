@@ -165,8 +165,8 @@ func TestBlog(t *testing.T) {
 		}
 	}
 	_, body := getBody(t, srv.URL+"/blog/fr/hello-deckhand")
-	if !strings.Contains(body, `<html lang="fr">`) || !strings.Contains(body, "/static/blog/launch.jpg") {
-		t.Fatal("french post: lang or image missing")
+	if !strings.Contains(body, `<html lang="fr">`) || !strings.Contains(body, `href="/blog/hello-deckhand" hreflang="en"`) {
+		t.Fatal("french post: lang or language switch missing")
 	}
 	if !strings.Contains(body, `og:image" content="https://h.example/static/blog/launch.jpg"`) {
 		t.Fatal("french post: og:image should be the post image")
@@ -190,8 +190,10 @@ func TestBlog(t *testing.T) {
 
 func TestHubStylesheet(t *testing.T) {
 	srv := newSiteServer(t)
-	resp, body := getBody(t, srv.URL+"/static/hub/hub.css")
-	if resp.StatusCode != 200 || !strings.HasPrefix(resp.Header.Get("Content-Type"), "text/css") || !strings.Contains(body, ".post-card") {
-		t.Fatalf("hub.css: %d %s, %d bytes", resp.StatusCode, resp.Header.Get("Content-Type"), len(body))
+	for file, marker := range map[string]string{"hub.css": ".docnav", "site.css": ".post-list"} {
+		resp, body := getBody(t, srv.URL+"/static/hub/"+file)
+		if resp.StatusCode != 200 || !strings.HasPrefix(resp.Header.Get("Content-Type"), "text/css") || !strings.Contains(body, marker) {
+			t.Fatalf("%s: %d %s, %d bytes", file, resp.StatusCode, resp.Header.Get("Content-Type"), len(body))
+		}
 	}
 }

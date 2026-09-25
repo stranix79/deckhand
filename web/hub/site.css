@@ -1,0 +1,57 @@
+/* Public site pages rendered by the hub (the blog): same header, footer,
+   tokens and type as site/index.html, so they read as one site. The pages
+   themselves are text first: a title, a date, a column of prose. */
+@import url("/static/shared/base.css");
+
+body { font-family: var(--serif); font-size: 19px; line-height: 1.55; color: var(--text); background: var(--white); }
+a { color: var(--sea); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+h1, h2, h3 { font-family: var(--display); color: var(--ink); line-height: 1.05; margin: 0 0 .5em; letter-spacing: -.01em; }
+p { margin: 0 0 1.1em; }
+code { font-family: var(--mono); font-size: .9em; }
+:not(pre) > code { background: var(--fog); padding: 1px 5px; border-radius: 4px; }
+pre { background: var(--ink); color: #E6EDF3; padding: 16px 18px; border-radius: 10px; overflow: auto; font-size: .9em; line-height: 1.55; margin: 0 0 1.3em; }
+pre code { background: none; padding: 0; font-size: 1em; }
+ul, ol { padding-left: 1.3em; margin: 0 0 1.1em; } li { margin-bottom: .45em; }
+blockquote { margin: 0 0 1.1em; padding-left: 18px; border-left: 3px solid var(--brass); color: var(--muted); }
+hr { border: 0; border-top: 1px solid var(--fog); margin: 2em 0; }
+
+/* header and footer: copied from the landing */
+.site-header { display: flex; align-items: center; justify-content: space-between; padding: 22px clamp(20px, 5vw, 72px); }
+.brand { font-family: var(--display); font-weight: 700; font-size: 1.35rem; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.brand svg { width: 28px; height: 28px; }
+.site-header nav { display: flex; gap: 22px; align-items: center; font-family: var(--display); font-size: .98rem; }
+.site-header nav a { color: var(--text); text-decoration: none; }
+.site-header nav a:hover { color: var(--sea); }
+.site-header nav a.on { color: var(--ink); font-weight: 700; }
+.lang { display: flex; gap: 6px; border-left: 1px solid var(--fog); padding-left: 20px; }
+.lang a { color: var(--muted); padding: 2px 4px; } .lang a.cur { color: var(--ink); font-weight: 700; }
+@media (max-width: 760px) { .site-header nav a:not(.on):not(.lang a) { display: none; } }
+.site-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; padding: 28px clamp(20px, 5vw, 72px) 40px; border-top: 1px solid var(--fog); font-family: var(--display); font-size: .9rem; color: var(--muted); }
+
+/* the column */
+.site-main { max-width: 680px; margin: 0 auto; padding: clamp(20px, 4vw, 48px) clamp(20px, 5vw, 32px) 60px; }
+
+/* blog index: a list, not a grid */
+.blog-title { font-size: clamp(2rem, 4vw, 2.8rem); margin-bottom: .2em; }
+.blog-intro { color: var(--muted); font-size: 1.05rem; margin-bottom: 2.2em; }
+.blog-intro a { color: var(--sea); }
+.post-list { list-style: none; padding: 0; margin: 0; }
+.post-list li { padding: 22px 0; border-top: 1px solid var(--fog); }
+.post-list li:last-child { border-bottom: 1px solid var(--fog); }
+.post-list time { display: block; font-family: var(--display); font-size: .85rem; color: var(--muted); margin-bottom: 6px; }
+.post-list h2 { font-size: 1.45rem; margin: 0 0 .3em; }
+.post-list h2 a { color: var(--ink); text-decoration: none; }
+.post-list h2 a:hover { color: var(--sea); }
+.post-list p { margin: 0; color: var(--text); font-size: 1rem; }
+
+/* a post: title, date, prose */
+.post-head { margin-bottom: 2em; }
+.post-head time { display: block; font-family: var(--display); font-size: .9rem; color: var(--muted); margin-bottom: 14px; }
+.post-head h1 { font-size: clamp(2rem, 4.4vw, 3rem); }
+.post-head .lede { font-size: 1.2rem; color: var(--muted); margin: .6em 0 0; }
+.post-body h2 { font-size: 1.5rem; margin-top: 1.8em; }
+.post-body img { max-width: 100%; height: auto; border-radius: 8px; }
+.post-foot { margin-top: 3em; padding-top: 1.4em; border-top: 1px solid var(--fog); font-family: var(--display); font-size: .95rem; color: var(--muted); }
+.post-foot a { color: var(--sea); }
+.post-nav { display: flex; justify-content: space-between; gap: 20px; margin-top: 2.2em; font-family: var(--display); font-size: .95rem; }
+.post-nav a { color: var(--sea); text-decoration: none; } .post-nav a:hover { text-decoration: underline; }

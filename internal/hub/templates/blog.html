@@ -1,30 +1,13 @@
 {{define "content"}}
-<section class="blog">
-  <header class="blog-head">
-    <p class="eyebrow">{{if eq .Lang "fr"}}Deckhand · le blog{{else}}Deckhand · the blog{{end}}</p>
-    <h1>{{if eq .Lang "fr"}}Ce qui se passe derrière les slides.{{else}}What happens behind the slides.{{end}}</h1>
-    <p class="lede">{{if eq .Lang "fr"}}Versions, coulisses et petites leçons apprises en présentant des pages web.{{else}}Releases, behind the scenes, and small lessons learned while presenting web pages.{{end}}</p>
-    <p class="blog-links">{{with .OtherLang}}<a href="{{.URL}}" hreflang="{{.Lang}}">{{if eq .Lang "fr"}}Lire en français{{else}}Read in English{{end}}</a> · {{end}}<a href="{{if eq .Lang "fr"}}/blog/fr/feed.xml{{else}}/blog/feed.xml{{end}}">RSS</a> · <a href="/#newsletter">{{if eq .Lang "fr"}}Newsletter{{else}}Newsletter{{end}}</a></p>
-  </header>
-  {{range $i, $p := .Posts}}{{if eq $i 0}}
-  <a class="post-feature" href="{{$p.URL}}">
-    {{if $p.Image}}<img src="/static/blog/{{$p.Image}}" alt="" width="1200" height="630">{{end}}
-    <div class="post-feature-body">
-      <time datetime="{{$p.Date.Format "2006-01-02"}}">{{$p.DateText}}</time>
-      <h2>{{$p.Title}}</h2>
-      <p>{{$p.Summary}}</p>
-      <span class="more">{{if eq $.Lang "fr"}}Lire{{else}}Read{{end}} →</span>
-    </div>
-  </a>
-  <div class="posts">{{else}}
-    <a class="post-card" href="{{$p.URL}}">
-      {{if $p.Image}}<img src="/static/blog/{{$p.Image}}" alt="" loading="lazy" width="1200" height="630">{{end}}
-      <div class="post-card-body">
-        <time datetime="{{$p.Date.Format "2006-01-02"}}">{{$p.DateText}}</time>
-        <h2>{{$p.Title}}</h2>
-        <p>{{$p.Summary}}</p>
-      </div>
-    </a>{{end}}{{end}}
-  </div>
-</section>
+<h1 class="blog-title">Blog</h1>
+<p class="blog-intro">{{if eq .Lang "fr"}}Ce qui change dans Deckhand, et pourquoi. Écrit par la personne qui le fait.{{else}}What changes in Deckhand, and why. Written by the person making it.{{end}} <a href="{{.Feed}}">RSS</a> · <a href="/#newsletter{{if eq .Lang "fr"}}#fr{{end}}">{{if eq .Lang "fr"}}Newsletter{{else}}Newsletter{{end}}</a></p>
+<ul class="post-list">
+{{range .Posts}}
+  <li>
+    <time datetime="{{.Date.Format "2006-01-02"}}">{{.DateText}}</time>
+    <h2><a href="{{.URL}}">{{.Title}}</a></h2>
+    <p>{{.Summary}}</p>
+  </li>
+{{end}}
+</ul>
 {{end}}

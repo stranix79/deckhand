@@ -1,20 +1,17 @@
 {{define "content"}}
-<article class="post">
+<article>
   <header class="post-head">
-    <p class="post-crumbs"><a href="{{if eq .Lang "fr"}}/blog/fr{{else}}/blog{{end}}">{{if eq .Lang "fr"}}← Le blog{{else}}← The blog{{end}}</a>{{with .OtherLang}} · <a href="{{.URL}}" hreflang="{{.Lang}}">{{if eq .Lang "fr"}}Lire en français{{else}}Read in English{{end}}</a>{{end}}</p>
     <time datetime="{{.Post.Date.Format "2006-01-02"}}">{{.Post.DateText}}</time>
     <h1>{{.Post.Title}}</h1>
     <p class="lede">{{.Post.Summary}}</p>
   </header>
-  {{if .Post.Image}}<figure class="post-hero"><img src="/static/blog/{{.Post.Image}}" alt="" width="1200" height="630">{{if .Post.Credit}}<figcaption>{{.Post.Credit}}</figcaption>{{end}}</figure>{{end}}
   <div class="post-body">
   {{.Post.Body}}
   </div>
-  <aside class="post-end">
-    <p class="eyebrow">{{if eq .Lang "fr"}}Essayer Deckhand{{else}}Try Deckhand{{end}}</p>
-    <pre><code>brew install stranix79/tap/deckhand
-deckhand present your-slides/</code></pre>
-    <p><a class="cta" href="https://github.com/stranix79/deckhand">GitHub</a> <a class="cta alt" href="/">deckhand.show</a> <a class="cta alt" href="/#newsletter">{{if eq .Lang "fr"}}Newsletter{{else}}Newsletter{{end}}</a></p>
-  </aside>
+  <p class="post-foot">{{if eq .Lang "fr"}}Gilles Fauvie, qui fait Deckhand. Une question, une remarque : <a href="mailto:hello@deckhand.app">hello@deckhand.app</a>.{{else}}Gilles Fauvie, who makes Deckhand. Questions and remarks: <a href="mailto:hello@deckhand.app">hello@deckhand.app</a>.{{end}}</p>
+  <nav class="post-nav">
+    <a href="{{if eq .Lang "fr"}}/blog/fr{{else}}/blog{{end}}">{{if eq .Lang "fr"}}← Tous les billets{{else}}← All posts{{end}}</a>
+    {{with .Next}}<a href="{{.URL}}">{{if eq $.Lang "fr"}}Billet suivant{{else}}Next post{{end}} →</a>{{end}}
+  </nav>
 </article>
 {{end}}
