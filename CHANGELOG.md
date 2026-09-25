@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-09-25
+
+### Changed
+- Blog redesigned to match the landing: the hub layout now loads the same display and serif fonts, the index opens with a headline and a featured latest post on a dark panel followed by cards, and the post page gets a large title, a full-width hero with credit, a readable column, dark code blocks and a "try Deckhand" block at the end.
+
 ## [1.4.1] - 2026-09-25
 
 ### Fixed
