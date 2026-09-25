@@ -455,16 +455,6 @@
 </footer>
 
 <script>
-/* ---------- language ---------- */
-(function(){
-  const html=document.documentElement;
-  const saved=location.hash.replace('#','');
-  const browser=(navigator.language||'en').slice(0,2)==='fr'?'fr':'en';
-  const set=l=>{html.setAttribute('data-lang',l);html.lang=l;history.replaceState(null,'','#'+l);renderRemote();};
-  set(saved==='fr'||saved==='en'?saved:browser);
-  document.querySelectorAll('[data-set]').forEach(b=>b.addEventListener('click',()=>set(b.dataset.set)));
-})();
-
 /* ---------- newsletter: the server answers with ?newsletter=<status> ---------- */
 (function(){
   const s=new URLSearchParams(location.search).get('newsletter');
@@ -507,6 +497,20 @@ const stage=document.getElementById('stage'),laser=document.getElementById('lase
 stage.addEventListener('pointermove',e=>{const r=stage.getBoundingClientRect();laser.style.left=(e.clientX-r.left)+'px';laser.style.top=(e.clientY-r.top)+'px';laser.classList.add('on');});
 stage.addEventListener('pointerleave',()=>laser.classList.remove('on'));
 renderRemote();
+
+/* ---------- language ----------
+   After the demo script on purpose: set() re-renders the remote, whose state
+   (n, TITLES, NOTES) is declared above with let/const. Calling it earlier
+   threw a "cannot access before initialization" error, which also skipped
+   attaching the EN/FR buttons. */
+(function(){
+  const html=document.documentElement;
+  const saved=location.hash.replace('#','');
+  const browser=(navigator.language||'en').slice(0,2)==='fr'?'fr':'en';
+  const set=l=>{html.setAttribute('data-lang',l);html.lang=l;history.replaceState(null,'','#'+l);renderRemote();};
+  set(saved==='fr'||saved==='en'?saved:browser);
+  document.querySelectorAll('[data-set]').forEach(b=>b.addEventListener('click',()=>set(b.dataset.set)));
+})();
 </script>
 </body>
 </html>

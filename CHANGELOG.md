@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.4.4] - 2026-09-25
+
+### Fixed
+- Landing page: the EN/FR buttons did nothing. The language script ran before the demo script it depends on, threw on first paint and never attached the click handlers. The language block now runs after the demo definitions.
+
 ## [1.4.3] - 2026-09-25
 
 ### Changed
