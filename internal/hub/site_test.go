@@ -1,11 +1,15 @@
 package hub
 
 import (
+	"bytes"
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/stranix79/deckhand/site"
 )
 
 // noindexTag is the exact robots tag the layout emits; the word alone also
@@ -195,5 +199,79 @@ func TestHubStylesheet(t *testing.T) {
 		if resp.StatusCode != 200 || !strings.HasPrefix(resp.Header.Get("Content-Type"), "text/css") || !strings.Contains(body, marker) {
 			t.Fatalf("%s: %d %s, %d bytes", file, resp.StatusCode, resp.Header.Get("Content-Type"), len(body))
 		}
+	}
+}
+
+func TestLLMsTxt(t *testing.T) {
+	srv := newSiteServer(t)
+	resp, body := getBody(t, srv.URL+"/llms.txt")
+	if resp.StatusCode != 200 || !strings.HasPrefix(resp.Header.Get("Content-Type"), "text/plain") {
+		t.Fatalf("llms.txt: %d %s", resp.StatusCode, resp.Header.Get("Content-Type"))
+	}
+	if !strings.HasPrefix(body, "# Deckhand\n\n> ") {
+		t.Fatalf("llms.txt must open with the title and the summary blockquote:\n%s", body)
+	}
+	for _, want := range []string{"https://h.example/docs/LLM", "https://h.example/vs/reveal-js", "https://h.example/blog/feed.xml", "## Source", "https://github.com/stranix79/deckhand", "## Pricing", "## Author"} {
+		if !strings.Contains(body, want) {
+			t.Fatalf("llms.txt lacks %q:\n%s", want, body)
+		}
+	}
+	// Every absolute link into the site must be a page that answers 200.
+	for _, line := range strings.Split(body, "\n") {
+		for _, part := range strings.Split(line, "(https://h.example") {
+			if !strings.HasPrefix(part, "/") {
+				continue
+			}
+			path := part[:strings.IndexByte(part, ')')]
+			if r2, _ := getBody(t, srv.URL+path); r2.StatusCode != 200 {
+				t.Fatalf("%s: %d", path, r2.StatusCode)
+			}
+		}
+	}
+
+	resp, full := getBody(t, srv.URL+"/llms-full.txt")
+	if resp.StatusCode != 200 || !strings.HasPrefix(resp.Header.Get("Content-Type"), "text/plain") {
+		t.Fatalf("llms-full.txt: %d %s", resp.StatusCode, resp.Header.Get("Content-Type"))
+	}
+	if !strings.HasPrefix(full, body) || !strings.Contains(full, "# Generate a deck with an LLM") {
+		t.Fatal("llms-full.txt must start with llms.txt and carry docs/LLM.md")
+	}
+}
+
+func TestIndexNowKey(t *testing.T) {
+	srv := newSiteServer(t)
+	resp, body := getBody(t, srv.URL+"/"+indexNowKey+".txt")
+	if resp.StatusCode != 200 || !strings.HasPrefix(resp.Header.Get("Content-Type"), "text/plain") || body != indexNowKey {
+		t.Fatalf("indexnow: %d %s %q", resp.StatusCode, resp.Header.Get("Content-Type"), body)
+	}
+}
+
+func TestLandingJSONLD(t *testing.T) {
+	srv := newSiteServer(t)
+	_, body := getBody(t, srv.URL+"/")
+	const open, closing = `<script type="application/ld+json">`, "</script>"
+	i := strings.Index(body, open)
+	if i < 0 || i > strings.Index(body, "</head>") {
+		t.Fatal("JSON-LD block missing from the landing head")
+	}
+	raw := body[i+len(open):]
+	raw = raw[:strings.Index(raw, closing)]
+	var data map[string]any
+	if err := json.Unmarshal([]byte(raw), &data); err != nil {
+		t.Fatalf("JSON-LD is not valid JSON: %v\n%s", err, raw)
+	}
+	if data["@type"] != "SoftwareApplication" || data["name"] != "Deckhand" || data["url"] != "https://h.example/" {
+		t.Fatalf("JSON-LD: %v", data)
+	}
+	if data["image"] != "https://h.example/static/site/og.png" || data["codeRepository"] != "https://github.com/stranix79/deckhand" {
+		t.Fatalf("JSON-LD image or repository: %v", data)
+	}
+	author, _ := data["author"].(map[string]any)
+	if author["@type"] != "Person" || author["name"] != "Gilles Fauvie" {
+		t.Fatalf("JSON-LD author: %v", data["author"])
+	}
+	// index.html itself stays as provided: the block is added at serve time.
+	if bytes.Contains(site.Index, []byte(open)) {
+		t.Fatal("site/index.html must not carry the JSON-LD block")
 	}
 }

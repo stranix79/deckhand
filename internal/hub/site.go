@@ -2,6 +2,7 @@ package hub
 
 import (
 	"bytes"
+	"encoding/json"
 	"html/template"
 	"net/http"
 	"strings"
@@ -32,6 +33,12 @@ func (h *Hub) siteRoutes(r chi.Router) {
 	h.blogRoutes(r)
 	r.Get("/sitemap.xml", h.sitemap)
 	r.Get("/robots.txt", h.robots)
+	r.Get("/llms.txt", h.llmsTxt)
+	r.Get("/llms-full.txt", h.llmsFullTxt)
+	r.Get("/"+indexNowKey+".txt", func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		_, _ = w.Write([]byte(indexNowKey))
+	})
 	r.Get("/static/site/og.png", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "image/png")
 		w.Header().Set("Cache-Control", "public, max-age=86400")
@@ -74,13 +81,112 @@ func (h *Hub) landing(w http.ResponseWriter, _ *http.Request) {
 	// a human posts it, which is exactly the point.
 	page := bytes.ReplaceAll(site.Index, []byte(newsletterPlaceholder),
 		[]byte(newsletterToken(h.cfg.Secret, time.Now())))
+	// Structured data for search engines goes in the head too, the same
+	// way; both CSPs allow inline scripts so it needs no nonce.
+	head := h.landingJSONLD()
 	if h.cfg.AnalyticsID == "" {
 		w.Header().Set("Content-Security-Policy", pageCSP)
-		_, _ = w.Write(page)
-		return
+	} else {
+		w.Header().Set("Content-Security-Policy", landingAnalyticsCSP)
+		head += analyticsSnippet(h.cfg.AnalyticsID)
 	}
-	w.Header().Set("Content-Security-Policy", landingAnalyticsCSP)
-	_, _ = w.Write(bytes.Replace(page, []byte("</head>"), []byte(analyticsSnippet(h.cfg.AnalyticsID)+"</head>"), 1))
+	_, _ = w.Write(bytes.Replace(page, []byte("</head>"), []byte(head+"</head>"), 1))
+}
+
+// landingJSONLD is the schema.org description of Deckhand as a software
+// application, for the rich results of search engines. Marshalled with
+// encoding/json, which escapes < > & so the block cannot close its own
+// script tag whatever the strings contain.
+func (h *Hub) landingJSONLD() string {
+	data := map[string]any{
+		"@context":            "https://schema.org",
+		"@type":               "SoftwareApplication",
+		"name":                "Deckhand",
+		"url":                 h.cfg.BaseURL + "/",
+		"description":         "Deckhand turns a folder of HTML pages into a presentation: a stage on the big screen, a remote on your phone, and a live link for everyone in the room. One Go binary, MIT.",
+		"applicationCategory": "PresentationApplication",
+		"operatingSystem":     "macOS, Linux, Windows",
+		"license":             "https://opensource.org/license/mit",
+		"codeRepository":      "https://github.com/stranix79/deckhand",
+		"image":               h.cfg.BaseURL + "/static/site/og.png",
+		"screenshot":          h.cfg.BaseURL + "/static/site/og.png",
+		"author": map[string]any{
+			"@type": "Person",
+			"name":  "Gilles Fauvie",
+			"url":   "https://stranix.net",
+		},
+		"offers": map[string]any{
+			"@type":         "Offer",
+			"price":         "0",
+			"priceCurrency": "EUR",
+			"description":   "Self-hosted, free and open source.",
+		},
+	}
+	b, err := json.Marshal(data)
+	if err != nil {
+		return ""
+	}
+	return `<script type="application/ld+json">` + string(b) + "</script>\n"
+}
+
+// indexNowKey is the IndexNow site key; the file at /<key>.txt proves to
+// Bing and the other IndexNow engines that we own the host.
+const indexNowKey = "0b1e3f2aadf66f64493e0974b540006c"
+
+// llmsTxt answers the llms.txt convention (llmstxt.org): a short Markdown
+// index of the site for language models, built from the same routes as
+// the sitemap so it never lists a page that does not exist.
+func (h *Hub) llmsTxt(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Cache-Control", "public, max-age=3600")
+	_, _ = w.Write([]byte(h.llmsIndex()))
+}
+
+// llmsFullTxt is llms.txt followed by the full text of docs/LLM.md, the
+// same embed that /docs/LLM renders: the prompt and the rules a model needs
+// to write a valid deck without fetching anything else.
+func (h *Hub) llmsFullTxt(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+	w.Header().Set("Cache-Control", "public, max-age=3600")
+	var b strings.Builder
+	b.WriteString(h.llmsIndex())
+	if src, err := docs.FS.ReadFile("LLM.md"); err == nil {
+		b.WriteString("\n---\n\n")
+		b.Write(src)
+	}
+	_, _ = w.Write([]byte(b.String()))
+}
+
+func (h *Hub) llmsIndex() string {
+	u := h.cfg.BaseURL
+	var b strings.Builder
+	b.WriteString("# Deckhand\n\n")
+	b.WriteString("> Present a folder of HTML slides: a stage on the big screen, a remote on your phone, a live link for the audience. One Go binary, MIT.\n\n")
+	b.WriteString("A deck is one HTML file per slide, optionally a deck.json for order, notes and ratio. `deckhand present ./deck` serves the stage, the remote and the viewers on the local network; the hub at " + u + " adds viewers anywhere and permanent links.\n\n")
+	b.WriteString("## Docs\n\n")
+	b.WriteString("- [Generate a deck with an LLM](" + u + "/docs/LLM): prompt that produces a deck passing deckhand validate\n")
+	for _, n := range docPages {
+		if n == "LLM" {
+			continue
+		}
+		b.WriteString("- [" + n + "](" + u + "/docs/" + n + "): " + docDescriptions[n] + "\n")
+	}
+	b.WriteString("- [Changelog](" + u + "/changelog)\n")
+	b.WriteString("- [Comparisons](" + u + "/vs)\n")
+	for _, p := range vsPages {
+		b.WriteString("- [" + p.Title + "](" + u + "/vs/" + p.Slug + ")\n")
+	}
+	b.WriteString("- [Blog](" + u + "/blog), [in French](" + u + "/blog/fr), [RSS](" + u + "/blog/feed.xml)\n\n")
+	b.WriteString("## Source\n\n")
+	b.WriteString("- [GitHub](https://github.com/stranix79/deckhand): Go, MIT (hub under BSL 1.1)\n")
+	b.WriteString("- [Homebrew tap](https://github.com/stranix79/homebrew-tap): brew install stranix79/tap/deckhand\n\n")
+	b.WriteString("## Pricing\n\n")
+	b.WriteString("- CLI and self-hosted hub: free\n")
+	b.WriteString("- Deckhand Hub Pro at " + u + ": from 9 EUR per month, viewers outside the room, permanent links, audience stats\n\n")
+	b.WriteString("## Author\n\n")
+	b.WriteString("- Gilles Fauvie, https://stranix.net\n")
+	b.WriteString("- CODE79, https://code79.com\n")
+	return b.String()
 }
 
 // landingAnalyticsCSP is pageCSP plus what gtag.js needs: its script host,

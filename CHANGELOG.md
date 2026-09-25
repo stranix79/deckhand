@@ -4,6 +4,13 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.4.5] - 2026-09-25
+
+### Added
+- `/llms.txt` and `/llms-full.txt` on the hub (llmstxt.org convention): a Markdown index of the site for language models, built from the same routes as the sitemap, and the same index followed by the full text of `docs/LLM.md`.
+- Structured data on the landing: a schema.org `SoftwareApplication` block (name, description, category, operating systems, license, repository, author, free self-hosted offer) inserted before `</head>` when the page is served, `site/index.html` itself untouched.
+- IndexNow key file, so Bing and the other IndexNow engines accept URL submissions for the site.
+
 ## [1.4.4] - 2026-09-25
 
 ### Fixed
