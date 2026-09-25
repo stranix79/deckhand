@@ -6,5 +6,5 @@ import "embed"
 
 // FS holds stage/, remote/, viewer/ and shared/.
 //
-//go:embed stage remote viewer shared
+//go:embed stage remote viewer shared hub
 var FS embed.FS

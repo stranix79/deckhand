@@ -187,3 +187,11 @@ func TestBlog(t *testing.T) {
 		t.Fatal("sitemap lacks the french release post")
 	}
 }
+
+func TestHubStylesheet(t *testing.T) {
+	srv := newSiteServer(t)
+	resp, body := getBody(t, srv.URL+"/static/hub/hub.css")
+	if resp.StatusCode != 200 || !strings.HasPrefix(resp.Header.Get("Content-Type"), "text/css") || !strings.Contains(body, ".post-card") {
+		t.Fatalf("hub.css: %d %s, %d bytes", resp.StatusCode, resp.Header.Get("Content-Type"), len(body))
+	}
+}

@@ -4,6 +4,11 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-09-25
+
+### Fixed
+- The hub stylesheet (`/static/hub/hub.css`) was served empty by release builds: `web/hub` was missing from the embed directive, so every hub page (docs, comparisons, blog) rendered unstyled. Embedded now, with a test that checks the stylesheet has content.
+
 ## [1.4.0] - 2026-09-25
 
 ### Added
