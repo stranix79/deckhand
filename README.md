@@ -115,7 +115,7 @@ make validate   # build + validate the example deck
 ## License
 
 MIT for everything, except `internal/hub` (the hosted multi-tenant part) which
-is under the Business Source License 1.1, see [LICENSE.hub](LICENSE.hub).
+is under the Business Source License 1.1, see [internal/hub/LICENSE](internal/hub/LICENSE).
 Made in Belgium by [CODE79](https://stranix.net).
 
 ## Support

@@ -11,7 +11,7 @@ Read this before touching the repo. The full brief lives in docs/BRIEF.md.
 - Slide security from day one: `<iframe sandbox="allow-scripts">` (never `allow-same-origin`), strict CSP on app pages, decks served from a distinct origin in Hub mode (`decks.<domain>` vs `app.<domain>`, env-configurable), deck max 200 MB / 500 slides, zip slip and path traversal refused, allowed file types only (.html .css .js .json images videos fonts .svg .pdf; .svg served as image/svg+xml + Content-Disposition attachment except for <img>).
 - Tests: `go test ./...` green at every milestone. Unit tests on deck parsing and protocol; integration test starting the server with two WebSockets.
 - Quality: gofmt, go vet, golangci-lint (config in .golangci.yml), zero warnings. Conventional commits (`feat:`, `fix:`, `docs:`…), messages in English.
-- License: MIT everywhere except internal/hub (BSL 1.1, LICENSE.hub).
+- License: MIT everywhere except internal/hub (BSL 1.1, internal/hub/LICENSE).
 - Language: French in conversation, English in code, commits and docs. Landing is bilingual.
 - Undecided points: pick the simplest option, log it in docs/DECISIONS.md with date and one line of why, keep going. Ask only if the milestone is blocked.
 - Stop at the end of each milestone and report in 10 lines max: what exists, how to test it, what is open.

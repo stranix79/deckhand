@@ -4,7 +4,7 @@ The hub is the same `deckhand` binary in `serve` mode: multi-user, backed by
 PostgreSQL 16, with magic-link sign-in, deck uploads, hosted and relayed
 presentations, permanent links, statistics and Stripe billing.
 
-`internal/hub` is under the Business Source License 1.1 (`LICENSE.hub`):
+`internal/hub` is under the Business Source License 1.1 (`internal/hub/LICENSE`):
 you may self-host it for your own use; offering it as a paid service to
 third parties needs a licence from CODE79 until the change date.
 

@@ -34,7 +34,7 @@ archives:
         formats: [zip]
     files:
       - LICENSE
-      - LICENSE.hub
+      - internal/hub/LICENSE
       - README.md
       - docs/FORMAT.md
       - docs/CLI.md

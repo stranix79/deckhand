@@ -23,7 +23,7 @@ Public cible : gens de la tech et créateurs qui génèrent leurs slides en HTML
   - taille max d'un deck : 200 Mo, 500 slides ; zip slip et path traversal refusés ; seuls les fichiers `.html`, `.css`, `.js`, `.json`, images, vidéos, polices, `.svg` (servi en `Content-Type: image/svg+xml` avec `Content-Disposition: attachment` sauf pour les `<img>`), `.pdf` sont acceptés.
 - **Tests** : `go test ./...` doit passer à chaque jalon. Tests unitaires sur le parsing du deck et le protocole ; test d'intégration qui lance le serveur, ouvre deux WebSockets et vérifie la synchro.
 - **Qualité** : `gofmt`, `go vet`, `golangci-lint` (config fournie), pas de warning. Commits conventionnels (`feat:`, `fix:`, `docs:`…). Messages en anglais.
-- **Licence** : MIT pour tout ce qui est dans `cmd/`, `internal/deck`, `internal/session`, `internal/local`, `web/`. Le code du Hub (`internal/hub`) est dans le même repo mais sous licence **BSL 1.1** (fichier `LICENSE.hub`) — ça évite deux repos tout en protégeant la partie commerciale.
+- **Licence** : MIT pour tout ce qui est dans `cmd/`, `internal/deck`, `internal/session`, `internal/local`, `web/`. Le code du Hub (`internal/hub`) est dans le même repo mais sous licence **BSL 1.1** (fichier `internal/hub/LICENSE`) — ça évite deux repos tout en protégeant la partie commerciale.
 
 ## 3. Le format de deck (spec à respecter et à documenter dans `docs/FORMAT.md`)
 
@@ -145,7 +145,7 @@ deckhand/
 ├── migrations/
 ├── .github/workflows/      ci.yml (test+lint), release.yml (goreleaser, binaires + Homebrew tap)
 ├── Dockerfile, docker-compose.hub.yml, .goreleaser.yaml, .golangci.yml
-├── LICENSE (MIT), LICENSE.hub (BSL 1.1), README.md, CHANGELOG.md, CLAUDE.md
+├── LICENSE (MIT), internal/hub/LICENSE (BSL 1.1), README.md, CHANGELOG.md, CLAUDE.md
 └── Makefile                build, test, lint, run-local, run-hub, release
 ```
 

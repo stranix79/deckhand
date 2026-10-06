@@ -1,7 +1,7 @@
 // Package hub is `deckhand serve`: the hosted, multi-tenant Deckhand.
 //
 // This package is licensed under the Business Source License 1.1, see
-// LICENSE.hub at the repository root. Everything else in the repository is MIT.
+// internal/hub/LICENSE at the repository root. Everything else in the repository is MIT.
 package hub
 
 import (
