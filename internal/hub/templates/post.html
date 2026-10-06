@@ -8,7 +8,7 @@
   <div class="post-body">
   {{.Post.Body}}
   </div>
-  <p class="post-foot">{{if eq .Lang "fr"}}Gilles Fauvie, qui fait Deckhand. Une question, une remarque : <a href="mailto:hello@deckhand.app">hello@deckhand.app</a>.{{else}}Gilles Fauvie, who makes Deckhand. Questions and remarks: <a href="mailto:hello@deckhand.app">hello@deckhand.app</a>.{{end}}</p>
+  <p class="post-foot">{{if eq .Lang "fr"}}Gilles Fauvie, qui fait Deckhand. Une question, une remarque : <a href="mailto:hello@code79.com">hello@code79.com</a>.{{else}}Gilles Fauvie, who makes Deckhand. Questions and remarks: <a href="mailto:hello@code79.com">hello@code79.com</a>.{{end}}</p>
   <nav class="post-nav">
     <a href="{{if eq .Lang "fr"}}/blog/fr{{else}}/blog{{end}}">{{if eq .Lang "fr"}}← Tous les billets{{else}}← All posts{{end}}</a>
     {{with .Next}}<a href="{{.URL}}">{{if eq $.Lang "fr"}}Billet suivant{{else}}Next post{{end}} →</a>{{end}}

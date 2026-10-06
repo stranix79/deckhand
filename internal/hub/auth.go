@@ -10,6 +10,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/mail"
+	"net/url"
 	"regexp"
 	"strings"
 	"time"
@@ -182,18 +183,38 @@ func (h *Hub) findOrCreateUser(ctx context.Context, email string) (*User, error)
 
 // --- handlers ----------------------------------------------------------------------
 
+// safeNext keeps a post-login destination only if it is a local path: it must
+// start with a single "/" (so neither "//host" nor "/\\host", nor an absolute
+// URL) and carry no control characters. Anything else falls back to /app.
+func safeNext(next string) string {
+	if len(next) < 2 && next != "/" {
+		return "/app"
+	}
+	if !strings.HasPrefix(next, "/") || strings.HasPrefix(next, "//") || strings.HasPrefix(next, "/\\") {
+		return "/app"
+	}
+	for _, c := range next {
+		if c < 0x20 || c == 0x7f {
+			return "/app"
+		}
+	}
+	return next
+}
+
 func (h *Hub) loginPage(w http.ResponseWriter, r *http.Request) {
+	next := safeNext(r.URL.Query().Get("next"))
 	if h.userFromRequest(r) != nil {
-		http.Redirect(w, r, "/app", http.StatusFound)
+		http.Redirect(w, r, next, http.StatusFound) //nolint:gosec // next comes from safeNext: local path only
 		return
 	}
-	h.render(w, r, "login.html", map[string]any{"Title": "Sign in"})
+	h.render(w, r, "login.html", map[string]any{"Title": "Sign in", "Next": next})
 }
 
 func (h *Hub) loginPost(w http.ResponseWriter, r *http.Request) {
+	next := safeNext(r.FormValue("next"))
 	addr, err := mail.ParseAddress(strings.TrimSpace(r.FormValue("email")))
 	if err != nil {
-		h.render(w, r, "login.html", map[string]any{"Title": "Sign in", "Error": "That does not look like an e-mail address."})
+		h.render(w, r, "login.html", map[string]any{"Title": "Sign in", "Error": "That does not look like an e-mail address.", "Next": next})
 		return
 	}
 	u, err := h.findOrCreateUser(r.Context(), addr.Address)
@@ -207,13 +228,16 @@ func (h *Hub) loginPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	link := h.cfg.BaseURL + "/auth/callback?token=" + raw
+	if next != "/app" {
+		link += "&next=" + url.QueryEscape(next)
+	}
 	body := fmt.Sprintf("Hello,\n\nHere is your Deckhand sign-in link (valid %d minutes, single use):\n\n%s\n\nIf you did not ask for it, ignore this e-mail.\n\n— Deckhand, made in Belgium by CODE79\n",
 		int(h.cfg.MagicLinkTTL.Minutes()), link)
 	if h.cfg.DevLogMagicLinks {
 		slog.Info("MAGIC LINK", "email", u.Email, "link", link)
 	} else if err := h.sendMail(u.Email, "Your Deckhand sign-in link", body); err != nil {
 		slog.Error("send magic link", "err", err)
-		h.render(w, r, "login.html", map[string]any{"Title": "Sign in", "Error": "We could not send the e-mail. Please try again in a minute."})
+		h.render(w, r, "login.html", map[string]any{"Title": "Sign in", "Error": "We could not send the e-mail. Please try again in a minute.", "Next": next})
 		return
 	}
 	h.render(w, r, "sent.html", map[string]any{"Title": "Check your inbox", "Email": u.Email})
@@ -234,7 +258,7 @@ func (h *Hub) authCallback(w http.ResponseWriter, r *http.Request) {
 		Name: cookieName, Value: raw, Path: "/", HttpOnly: true, Secure: h.cfg.Secure(),
 		SameSite: http.SameSiteLaxMode, MaxAge: int(h.cfg.CookieTTL.Seconds()),
 	})
-	http.Redirect(w, r, "/app", http.StatusFound)
+	http.Redirect(w, r, safeNext(r.URL.Query().Get("next")), http.StatusFound) //nolint:gosec // local path only
 }
 
 func (h *Hub) logout(w http.ResponseWriter, r *http.Request) {

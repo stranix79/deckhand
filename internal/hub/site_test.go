@@ -275,3 +275,52 @@ func TestLandingJSONLD(t *testing.T) {
 		t.Fatal("site/index.html must not carry the JSON-LD block")
 	}
 }
+
+func TestLandingSignInAndGoPro(t *testing.T) {
+	srv := newSiteServer(t)
+	_, body := getBody(t, srv.URL+"/")
+	for _, want := range []string{`href="/login"`, `href="/login?next=/billing"`, "Go Pro", "Passer à Pro", "hello@code79.com"} {
+		if !strings.Contains(body, want) {
+			t.Errorf("landing lacks %q", want)
+		}
+	}
+	for _, path := range []string{"/", "/blog", "/blog/fr", "/llms.txt", "/llms-full.txt", "/docs"} {
+		_, b := getBody(t, srv.URL+path)
+		if strings.Contains(b, "deckhand.app") {
+			t.Errorf("%s still mentions deckhand.app", path)
+		}
+	}
+}
+
+func TestSafeNext(t *testing.T) {
+	cases := map[string]string{
+		"/billing":            "/billing",
+		"/":                   "/",
+		"":                    "/app",
+		"https://evil":        "/app",
+		"//evil":              "/app",
+		"/\\evil":             "/app",
+		"billing":             "/app",
+		"/billing\r\nX: y":    "/app",
+		"javascript:alert(1)": "/app",
+	}
+	for in, want := range cases {
+		if got := safeNext(in); got != want {
+			t.Errorf("safeNext(%q) = %q, want %q", in, got, want)
+		}
+	}
+}
+
+func TestLoginKeepsNext(t *testing.T) {
+	srv := newSiteServer(t)
+	_, body := getBody(t, srv.URL+"/login?next=/billing")
+	if !strings.Contains(body, `name="next" value="/billing"`) {
+		t.Error("login form does not carry next=/billing")
+	}
+	for _, evil := range []string{"https://evil", "//evil"} {
+		_, body = getBody(t, srv.URL+"/login?next="+evil)
+		if strings.Contains(body, "evil") {
+			t.Errorf("login form kept next=%s", evil)
+		}
+	}
+}

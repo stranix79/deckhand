@@ -11,7 +11,7 @@
     <p><strong>Pro</strong> removes every limit. Monthly subscription, cancel anytime.</p>
     {{if .OdooEnabled}}
       <p><a class="button primary" href="{{.OdooProductURL}}">Subscribe — 9 € / month</a></p>
-      <p class="muted">Payment and invoices are handled by our shop. <strong>Use the same e-mail as here ({{.User.Email}})</strong>: your Pro plan is activated within a few minutes of the payment.</p>
+      <p class="muted">Payment and invoices are handled by our shop. <strong>Use the same e-mail address as your Deckhand account ({{.User.Email}}) when you pay, Pro is activated automatically within 5 minutes.</strong> If the address differs, nothing is activated.</p>
     {{else if .StripeEnabled}}
       <form method="post" action="/billing/checkout"><button class="primary">Subscribe</button></form>
     {{else}}

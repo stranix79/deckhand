@@ -4,6 +4,18 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.4.6] - 2026-10-06
+
+### Added
+- Landing: a "Go Pro" button in the price row of the comparison table (links to `/login?next=/billing`) and a "Sign in" link in the header, in English and French.
+- `/login` accepts a `next` parameter: after the magic link, the visitor lands on that page. Only local paths are accepted (`/…`, never `//…` or an absolute URL); anything else falls back to `/app`.
+
+### Changed
+- `/billing`: the Subscribe button is followed by a clear reminder to pay with the same e-mail address as the Deckhand account, since Pro is matched by e-mail and activated within 5 minutes.
+
+### Fixed
+- Contact address: `hello@deckhand.app` (a domain that is not ours) replaced by `hello@code79.com` on the landing and in blog posts.
+
 ## [1.4.5] - 2026-09-25
 
 ### Added
