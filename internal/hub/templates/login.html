@@ -5,6 +5,11 @@
   {{if .Error}}<p class="error">{{.Error}}</p>{{end}}
   <form method="post" action="/login">
     {{if .Next}}<input type="hidden" name="next" value="{{.Next}}">{{end}}
+    <input type="hidden" name="t" value="{{.FormToken}}">
+    <div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden" aria-hidden="true">
+      <label for="website">Leave this field empty</label>
+      <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+    </div>
     <label for="email">E-mail</label>
     <input id="email" name="email" type="email" required autocomplete="email" autofocus placeholder="you@example.com">
     <button class="primary">Send me a link</button>

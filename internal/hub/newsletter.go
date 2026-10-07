@@ -50,6 +50,12 @@ type ipLimiter struct {
 var newsletterLimit ipLimiter
 
 func (l *ipLimiter) allow(ip string, now time.Time) bool {
+	return l.allowN(ip, now, newsletterBurst)
+}
+
+// allowN is allow with its own budget per window (the key does not have to
+// be an IP: the sign-in form also counts per destination address).
+func (l *ipLimiter) allowN(ip string, now time.Time, burst int) bool {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	if l.hits == nil {
@@ -68,7 +74,7 @@ func (l *ipLimiter) allow(ip string, now time.Time) bool {
 			keep = append(keep, t)
 		}
 	}
-	if len(keep) >= newsletterBurst {
+	if len(keep) >= burst {
 		l.hits[ip] = keep
 		return false
 	}

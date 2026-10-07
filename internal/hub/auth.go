@@ -207,14 +207,47 @@ func (h *Hub) loginPage(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, next, http.StatusFound) //nolint:gosec // next comes from safeNext: local path only
 		return
 	}
-	h.render(w, r, "login.html", map[string]any{"Title": "Sign in", "Next": next})
+	h.render(w, r, "login.html", map[string]any{"Title": "Sign in", "Next": next, "FormToken": newsletterToken(h.cfg.Secret, time.Now())})
 }
+
+// Sign-in links are e-mails sent on behalf of whoever fills the form, so the
+// form is a target for bots that use it to mail strangers (seen in October
+// 2026: one link per night to random addresses). Same defences as the
+// newsletter form: honeypot field, signed timestamp (refuses instant posts),
+// and budgets per client IP and per destination address. A refused request
+// gets the same "check your inbox" page as a real one: a bot learns nothing.
+const (
+	loginBurstPerIP    = 5
+	loginBurstPerEmail = 3
+)
+
+var (
+	loginLimitIP    ipLimiter
+	loginLimitEmail ipLimiter
+)
 
 func (h *Hub) loginPost(w http.ResponseWriter, r *http.Request) {
 	next := safeNext(r.FormValue("next"))
 	addr, err := mail.ParseAddress(strings.TrimSpace(r.FormValue("email")))
 	if err != nil {
-		h.render(w, r, "login.html", map[string]any{"Title": "Sign in", "Error": "That does not look like an e-mail address.", "Next": next})
+		h.render(w, r, "login.html", map[string]any{"Title": "Sign in", "Error": "That does not look like an e-mail address.", "Next": next, "FormToken": newsletterToken(h.cfg.Secret, time.Now())})
+		return
+	}
+	fakeSent := func(reason string) {
+		slog.Info("sign-in refused", "reason", reason)
+		h.render(w, r, "sent.html", map[string]any{"Title": "Check your inbox", "Email": addr.Address})
+	}
+	if r.FormValue("website") != "" { // honeypot
+		fakeSent("honeypot")
+		return
+	}
+	if err := checkNewsletterToken(h.cfg.Secret, r.FormValue("t"), time.Now()); err != nil {
+		fakeSent(err.Error())
+		return
+	}
+	now := time.Now()
+	if !loginLimitIP.allowN(clientIP(r), now, loginBurstPerIP) || !loginLimitEmail.allowN(strings.ToLower(addr.Address), now, loginBurstPerEmail) {
+		fakeSent("rate limit")
 		return
 	}
 	u, err := h.findOrCreateUser(r.Context(), addr.Address)
