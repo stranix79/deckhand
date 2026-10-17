@@ -52,6 +52,32 @@ changelog:
       - "^test:"
       - "^ci:"
 
+# AUR package deckhand-bin, pushed on every tag. Needs the AUR_KEY secret
+# (private SSH key of the AUR account); without it the upload is skipped
+# and the release still goes through.
+aurs:
+  - name: deckhand-bin
+    homepage: https://deckhand.show
+    description: "Present a folder of HTML slides: a stage on the big screen, a remote on your phone, a live link for the audience"
+    maintainers:
+      - "Gilles Fauvie <hello at code79 dot com>"
+    license: "MIT AND BUSL-1.1"
+    provides: [deckhand]
+    conflicts: [deckhand]
+    private_key: '{{ index .Env "AUR_KEY" }}'
+    git_url: "ssh://aur@aur.archlinux.org/deckhand-bin.git"
+    skip_upload: '{{ if index .Env "AUR_KEY" }}auto{{ else }}true{{ end }}'
+    commit_author:
+      name: Gilles Fauvie
+      email: 1789515+gfauvie@users.noreply.github.com
+    package: |-
+      install -Dm755 ./deckhand "${pkgdir}/usr/bin/deckhand"
+      install -Dm644 ./LICENSE "${pkgdir}/usr/share/licenses/deckhand-bin/LICENSE"
+      install -Dm644 ./internal/hub/LICENSE "${pkgdir}/usr/share/licenses/deckhand-bin/LICENSE-hub"
+      install -Dm644 ./README.md "${pkgdir}/usr/share/doc/deckhand-bin/README.md"
+      install -Dm644 ./docs/FORMAT.md "${pkgdir}/usr/share/doc/deckhand-bin/FORMAT.md"
+      install -Dm644 ./docs/CLI.md "${pkgdir}/usr/share/doc/deckhand-bin/CLI.md"
+
 release:
   github:
     owner: stranix79

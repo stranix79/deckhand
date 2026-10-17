@@ -102,3 +102,11 @@ The hub moves from deckhand.stranix.net to **deckhand.show** (deck origin
 `decks.deckhand.show`, `www` redirected). Zone at Cloudflare, records by
 Terraform, TLS by Let's Encrypt on hawking. The old names keep a 301 for
 the links already shared. Homebrew tap and landing point to the new domain.
+
+## 2026-10-17 — Arch Linux package: deckhand-bin on the AUR
+
+Arch and Omarchy users install with `yay -S deckhand-bin`. goreleaser
+pushes the PKGBUILD to the AUR on every tag (prebuilt binaries, MIT AND
+BUSL-1.1 since the hub ships in the same binary). The upload needs the
+`AUR_KEY` secret; without it the step is skipped and the release is
+unaffected.
