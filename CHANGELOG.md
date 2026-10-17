@@ -4,6 +4,14 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+## [1.4.7] - 2026-10-17
+
+### Security
+- Sign-in form: bots were using `/login` to send magic links to strangers. The form now carries a honeypot field and a signed timestamp (instant posts are refused), with budgets of 5 requests per hour per IP and 3 per hour per destination address. Refused requests get the normal "check your inbox" page, so a bot learns nothing.
+
+### Added
+- Arch Linux: goreleaser can publish a `deckhand-bin` package to the AUR on each release (enabled once the `AUR_KEY` secret is set).
+
 ## [1.4.6] - 2026-10-06
 
 ### Added
