@@ -99,6 +99,9 @@ func (h *Hub) renderSite(w http.ResponseWriter, r *http.Request, name string, da
 	data["Cfg"] = h.cfg
 	data["BaseURL"] = h.cfg.BaseURL
 	data["Year"] = time.Now().Year()
+	if _, ok := data["Nav"]; !ok {
+		data["Nav"] = "blog" // the section highlighted in the header
+	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.Header().Set("Content-Security-Policy", pageCSP)
 	w.Header().Set("Cache-Control", "public, max-age=300")

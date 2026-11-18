@@ -25,3 +25,9 @@ var Poster []byte
 //
 //go:embed og.png
 var OG []byte
+
+// Install is the installer served at /install.sh: the one line of the
+// download page pipes it into sh.
+//
+//go:embed install.sh
+var Install []byte

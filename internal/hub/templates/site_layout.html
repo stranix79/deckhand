@@ -6,7 +6,7 @@
 <title>{{.Title}} · Deckhand</title>
 {{with .SEO}}<meta name="description" content="{{.Description}}">
 <link rel="canonical" href="{{.Canonical}}">
-<meta property="og:type" content="article">
+<meta property="og:type" content="{{if eq $.Nav "blog"}}article{{else}}website{{end}}">
 <meta property="og:site_name" content="Deckhand">
 <meta property="og:title" content="{{$.Title}}">
 <meta property="og:description" content="{{.Description}}">
@@ -27,11 +27,11 @@
     Deckhand
   </a>
   <nav>
-    {{if eq .Lang "fr"}}<a href="/#why#fr">Pourquoi HTML</a><a href="/#how#fr">Comment ça marche</a><a href="/#format#fr">Le format</a><a href="/blog/fr" class="on">Blog</a><a href="/docs/CLI">Docs</a>{{else}}<a href="/#why">Why HTML</a><a href="/#how">How it works</a><a href="/#format">The format</a><a href="/blog" class="on">Blog</a><a href="/docs/CLI">Docs</a>{{end}}
+    {{if eq .Lang "fr"}}<a href="/#why#fr">Pourquoi HTML</a><a href="/#how#fr">Comment ça marche</a><a href="/#format#fr">Le format</a><a href="/download/fr"{{if eq .Nav "download"}} class="on"{{end}}>Installer</a><a href="/blog/fr"{{if eq .Nav "blog"}} class="on"{{end}}>Blog</a><a href="/docs/CLI">Docs</a>{{else}}<a href="/#why">Why HTML</a><a href="/#how">How it works</a><a href="/#format">The format</a><a href="/download"{{if eq .Nav "download"}} class="on"{{end}}>Download</a><a href="/blog"{{if eq .Nav "blog"}} class="on"{{end}}>Blog</a><a href="/docs/CLI">Docs</a>{{end}}
     <span class="lang">{{if .LangEN}}<a href="{{.LangEN}}" hreflang="en"{{if ne .Lang "fr"}} class="cur"{{end}}>EN</a>{{end}}{{if .LangFR}}<a href="{{.LangFR}}" hreflang="fr"{{if eq .Lang "fr"}} class="cur"{{end}}>FR</a>{{end}}</span>
   </nav>
 </header>
-<main class="site-main">
+<main class="site-main{{if .Wide}} wide{{end}}">
 {{template "content" .}}
 </main>
 <footer class="site-footer">

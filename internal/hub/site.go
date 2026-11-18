@@ -28,6 +28,14 @@ func (h *Hub) siteRoutes(r chi.Router) {
 	r.Get("/docs", func(w http.ResponseWriter, r *http.Request) { http.Redirect(w, r, "/docs/FORMAT", http.StatusFound) })
 	r.Get("/docs/{name}", h.docPage)
 	r.Get("/changelog", h.changelog)
+	r.Get("/download", func(w http.ResponseWriter, r *http.Request) { h.downloadPage(w, r, "en") })
+	r.Get("/download/fr", func(w http.ResponseWriter, r *http.Request) { h.downloadPage(w, r, "fr") })
+	r.Get("/install.sh", func(w http.ResponseWriter, _ *http.Request) {
+		// text/plain on purpose: a browser shows it, so people can read it before piping it.
+		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+		w.Header().Set("Cache-Control", "public, max-age=300")
+		_, _ = w.Write(site.Install)
+	})
 	r.Get("/vs", h.vsIndex)
 	r.Get("/vs/{slug}", h.vsPage)
 	h.blogRoutes(r)
@@ -290,7 +298,7 @@ func (h *Hub) publicPaths() []string {
 	for _, n := range docPages {
 		paths = append(paths, "/docs/"+n)
 	}
-	paths = append(paths, "/changelog", "/vs")
+	paths = append(paths, "/download", "/download/fr", "/changelog", "/vs")
 	for _, p := range vsPages {
 		paths = append(paths, "/vs/"+p.Slug)
 	}

@@ -324,3 +324,52 @@ func TestLoginKeepsNext(t *testing.T) {
 		}
 	}
 }
+
+func TestDownloadPageAndInstaller(t *testing.T) {
+	srv := newSiteServer(t)
+	for path, want := range map[string][]string{
+		"/download": {
+			"<title>Download · Deckhand</title>", "Free and open source.",
+			"curl -fsSL https://h.example/install.sh | sh",
+			`<link rel="canonical" href="https://h.example/download">`,
+			`hreflang="fr" href="https://h.example/download/fr"`,
+			`<a href="/download" class="on">Download</a>`, `<a href="/blog">Blog</a>`,
+			releasesURL + "/latest", // a development build has no release to link to
+		},
+		"/download/fr": {`<html lang="fr">`, "Libre et gratuit.", "Lisez-le avant de le lancer", `<a href="/download/fr" class="on">Installer</a>`},
+	} {
+		resp, body := getBody(t, srv.URL+path)
+		if resp.StatusCode != 200 || resp.Header.Get("Content-Security-Policy") != pageCSP {
+			t.Fatalf("%s: status %d, csp %q", path, resp.StatusCode, resp.Header.Get("Content-Security-Policy"))
+		}
+		if strings.Contains(body, noindexTag) {
+			t.Errorf("%s must be indexable", path)
+		}
+		for _, w := range want {
+			if !strings.Contains(body, w) {
+				t.Errorf("%s: missing %q", path, w)
+			}
+		}
+	}
+
+	resp, body := getBody(t, srv.URL+"/install.sh")
+	if resp.StatusCode != 200 || !strings.HasPrefix(resp.Header.Get("Content-Type"), "text/plain") {
+		t.Fatalf("/install.sh: status %d, type %q", resp.StatusCode, resp.Header.Get("Content-Type"))
+	}
+	for _, w := range []string{"#!/bin/sh\n", `REPO="stranix79/deckhand"`, "checksum mismatch", "\nmain \"$@\"\n"} {
+		if !strings.Contains(body, w) {
+			t.Errorf("/install.sh: missing %q", w)
+		}
+	}
+
+	// The blog still highlights itself, and the landing sends people here.
+	if _, blog := getBody(t, srv.URL+"/blog"); !strings.Contains(blog, `<a href="/blog" class="on">Blog</a>`) {
+		t.Error("/blog: the Blog link must be the highlighted one")
+	}
+	if _, landing := getBody(t, srv.URL+"/"); !strings.Contains(landing, `<a class="cta alt" href="/download" lang="en">`) {
+		t.Error("landing: the CLI button must point to /download")
+	}
+	if _, sitemap := getBody(t, srv.URL+"/sitemap.xml"); !strings.Contains(sitemap, "https://h.example/download/fr</loc>") {
+		t.Error("sitemap: /download/fr is missing")
+	}
+}

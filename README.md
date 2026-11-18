@@ -24,11 +24,15 @@ viewers, permanent links and statistics; you can also
 ## Install
 
 ```
-brew install stranix79/tap/deckhand          # macOS / Linux, builds from source (needs Go)
+curl -fsSL https://deckhand.show/install.sh | sh      # macOS / Linux, the release binary
+brew install stranix79/tap/deckhand                   # macOS / Linux, builds from source (needs Go)
 ```
 
-Or grab a binary for macOS, Linux or Windows from the
-[releases](https://github.com/stranix79/deckhand/releases), or build it:
+The first line downloads the binary of the latest release, checks its
+SHA-256 and puts it in `/usr/local/bin` or `~/.local/bin`, without sudo
+([read the script](site/install.sh)). Windows and direct downloads are on
+[deckhand.show/download](https://deckhand.show/download) and in the
+[releases](https://github.com/stranix79/deckhand/releases). Or build it:
 
 ```
 git clone https://github.com/stranix79/deckhand && cd deckhand

@@ -1,0 +1,77 @@
+{{define "content"}}
+{{$fr := eq .Lang "fr"}}
+<div class="dl">
+<h1>{{if $fr}}Installer Deckhand{{else}}Download Deckhand{{end}} <span>{{if $fr}}Libre et gratuit.{{else}}Free and open source.{{end}}</span></h1>
+<p class="lede">{{if $fr}}Une ligne dans un terminal, sur macOS ou Linux. Vous recevez un seul fichier, et rien d'autre : pas de compte, pas de dépendance, pas d'étape de build.{{else}}One line in a terminal, on macOS or Linux. You get one file and nothing else: no account, no dependency, no build step.{{end}}</p>
+
+<div class="cmd" id="cmd">
+  <div class="cmd-tabs" role="tablist">
+    <button type="button" role="tab" data-tab="unix" class="on">macOS · Linux</button>
+    <button type="button" role="tab" data-tab="win">Windows</button>
+  </div>
+  <div class="cmd-pane" data-pane="unix">
+    <pre><code id="line">{{.Install}}</code></pre>
+    <button type="button" class="copy" data-copy="line" data-done="{{if $fr}}Copié{{else}}Copied{{end}}">{{if $fr}}Copier{{else}}Copy{{end}}</button>
+  </div>
+  <div class="cmd-pane" data-pane="win" hidden>
+    <p>{{if $fr}}Pas de ligne magique sous Windows : téléchargez le zip, décompressez-le, et lancez <code>deckhand.exe</code> depuis un terminal.{{else}}No magic line on Windows: download the zip, unzip it, and run <code>deckhand.exe</code> from a terminal.{{end}} <a class="get" href="{{.Windows.URL}}">{{if $fr}}Télécharger le zip{{else}}Download the zip{{end}} ({{.Windows.Label}})</a></p>
+  </div>
+</div>
+<p class="cmd-note">{{if $fr}}Le script télécharge le binaire de la dernière version depuis GitHub, vérifie son empreinte <span class="nb">SHA-256</span> et le pose dans <code>/usr/local/bin</code>, ou dans <code>~/.local/bin</code> si vous n'y avez pas accès. Pas de sudo. <a href="/install.sh">Lisez-le avant de le lancer</a>, il fait cent lignes.{{else}}The script downloads the binary of the latest release from GitHub, checks its <span class="nb">SHA-256</span> and puts it in <code>/usr/local/bin</code>, or in <code>~/.local/bin</code> if you cannot write there. No sudo. <a href="/install.sh">Read it before you run it</a>, it is a hundred lines.{{end}}</p>
+
+<div class="dl-cols">
+  <section>
+    <h2>macOS</h2>
+    <p>{{if $fr}}Apple silicon et Intel. La ligne ci-dessus, ou l'archive :{{else}}Apple silicon and Intel. The line above, or the archive:{{end}} {{range $i, $a := .Mac}}{{if $i}}, {{end}}<a href="{{$a.URL}}">{{$a.Label}}</a>{{end}}.</p>
+    <p>{{if $fr}}Avec Homebrew (compile depuis les sources, il faut Go) :{{else}}With Homebrew (builds from source, needs Go):{{end}}<code class="line">brew install stranix79/tap/deckhand</code></p>
+  </section>
+  <section>
+    <h2>Linux</h2>
+    <p>{{if $fr}}x86_64 et arm64. Un binaire statique, qui tourne sur n'importe quelle distribution. La ligne ci-dessus, ou l'archive :{{else}}x86_64 and arm64. One static binary, runs on any distribution. The line above, or the archive:{{end}} {{range $i, $a := .Linux}}{{if $i}}, {{end}}<a href="{{$a.URL}}">{{$a.Label}}</a>{{end}}.</p>
+  </section>
+  <section>
+    <h2>Windows</h2>
+    <p>{{if $fr}}x86_64. Un zip avec <code>deckhand.exe</code> dedans, à lancer depuis PowerShell ou le Terminal.{{else}}x86_64. A zip with <code>deckhand.exe</code> inside, to run from PowerShell or Terminal.{{end}} <a href="{{.Windows.URL}}">{{if $fr}}Télécharger{{else}}Download{{end}}</a>.</p>
+  </section>
+</div>
+
+<section class="dl-row">
+  <h2>{{if $fr}}iPhone, iPad et Android{{else}}iPhone, iPad and Android{{end}}</h2>
+  <p>{{if $fr}}Rien à installer. La télécommande et l'écran du public sont des pages web : scannez le QR code que Deckhand affiche, et c'est tout.{{else}}Nothing to install. The remote and the audience screen are web pages: scan the QR code Deckhand prints, and that is it.{{end}}</p>
+</section>
+
+<section class="dl-row">
+  <h2>{{if $fr}}Ensuite{{else}}Then{{end}}</h2>
+<pre><code>deckhand present talk/      {{if $fr}}# la scène, la télécommande et le public, sur votre réseau{{else}}# stage, remote and audience, on your network{{end}}
+deckhand import old.pptx    {{if $fr}}# vous venez de PowerPoint{{else}}# coming from PowerPoint{{end}}
+deckhand validate talk/     {{if $fr}}# vérifier un deck{{else}}# check a deck{{end}}</code></pre>
+  <p class="dl-meta">{{if .Version}}{{if $fr}}Version{{else}}Version{{end}} {{.Version}} · {{end}}<a href="/changelog">{{if $fr}}ce qui a changé{{else}}what changed{{end}}</a> · <a href="{{.Releases}}">{{if $fr}}tous les fichiers et les empreintes sur GitHub{{else}}every file and the checksums on GitHub{{end}}</a> · <a href="/docs/CLI">{{if $fr}}les commandes{{else}}the commands{{end}}</a>. {{if $fr}}Pour mettre à jour, relancez la ligne.{{else}}To update, run the line again.{{end}}</p>
+</section>
+</div>
+
+<script>
+// Tabs and the copy button. Without JavaScript the macOS · Linux line stays
+// visible and the Windows link is in the column below, so nothing is lost.
+(function () {
+  var box = document.getElementById("cmd");
+  function show(name) {
+    box.querySelectorAll("[data-tab]").forEach(function (b) { b.classList.toggle("on", b.dataset.tab === name); });
+    box.querySelectorAll("[data-pane]").forEach(function (p) { p.hidden = p.dataset.pane !== name; });
+  }
+  box.querySelectorAll("[data-tab]").forEach(function (b) {
+    b.addEventListener("click", function () { show(b.dataset.tab); });
+  });
+  if (/Win/.test(navigator.platform || "")) show("win");
+  box.querySelectorAll(".copy").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var text = document.getElementById(b.dataset.copy).textContent;
+      var label = b.textContent;
+      navigator.clipboard.writeText(text).then(function () {
+        b.textContent = b.dataset.done;
+        setTimeout(function () { b.textContent = label; }, 1500);
+      });
+    });
+  });
+})();
+</script>
+{{end}}

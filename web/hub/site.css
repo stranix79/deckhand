@@ -55,3 +55,37 @@ hr { border: 0; border-top: 1px solid var(--fog); margin: 2em 0; }
 .post-foot a { color: var(--sea); }
 .post-nav { display: flex; justify-content: space-between; gap: 20px; margin-top: 2.2em; font-family: var(--display); font-size: .95rem; }
 .post-nav a { color: var(--sea); text-decoration: none; } .post-nav a:hover { text-decoration: underline; }
+
+/* the download page: wider than a post, same voice. One command, then the
+   systems side by side under a thin rule, like the post list. */
+.site-main.wide { max-width: 1040px; }
+.dl h1 { font-size: clamp(2.4rem, 6.4vw, 4.4rem); letter-spacing: -.025em; margin-bottom: .35em; }
+.dl h1 span { display: block; color: var(--muted); }
+.dl .lede { font-size: 1.25rem; color: var(--muted); max-width: 34em; margin-bottom: 1.8em; }
+.cmd { border: 1px solid var(--fog); border-radius: 12px; overflow: hidden; }
+.cmd-tabs { display: flex; gap: 4px; padding: 8px; border-bottom: 1px solid var(--fog); }
+.cmd-tabs button { font-family: var(--display); font-size: .92rem; color: var(--muted); background: none; padding: 6px 12px; border-radius: 7px; }
+.cmd-tabs button.on { color: var(--ink); background: var(--fog); font-weight: 700; }
+.cmd-pane { display: flex; align-items: center; gap: 14px; padding: 16px 18px; }
+.cmd-pane[hidden] { display: none; }
+.cmd-pane pre { flex: 1; min-width: 0; margin: 0; padding: 0; background: none; color: var(--ink); font-size: 1rem; white-space: pre; overflow-x: auto; }
+.cmd-pane pre code::before { content: "$ "; color: var(--muted); }
+.cmd-pane p { margin: 0; font-size: 1rem; }
+.cmd .copy { font-family: var(--display); font-size: .92rem; font-weight: 700; color: var(--white); background: var(--ink); padding: 8px 16px; border-radius: 8px; }
+.cmd .copy:hover { background: var(--sea); }
+.cmd .get { font-family: var(--display); font-weight: 700; white-space: nowrap; }
+.cmd-note { font-size: .95rem; color: var(--muted); margin: 14px 0 0; max-width: 46em; }
+.dl-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 40px; margin-top: 3em; }
+.dl-cols section, .dl-row { border-top: 1px solid var(--fog); padding-top: 20px; }
+.dl-cols h2, .dl-row h2 { font-size: 1.3rem; margin-bottom: .5em; }
+.dl-cols p, .dl-row p { font-size: 1rem; color: var(--text); }
+.dl-row { margin-top: 1.6em; }
+.dl-row pre { font-size: .88rem; }
+.dl-row .dl-meta { font-family: var(--display); font-size: .92rem; color: var(--muted); }
+.dl-cols code.line { display: block; margin-top: 6px; padding: 6px 8px; font-size: .8em; white-space: nowrap; overflow-x: auto; }
+.nb { white-space: nowrap; }
+@media (max-width: 760px) {
+  .dl-cols { grid-template-columns: minmax(0, 1fr); }
+  .cmd-pane { flex-direction: column; align-items: stretch; }
+  .cmd .copy { align-self: flex-start; }
+}
