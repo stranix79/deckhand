@@ -9,6 +9,7 @@ Your AI already writes one HTML file per slide. Deckhand is what presents them.
 deckhand validate talk/     # check the deck, list every problem
 deckhand present  talk/     # stage + remote + viewer on your LAN
 deckhand push     talk/     # publish on a Hub, get a public link
+deckhand import   old.pptx  # leave PowerPoint: one HTML file per slide
 ```
 
 <p align="center">
@@ -70,6 +71,15 @@ order, optional `deck.json` for title, ratio and presenter notes. Slides may
 opt into fragments with a tiny `postMessage` protocol. Everything is in
 [docs/FORMAT.md](docs/FORMAT.md); [examples/ship-it](examples/ship-it) is an
 eight-slide deck that uses all of it.
+
+## Coming from PowerPoint
+
+`deckhand import talk.pptx` writes a deck next to the file: one HTML file
+per slide, your presenter notes in `deck.json`, pictures and videos in
+`assets/`. Text slides become clean HTML you can edit by hand. Diagrams
+(boxes and arrows) are redrawn in place with their colours. Charts,
+SmartArt and animations are not converted, and the command tells you where
+they were. Details in [docs/CLI.md](docs/CLI.md#import).
 
 ## Generate a deck with an LLM
 

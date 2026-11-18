@@ -4,6 +4,12 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 
 ## [Unreleased]
 
+### Added
+- `deckhand import <file.pptx>`: converts a PowerPoint file into a deck (one HTML file per slide, `deck.json` with the presenter notes, `assets/` with pictures, videos and an editable stylesheet). Text slides become clean HTML (headings, nested lists, tables, links); drawings such as architecture diagrams keep their layout, with shapes, theme colours and connectors redrawn in HTML and SVG. Hidden slides are skipped. Charts, SmartArt, animations, freeform shapes and EMF/WMF pictures are not converted: each one is reported with its slide number and left as a visible placeholder. Flags: `-o` (output directory), `--dark`, `--force`. Standard library only, no new dependency.
+
+### Changed
+- `deckhand import` is no longer a stub that says the converter is planned.
+
 ## [1.4.7] - 2026-10-17
 
 ### Security

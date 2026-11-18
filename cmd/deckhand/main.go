@@ -36,15 +36,3 @@ func versionCmd() *cobra.Command {
 		},
 	}
 }
-
-// importCmd is the stub the brief asks for: the PPTX converter is planned, not built.
-func importCmd() *cobra.Command {
-	return &cobra.Command{
-		Use:   "import <file.pptx>",
-		Short: "Convert a PowerPoint deck (planned, not available yet)",
-		Args:  cobra.ExactArgs(1),
-		RunE: func(_ *cobra.Command, args []string) error {
-			return fmt.Errorf("import is planned but not available yet: export %q as one HTML file per slide (or ask your AI to) and run `deckhand validate` on the folder", args[0])
-		},
-	}
-}

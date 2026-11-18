@@ -1,0 +1,136 @@
+/* Written by `deckhand import`. This file is yours now: change the colours,
+   the fonts, anything. Slides are designed at 1920 px wide; Deckhand scales
+   the whole page to the screen, so sizes are in plain pixels on purpose. */
+:root {
+  --bg: #ffffff;
+  --fg: #16181d;
+  --muted: #5d6470;
+  --accent: #1e6e74;
+  --line: #dfe3e8;
+  --panel: #f3f5f7;
+  --sans: "Inter", "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+html.dark {
+  --bg: #14140f;
+  --fg: #ece7dc;
+  --muted: #a39d8c;
+  --accent: #f5842a;
+  --line: #33322a;
+  --panel: #1f1f18;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 1920px; height: {{HEIGHT}}px; overflow: hidden; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 40px;
+  line-height: 1.35;
+  display: flex;
+  flex-direction: column;
+  padding: 96px 128px;
+}
+
+h1, h2 { margin: 0; font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 72px; line-height: 1.1; margin-bottom: 56px; }
+p { margin: 0 0 24px; }
+ul, ol { margin: 0 0 24px; padding-left: 1.1em; }
+li { margin-bottom: 16px; }
+li::marker { color: var(--accent); }
+li ul, li ol { margin: 12px 0 0; font-size: 0.85em; }
+a { color: var(--accent); }
+code { font-family: var(--mono); font-size: 0.9em; background: var(--panel); padding: 0.05em 0.25em; border-radius: 6px; }
+.lead { font-size: 48px; color: var(--muted); }
+
+/* Title slides and slides with one short sentence: centred, bigger. */
+body.cover { justify-content: center; }
+body.cover h1 { font-size: 120px; line-height: 1.05; margin-bottom: 40px; max-width: 1500px; }
+body.cover .flow { flex: none; }
+
+/* The content area takes what the title leaves. */
+.flow { flex: 1; min-height: 0; }
+.cols {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: minmax(0, 1fr);
+  gap: 72px;
+}
+
+/* Pictures and videos share their area evenly and are never cropped. */
+.media {
+  min-height: 0;
+  display: grid;
+  gap: 24px;
+  grid-auto-rows: minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+}
+.cols > .media { height: 100%; }
+.media.only { flex: 1; }
+.media.only.n2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.media.only.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.media.only.n4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.media.only.many { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.media.n4, .media.many { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.media img, .media video { width: 100%; height: 100%; min-height: 0; object-fit: contain; }
+.media audio { width: 100%; align-self: center; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.8em; margin-bottom: 24px; }
+th, td { text-align: left; vertical-align: top; padding: 14px 20px; border-bottom: 2px solid var(--line); }
+th { color: var(--muted); font-weight: 600; }
+
+/* What the import could not convert stays visible until you replace it. */
+.missing {
+  margin-bottom: 24px;
+  padding: 28px 32px;
+  border: 3px dashed var(--line);
+  border-radius: 12px;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 26px;
+}
+
+/* Busy slides get a smaller type instead of overflowing. */
+body.dense { font-size: 32px; }
+body.dense h2 { font-size: 60px; margin-bottom: 40px; }
+body.denser { font-size: 25px; }
+body.denser h2 { font-size: 52px; margin-bottom: 32px; }
+body.denser li { margin-bottom: 10px; }
+
+/* Slides that were drawings in PowerPoint (boxes, arrows, labels placed by
+   hand) keep their exact layout and their own colours. */
+@font-face {
+  /* Office fonts are narrow. When they are not installed, the system font
+     stands in, shrunk a little so labels still fit their boxes. */
+  font-family: "Deckhand Narrow";
+  src: local("Helvetica Neue"), local("Arial"), local("Liberation Sans"), local("Segoe UI"), local("DejaVu Sans");
+  size-adjust: 92%;
+}
+@font-face {
+  font-family: "Deckhand Narrow";
+  font-weight: 700;
+  src: local("Helvetica Neue Bold"), local("Arial Bold"), local("Liberation Sans Bold"), local("Segoe UI Bold"), local("DejaVu Sans Bold");
+  size-adjust: 92%;
+}
+body.canvas {
+  display: block;
+  position: relative;
+  padding: 0;
+  line-height: 1.2;
+  /* The font of the PowerPoint theme first: text fits its boxes best with it. */
+  font-family: {{DRAWFONT}}Calibri, Carlito, "Deckhand Narrow", var(--sans);
+}
+.sh, .ob, .ln { position: absolute; }
+.sh { display: flex; flex-direction: column; }
+.sh p { margin: 0; width: 100%; }
+.sh.nw { white-space: nowrap; }
+.sh p.bu { text-indent: -1.2em; }
+.sh p.bu::before { content: attr(data-b); display: inline-block; width: 1.2em; text-indent: 0; }
+.ln { left: 0; top: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+img.ob { object-fit: fill; }
+img.ob.crop { object-fit: cover; }
+div.ob > table { margin: 0; font-size: inherit; }
+div.ob.missing { margin: 0; overflow: hidden; }

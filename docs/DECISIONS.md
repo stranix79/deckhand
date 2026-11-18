@@ -110,3 +110,26 @@ pushes the PKGBUILD to the AUR on every tag (prebuilt binaries, MIT AND
 BUSL-1.1 since the hub ships in the same binary). The upload needs the
 `AUR_KEY` secret; without it the step is skipped and the release is
 unaffected.
+
+## 2026-11-18 — `import`: two conversion modes, chosen per slide
+
+The brief left the PPTX converter out of the MVP. It is now built, in
+`internal/pptx`, with the standard library only (a .pptx is a zip of XML).
+
+A slide is converted in one of two ways. A slide that fills the placeholders
+of its layout is converted for its meaning: title, lists, tables, pictures,
+laid out by one stylesheet. The PowerPoint theme is dropped on purpose: the
+point of leaving PowerPoint is to get HTML a human can edit. A slide that is
+a drawing (any connector, a group with free shapes, or four free shapes and
+more) is converted for its geometry: every shape keeps its position, size,
+fill, outline and text, because a diagram flattened to a list of labels is
+useless. First version was meaning only; the first real file tried on it was
+a deck of architecture diagrams and came out as lists of words.
+
+Limits accepted for now: master decorations, charts, SmartArt, freeform
+shapes, animations. They are reported, never dropped silently. Rendering to
+pictures was ruled out: it needs a renderer, so a dependency, and gives
+slides nobody can edit.
+
+`--dark` does not apply to drawings: their colours belong together with
+their background.
