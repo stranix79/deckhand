@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"regexp"
 	"strings"
 	"testing"
 
@@ -159,7 +160,7 @@ func TestDemoVideo(t *testing.T) {
 
 func TestBlog(t *testing.T) {
 	srv := newSiteServer(t)
-	for _, path := range []string{"/blog", "/blog/fr", "/blog/hello-deckhand", "/blog/fr/hello-deckhand", "/blog/help-deckhand-live"} {
+	for _, path := range []string{"/blog", "/blog/fr", "/blog/hello-deckhand", "/blog/fr/hello-deckhand", "/blog/help-deckhand-live", "/blog/deckhand-1-5", "/blog/fr/deckhand-1-5"} {
 		resp, body := getBody(t, srv.URL+path)
 		if resp.StatusCode != 200 || strings.Contains(body, noindexTag) {
 			t.Fatalf("%s: %d indexable=%v", path, resp.StatusCode, !strings.Contains(body, noindexTag))
@@ -189,6 +190,40 @@ func TestBlog(t *testing.T) {
 	_, body = getBody(t, srv.URL+"/sitemap.xml")
 	if !strings.Contains(body, "<loc>https://h.example/blog/fr/deckhand-1-3</loc>") {
 		t.Fatal("sitemap lacks the french release post")
+	}
+}
+
+// Every post exists in both languages, its preview image is embedded, and the
+// links it makes to the site itself lead somewhere: a post is prose nobody
+// compiles, so a renamed page would otherwise break it in silence.
+func TestBlogPostsAreComplete(t *testing.T) {
+	srv := newSiteServer(t)
+	href := regexp.MustCompile(`href="(/[^"#]*)`)
+	blog := loadBlog()
+	if len(blog["en"]) != len(blog["fr"]) {
+		t.Fatalf("%d english posts, %d french ones", len(blog["en"]), len(blog["fr"]))
+	}
+	checked := map[string]bool{}
+	for _, lang := range []string{"en", "fr"} {
+		for _, p := range blog[lang] {
+			if p.Image != "" {
+				if _, err := blogFS.ReadFile("blog/img/" + p.Image); err != nil {
+					t.Errorf("%s (%s): image %s is not embedded", p.Slug, lang, p.Image)
+				}
+			}
+			for _, m := range href.FindAllStringSubmatch(string(p.Body), -1) {
+				if checked[m[1]] {
+					continue
+				}
+				checked[m[1]] = true
+				if resp, _ := getBody(t, srv.URL+m[1]); resp.StatusCode != 200 {
+					t.Errorf("%s (%s): link %s answers %d", p.Slug, lang, m[1], resp.StatusCode)
+				}
+			}
+		}
+	}
+	if !checked["/download"] || !checked["/install.sh"] {
+		t.Error("the 1.5 post should link the download page and the installer")
 	}
 }
 

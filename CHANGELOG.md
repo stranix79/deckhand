@@ -7,6 +7,7 @@ All notable changes to Deckhand are documented here. The format follows Keep a C
 ### Added
 - One-line install on macOS and Linux: `curl -fsSL https://deckhand.show/install.sh | sh`. The script picks the release binary for the machine, checks its SHA-256 against the release checksums and installs it in `/usr/local/bin` or `~/.local/bin`, without sudo. `DECKHAND_VERSION` and `DECKHAND_INSTALL_DIR` override the version and the directory.
 - Download page on the hub, in English (`/download`) and French (`/download/fr`): the install line, direct links to the archives of the current release for macOS, Linux and Windows, and Homebrew. Linked from the header and from the landing page, which used to send people to GitHub.
+- Blog post on 1.5, in English and French: what `deckhand import` keeps and loses, and the new ways to install.
 
 ## [1.5.0] - 2026-11-18
 
